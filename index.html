@@ -4,9 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#5BCEFA">
+<meta name="color-scheme" content="light dark">
+<meta name="app-version" content="2026.11.18.4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>用药记录</title>
+<meta name="apple-mobile-web-app-title" content="hrt 记录">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon-180.png">
+<title>hrt 记录</title>
 <style>
 :root{
   --pink:#F5A9B8;--pink-d:#E27C96;--pink-l:#FDEBF0;
@@ -27,7 +33,8 @@ header{padding:12px 16px 4px}
 .mark{width:28px;height:28px;border-radius:10px;flex:none;display:grid;place-items:center;
   background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 4px 10px rgba(245,169,184,.4)}
 .mark svg{width:16px;height:16px;color:#fff}
-h1{font-size:19px;margin:0;letter-spacing:.2px}
+h1{font-size:19px;margin:0;letter-spacing:.2px;animation:titleFloat 7s ease-in-out infinite}
+@keyframes titleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
 .sub{margin:6px 0 0;color:var(--dim);font-size:12px;padding-left:37px}
 main{padding:0 12px}
 .tab{display:none}.tab.active{display:block}
@@ -47,11 +54,33 @@ button:disabled{opacity:.5}
 .row2{display:flex;gap:10px}
 .row2>*{flex:1;min-width:0}
 .cardhead{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--dim);margin-bottom:8px}
+.cardhead>span:first-child{animation:headGlow 6s ease-in-out infinite}
+@keyframes headGlow{0%,100%{opacity:1}50%{opacity:.82}}
 .entry{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #F0F5F8;align-items:flex-start}
 .entry:last-child{border-bottom:none}
 .entry .t{color:var(--dim);font-size:12px;width:42px;flex:none;padding-top:3px}
 .entry .b{flex:1;min-width:0}
 .entry .n{font-weight:600;font-size:14px}
+@keyframes floatIco{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+.entry .ico{animation:floatIco 3.8s ease-in-out infinite}
+.entry:nth-child(2n) .ico{animation-delay:.7s}
+.entry:nth-child(3n) .ico{animation-delay:1.3s}
+@keyframes tabPulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.09)}}
+.tabbar button.on svg{animation:tabPulse 2.6s ease-in-out infinite}
+.gico{display:block;margin-bottom:2px}
+.gico .ico{width:16px;height:16px;margin:0;color:var(--dim)}
+.ico{width:18px;height:18px;vertical-align:-4px;margin-right:7px;color:var(--blue-d)}
+.achgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+.achcell{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;
+  opacity:.55;transition:opacity .3s,border-color .3s,transform .3s}
+.achcell.got{opacity:1;border-color:#CDEBF7;background:linear-gradient(160deg,#F7FBFD,#FFFFFF)}
+.achcell .achic{color:var(--dim)}
+.achcell.got .achic{color:#E0A54A}
+.achcell .achic svg{width:20px;height:20px}
+.achcell .achn{font-size:13px;font-weight:600;margin-top:6px}
+.achcell .achd{font-size:11px;color:var(--dim);margin-top:2px;line-height:1.4}
+html[data-theme="dark"] .achcell{background:#10161C;border-color:#2B3641}
+html[data-theme="dark"] .achcell.got{background:linear-gradient(160deg,#14202A,#10161C);border-color:#2A4C5C}
 .entry .d{color:var(--dim);font-size:12px;word-break:break-word}
 .entry .x{margin:0;padding:2px 6px;font-size:16px;background:transparent;border-color:transparent;color:#B9C7D2;line-height:1}
 .daygroup{font-size:12px;color:var(--dim);margin:10px 0 2px;font-weight:600}
@@ -114,8 +143,8 @@ pre.out{white-space:pre-wrap;word-break:break-word;background:var(--bg2);border:
 .sheet-wrap.show{display:block}
 .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;
   padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;
-  box-shadow:0 -10px 34px rgba(34,49,61,.18);animation:sheetup .2s ease-out}
-@keyframes sheetup{from{transform:translateY(16px);opacity:.5}to{transform:none;opacity:1}}
+  box-shadow:0 -10px 34px rgba(34,49,61,.18);animation:sheetup .65s cubic-bezier(.22,1,.36,1)}
+@keyframes sheetup{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 .sheet h2{font-size:17px;margin:0 0 2px;padding-right:40px}
 .sheet .xbtn{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:50%;border:none;
   background:var(--bg2);color:var(--dim);font-size:18px;margin:0;padding:0;line-height:1}
@@ -133,10 +162,51 @@ pre.out{white-space:pre-wrap;word-break:break-word;background:var(--bg2);border:
   overflow:hidden;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;
   font-size:24px;font-weight:700;box-shadow:0 4px 12px rgba(245,169,184,.35)}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar{animation:avFloat 4.5s ease-in-out infinite}
+@keyframes avFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.avatar.fr-ring{box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(160,190,215,.9),0 6px 16px rgba(0,0,0,.12)}
+.avatar.fr-grad{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(91,206,250,.75),0 0 18px rgba(245,169,184,.6)}
+.avatar.fr-orbit{animation:avFloat 4.5s ease-in-out infinite,orbitGlow 3.4s linear infinite}
+@keyframes orbitGlow{
+  0%{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(91,206,250,.9),0 0 22px rgba(91,206,250,.7)}
+  50%{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(245,169,184,.9),0 0 26px rgba(245,169,184,.75)}
+  100%{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(91,206,250,.9),0 0 22px rgba(91,206,250,.7)}}
+.bigname{font-size:20px;font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--ink),var(--ink));-webkit-background-clip:text;background-clip:text;
+  color:transparent;animation:nameBreath 5.5s ease-in-out infinite}
+@keyframes nameBreath{0%,100%{opacity:1;transform:translateY(0) scale(1)}
+  50%{opacity:.9;transform:translateY(-3px) scale(1.01)}}
+.bigname.nf-grad{background:linear-gradient(90deg,#5BCEFA,#9B8CE0,#F5A9B8);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.bigname.nf-shine{background:linear-gradient(100deg,#5BCEFA 0%,#F5A9B8 25%,#9B8CE0 50%,#5BCEFA 75%,#F5A9B8 100%);
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:nameShine 4s linear infinite,nameBreath 5s ease-in-out infinite}
+@keyframes nameShine{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.searchwrap{display:flex;align-items:center;gap:9px;background:var(--bg2);
+  border:1px solid #DCE8F0;border-radius:14px;padding:0 13px;margin-top:10px}
+.searchwrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(91,206,250,.2)}
+.searchwrap .sico{display:flex;flex:none;color:#8FA3B3}
+.searchwrap .sico .ico{width:18px;height:18px;margin:0;vertical-align:0;
+  animation:floatIco 4.2s ease-in-out infinite}
+.searchwrap input{border:none !important;background:transparent !important;box-shadow:none !important;
+  flex:1;min-width:0;margin:0;padding:12px 0;font-size:16px}
+html[data-theme="dark"] .searchwrap{background:#0B1016;border-color:#2B3641}
+html[data-theme="dark"] .searchwrap .sico{color:#7C8B99}
 .announce-wrap{position:fixed;inset:0;z-index:50;display:none;background:rgba(34,49,61,.35);
-  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:18px;overflow:auto}
-.announce-wrap.show{display:flex;align-items:center;justify-content:center}
-.announce{background:#fff;border-radius:22px;padding:22px 18px;max-width:420px;width:100%;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:18px;overflow:auto}
+.announce-wrap.show{display:flex;align-items:safe center;justify-content:center;
+  animation:annWrap 1.5s cubic-bezier(.22,1,.36,1);padding-top:calc(22px + env(safe-area-inset-top))}
+@keyframes annWrap{from{opacity:0;background:rgba(34,49,61,0)}to{opacity:1}}
+.announce{animation:annCard 1.7s cubic-bezier(.22,1,.36,1) both}
+@keyframes annCard{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+.announce h2,.announce .byline,.announce p,.announce .row{animation:annText 1.2s cubic-bezier(.22,1,.36,1) both}
+.announce h2{animation-delay:.25s}
+.announce .byline{animation-delay:.45s}
+.announce p:nth-of-type(1){animation-delay:.65s}
+.announce p:nth-of-type(2){animation-delay:.85s}
+.announce .row{animation-delay:1.05s}
+@keyframes annText{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.announce{background:#fff;border-radius:22px;padding:20px 18px;max-width:420px;width:100%;margin:auto 0;
   box-shadow:0 20px 50px rgba(34,49,61,.25);animation:sheetup .2s ease-out}
 .announce h2{font-size:19px;margin:0 0 4px}
 .announce .byline{font-size:13px;color:var(--dim);margin:0 0 10px}
@@ -177,17 +247,17 @@ table.dyn td.flash{animation:flash .55s}
 .pt{animation:pop .3s ease-out}
 
 /* 入场动画 */
-.tab.active{animation:tabfade .26s ease-out}
-@keyframes tabfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.tab.active > .card,.tab.active > div > .card{animation:cardUp .32s cubic-bezier(.2,.8,.3,1) both}
-.tab.active > .card:nth-child(2),.tab.active > div > .card:nth-child(2){animation-delay:.04s}
-.tab.active > .card:nth-child(3),.tab.active > div > .card:nth-child(3){animation-delay:.08s}
-.tab.active > .card:nth-child(4),.tab.active > div > .card:nth-child(4){animation-delay:.12s}
-.tab.active > .card:nth-child(5),.tab.active > div > .card:nth-child(5){animation-delay:.16s}
+.tab.active{animation:tabfade .5s cubic-bezier(.22,1,.36,1)}
+@keyframes tabfade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.tab.active > .card,.tab.active > div > .card{animation:cardUp .62s cubic-bezier(.22,1,.36,1) both}
+.tab.active > .card:nth-child(2),.tab.active > div > .card:nth-child(2){animation-delay:.08s}
+.tab.active > .card:nth-child(3),.tab.active > div > .card:nth-child(3){animation-delay:.16s}
+.tab.active > .card:nth-child(4),.tab.active > div > .card:nth-child(4){animation-delay:.24s}
+.tab.active > .card:nth-child(5),.tab.active > div > .card:nth-child(5){animation-delay:.32s}
 @keyframes cardUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.entry{animation:rowIn .24s ease-out both}
+.entry{animation:rowIn .45s cubic-bezier(.22,1,.36,1) both}
 @keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
-details{animation:rowIn .22s ease-out both}
+details{animation:rowIn .42s cubic-bezier(.22,1,.36,1) both}
 summary:active{background:var(--blue-l)}
 button{transition:transform .12s ease,background .15s,color .15s,border-color .15s}
 button:active{transform:scale(.96)}
@@ -195,10 +265,380 @@ button:active{transform:scale(.96)}
 @keyframes chipPop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
 .pbar i{transition:width .25s ease}
 .track i{transition:width .5s cubic-bezier(.2,.8,.3,1)}
+.savedtip{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #CDEBF7;border-radius:16px;
+  padding:10px 12px;z-index:35;box-shadow:0 12px 30px rgba(47,168,207,.22);
+  animation:tipIn .6s cubic-bezier(.22,1,.36,1)}
+@keyframes tipIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.savedtip-ic{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;font-size:12px;font-weight:700}
+.savedtip-tx{flex:1;font-size:13px;color:#3E4F5C}
+.savedtip-go{margin:0;padding:6px 12px;font-size:12px;border-radius:99px;border:1px solid var(--line);background:#fff}
+.entry.hl{animation:hlPulse 1.6s ease-out;border-radius:10px}
+@keyframes hlPulse{0%{background:var(--pink-l)}70%{background:var(--pink-l)}100%{background:transparent}}
+
+/* ===== 可读性：字号与行高 ===== */
+:root{color-scheme:light dark}
+body{font-size:16px;line-height:1.68;-webkit-text-size-adjust:100%}
+.sub{font-size:13px;line-height:1.5}
+.hint{font-size:13px;line-height:1.65}
+label{font-size:13px}
+.tag{font-size:12px;padding:2px 9px}
+.entry .t{font-size:13px;width:46px}
+.entry .d{font-size:13px;line-height:1.55}
+.entry .n{font-size:15px}
+.kv{font-size:14px;line-height:1.7}
+.kv b{font-size:13px}
+.chip{font-size:13.5px;padding:7px 14px}
+.opt{font-size:15px;line-height:1.5}
+.qtext{font-size:17px;line-height:1.65}
+table.dyn{font-size:14px}
+table.dyn th,table.dyn td{padding:10px 12px;line-height:1.5}
+pre.out{font-size:13px;line-height:1.6}
+.foot{font-size:12px;line-height:1.6}
+.badge{font-size:11px;padding:2px 7px}
+.tabbar button{font-size:10.5px}
+.summary,.res p{font-size:15px}
+.sheet .sec p,.announce p{font-size:15px;line-height:1.75}
+.sheet .mail{font-size:13px}
+input,select,textarea{font-size:16px}
+button{font-size:15px}
+button.savedtip-go,.savedtip-tx{font-size:13px}
+.daygroup{font-size:13px}
+
+/* ===== 宽屏断点 ===== */
+@media (min-width:600px){
+  header,main,.foot{max-width:700px;margin-left:auto;margin-right:auto}
+  .tabbar{max-width:700px;left:50%;transform:translateX(-50%);border-radius:18px 18px 0 0}
+  .card{padding:18px}
+  table.dyn th,table.dyn td{font-size:15px;padding:11px 13px}
+  .tabbar button{font-size:11.5px}
+}
+@media (max-width:360px){
+  main{padding:0 8px}
+  .card{padding:12px;border-radius:16px}
+  .tabbar button{font-size:9.5px;padding:6px 0 7px}
+  .tabbar button svg{width:17px;height:17px}
+  table.dyn th,table.dyn td{padding:8px 9px;min-width:78px}
+  .entry .t{width:40px}
+}
+
+/* ===== 深色模式 ===== */
+html[data-theme="dark"]{
+  --ink:#E8EEF4;--dim:#A3B3C0;--line:#2B3641;--card:#161C23;--bg2:#10161C;
+  --pink-l:#2C1D24;--blue-l:#11242D;color-scheme:dark;
+}
+html[data-theme="dark"] body{
+  background:radial-gradient(130% 55% at 100% 0%,#241820 0%,rgba(0,0,0,0) 60%),
+    radial-gradient(130% 55% at 0% 0%,#0D2530 0%,rgba(0,0,0,0) 60%),#0D1218;
+  color:var(--ink);
+}
+html[data-theme="dark"] .card{background:var(--card);border-color:var(--line);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea{background-color:#0B1016;border-color:#2B3641;color:var(--ink)}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder{color:#6B7B89}
+html[data-theme="dark"] button{background:#1B232C;border-color:#2B3641;color:var(--ink)}
+html[data-theme="dark"] button.primary{
+  color:#08161D;background:linear-gradient(135deg,#5BCEFA 0%,#7FD3EE 55%,#F5A9B8 100%)}
+html[data-theme="dark"] .chip{background:#1B232C;border-color:#2B3641;color:#C2D0DC}
+html[data-theme="dark"] .chip.on{background:var(--blue-d);border-color:var(--blue-d);color:#06141B}
+html[data-theme="dark"] .tabbar{background:rgba(13,18,24,.95);border-top-color:var(--line)}
+html[data-theme="dark"] .tabbar button{color:#7E8E9C}
+html[data-theme="dark"] .tabbar button.on{color:#F5A9B8}
+html[data-theme="dark"] .entry{border-bottom-color:#222C36}
+html[data-theme="dark"] .daygroup{color:var(--dim)}
+html[data-theme="dark"] .badge{background:#16303C;color:#9FD9F0}
+html[data-theme="dark"] .badge.b-body{background:#33222A;color:#F2B7C6}
+html[data-theme="dark"] .badge.b-note{background:#1E262F;color:#A3B3C0}
+html[data-theme="dark"] .badge.b-quiz{background:#241F33;color:#C2B4F0}
+html[data-theme="dark"] table.dyn th{background:#1A222B;color:#C9D6E1}
+html[data-theme="dark"] table.dyn th,
+html[data-theme="dark"] table.dyn td{border-color:#232D38}
+html[data-theme="dark"] .tblWrap{background:var(--card);border-color:var(--line)}
+html[data-theme="dark"] .sheet,
+html[data-theme="dark"] .announce{background:var(--card);box-shadow:0 -10px 34px rgba(0,0,0,.5)}
+html[data-theme="dark"] .sheet .xbtn{background:#1B232C;color:var(--dim)}
+html[data-theme="dark"] .sheet .sec b{color:#7CCBEA}
+html[data-theme="dark"] pre.out{background:#0B1016;border-color:var(--line);color:#D6E0E9}
+html[data-theme="dark"] .banner{background:#11242D;border-color:#1E4356;color:#C4ECFA}
+html[data-theme="dark"] .savedtip{background:var(--card);border-color:#1E4356;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+html[data-theme="dark"] .savedtip-go{background:#1B232C;border-color:#2B3641;color:var(--ink)}
+html[data-theme="dark"] .help{background:#11242D;border-color:#1E4356;color:#7CCBEA}
+html[data-theme="dark"] .warn{background:#2A1A20;border-color:#5A303C;color:#F6CCD4}
+html[data-theme="dark"] .track,
+html[data-theme="dark"] .pbar{background:#1A222B}
+html[data-theme="dark"] .avatar{box-shadow:none}
+html[data-theme="dark"] .foot{color:#6E7D8B}
+html[data-theme="dark"] .announce p,
+html[data-theme="dark"] .announce .byline{color:#C7D3DE}
+html[data-theme="dark"] .announce h2{color:#F2F7FB}
+html[data-theme="dark"] .announce .row{background:#10161C;border-color:#2B3641;color:#DCE6EF}
+html[data-theme="dark"] .announce .mail{color:#9FB0BE}
+html[data-theme="dark"] .announce-wrap,
+html[data-theme="dark"] .sheet-wrap{background:rgba(0,0,0,.6)}
+html[data-theme="dark"] .mechip{background:var(--card);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] summary:active{background:#1B232C}
+html[data-theme="dark"] table.dyn td:active{background:#16303C}
+html[data-theme="dark"] .opt{background:#141A21;border-color:#2B3641;color:var(--ink)}
+html[data-theme="dark"] .opt:active{background:#2C1D24;border-color:var(--pink)}
+html[data-theme="dark"] .hint{color:var(--dim)}
+html[data-theme="dark"] .tag{background:#11161C;border-color:#2B3641;color:#A3B3C0}
+html[data-theme="dark"] .flag{box-shadow:0 0 0 1px #2B3641,0 4px 12px rgba(0,0,0,.5)}
+.plan-wrap{position:fixed;inset:0;z-index:60;display:none;background:rgba(34,49,61,.45);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:14px}
+.plan-wrap.show{display:flex;align-items:flex-end}
+.plan-box{background:var(--card);border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;
+  max-height:86vh;display:flex;flex-direction:column;box-shadow:0 -10px 34px rgba(0,0,0,.25)}
+.plan-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px;
+  border-bottom:1px solid var(--line)}
+.plan-head b{font-size:17px}
+.plan-head .xbtn{position:static;width:30px;height:30px;border-radius:50%;border:none;background:var(--bg2);
+  color:var(--dim);font-size:18px;margin:0;padding:0}
+#planBody{overflow:auto;padding:6px 18px 10px}
+.plan-item{padding:12px 0;border-bottom:1px solid #F0F5F8}
+.plan-item:last-child{border-bottom:none}
+.plan-item .pd{font-size:12px;color:var(--dim);letter-spacing:.4px}
+.plan-item .pt{font-size:15px;line-height:1.6;margin-top:3px}
+.plan-item .ps{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;margin-left:6px;
+  background:var(--blue-l);color:#1D6F8C;vertical-align:1px}
+.plan-item .ps.done{background:#E6F7EF;color:#1F7A50}
+.plan-item .ps.doing{background:#FFF3E0;color:#9A6212}
+.plan-foot{display:flex;gap:10px;padding:10px 18px calc(14px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line)}
+html[data-theme="dark"] .plan-item{border-bottom-color:#222C36}
+.fab{position:fixed;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));width:56px;height:56px;
+  border-radius:50%;border:none;margin:0;padding:0;font-size:30px;line-height:1;font-weight:300;
+  color:#08161D;background:linear-gradient(135deg,var(--blue),var(--pink));
+  box-shadow:0 10px 24px rgba(47,168,207,.4);z-index:32;display:none}
+.fab.show{display:block;animation:fabIn .26s cubic-bezier(.2,.8,.3,1)}
+@keyframes fabIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.fab:active{transform:scale(.92)}
+.post-wrap{position:fixed;inset:0;z-index:62;display:none;background:rgba(34,49,61,.45);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:14px}
+.post-wrap.show{display:flex;align-items:flex-end}
+.post-box{background:var(--card);border:1px solid var(--line);border-radius:22px 22px 0 0;
+  width:100%;padding:16px 18px calc(18px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 34px rgba(0,0,0,.25);animation:sheetup .2s ease-out}
+.post-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.post-head b{font-size:17px}
+.post-head .xbtn{position:static;width:30px;height:30px;border-radius:50%;border:none;background:var(--bg2);
+  color:var(--dim);font-size:18px;margin:0;padding:0}
+.resBox{border:1px solid var(--line);border-radius:14px;padding:4px 12px 10px;margin-top:12px;background:var(--bg2)}
+.resBox .cardhead{margin-top:10px}
+html[data-theme="dark"] .resBox{background:#10161C;border-color:#2B3641}
+.daily{padding:8px 0 4px;animation:dailyIn .9s cubic-bezier(.22,1,.36,1)}
+.daily.out{animation:dailyOut .55s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes dailyOut{to{opacity:0;transform:translateY(-18px) scale(.96);filter:blur(6px)}}
+@keyframes dailyIn{from{opacity:0;transform:translateY(22px) scale(1.02);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.daily-h{font-size:16px;font-weight:600;line-height:1.55;margin-bottom:8px}
+.daily-h .tag{margin-right:8px}
+.daily-f{font-size:12px;color:var(--dim);margin-top:12px}
+.daily-bar{height:3px;background:#EFF5F9;border-radius:99px;overflow:hidden;margin-top:10px}
+.daily-bar i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--blue),var(--pink));animation:dailyFill 6s linear forwards}
+@keyframes dailyFill{from{width:0}to{width:100%}}
+.hitrow{display:flex;align-items:center;gap:10px;padding:13px 2px;border-bottom:1px solid #F0F5F8;
+  animation:hitIn .38s cubic-bezier(.2,.8,.3,1) both;cursor:pointer}
+.hitrow:last-child{border-bottom:none}
+.hitrow .b{flex:1;min-width:0}
+.hitrow .n{font-size:15px;font-weight:500;line-height:1.5}
+.hitrow .n .tag{margin-right:8px;font-weight:400}
+.hitrow:active{background:var(--blue-l)}
+html[data-theme="dark"] .hitrow{border-bottom-color:#222C36}
+html[data-theme="dark"] .hitrow:active{background:#16303C}
+.hit{padding:12px 0;border-bottom:1px solid #F0F5F8;animation:hitIn .6s cubic-bezier(.22,1,.36,1) both}
+.hit:last-child{border-bottom:none}
+@keyframes hitIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hit-h{font-size:15px;font-weight:600;line-height:1.55;margin-bottom:6px}
+.hit-h .tag{margin-right:8px}
+html[data-theme="dark"] .hit{border-bottom-color:#222C36}
+html[data-theme="dark"] .daily-bar{background:#1A222B}
+.stream{padding:6px 0 2px}
+.stream-h{font-size:16px;font-weight:600;line-height:1.55;margin-bottom:8px}
+.stream-h .tag{margin-right:8px}
+.stream-nav{display:flex;align-items:center;justify-content:space-between;margin-top:14px;
+  padding-top:10px;border-top:1px solid var(--line)}
+.stream-cnt{font-size:12px;color:var(--dim)}
+.stream-bar{height:3px;background:#EFF5F9;border-radius:99px;overflow:hidden;margin-top:10px}
+.stream-bar i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--blue),var(--pink));animation:streamFill 5s linear forwards}
+@keyframes streamFill{from{width:0}to{width:100%}}
+html[data-theme="dark"] .stream-nav{border-top-color:#2B3641}
+html[data-theme="dark"] .stream-bar{background:#1A222B}
+.hidden{display:none!important}
+.gstats{display:flex;gap:9px;margin-top:10px}
+.gstat{position:relative;flex:1;border-radius:18px;padding:14px 6px 11px;text-align:center;overflow:hidden;
+  border:1px solid var(--line);background:linear-gradient(170deg,#FFFFFF,#F5FAFD);
+  box-shadow:0 6px 16px rgba(47,168,207,.08)}
+.gstat:before{content:"";position:absolute;inset:-40% -10% auto;height:70%;
+  background:radial-gradient(circle at 50% 0%,rgba(91,206,250,.28),transparent 70%)}
+.gs-xp:before{background:radial-gradient(circle at 50% 0%,rgba(155,140,224,.3),transparent 70%)}
+.gs-hp:before{background:radial-gradient(circle at 50% 0%,rgba(245,169,184,.34),transparent 70%)}
+.gring{width:34px;height:34px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(140deg,#5BCEFA,#9FD8F2);box-shadow:0 4px 12px rgba(91,206,250,.45)}
+.gs-xp .gring{background:linear-gradient(140deg,#9B8CE0,#C2B4F0);box-shadow:0 4px 12px rgba(155,140,224,.45)}
+.gs-hp .gring{background:linear-gradient(140deg,#F5A9B8,#F7C6D2);box-shadow:0 4px 12px rgba(245,169,184,.5)}
+.gring .ico{width:18px;height:18px;margin:0;color:#fff;vertical-align:0}
+.gnum{display:block;font-size:23px;font-weight:800;line-height:1.15;letter-spacing:.5px;
+  background:linear-gradient(120deg,#2FA8CF,#5BCEFA);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gs-xp .gnum{background:linear-gradient(120deg,#7C6AD8,#B4A6F0);-webkit-background-clip:text;background-clip:text}
+.gs-hp .gnum{background:linear-gradient(120deg,#E27C96,#F5A9B8);-webkit-background-clip:text;background-clip:text}
+.gnum.small{font-size:17px;letter-spacing:0}
+.glab{display:block;font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.5px}
+.gacha{position:relative;height:212px;margin:6px 0 4px}
+.gcard-back{position:absolute;left:50%;top:18px;width:112px;height:158px;margin-left:-56px;border-radius:16px;
+  transform:translateX(var(--x)) rotate(var(--r));transition:transform .48s cubic-bezier(.22,1,.36,1),box-shadow .48s;
+  background:linear-gradient(160deg,#22303D,#0F1720);border:1px solid #2B3641;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,0,0,.3)}
+.gback-face{font-size:44px;color:#5BCEFA;opacity:.75;font-weight:300}
+.gcard-back.expert{background:linear-gradient(160deg,#3A2E12,#1A1408);border-color:#C9A227;
+  animation:goldPulse 1.8s ease-in-out infinite}
+.gcard-back.expert .gback-face{color:#F2D26B;text-shadow:0 0 14px #F2D26B}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 16px rgba(230,190,80,.45)}50%{box-shadow:0 0 30px rgba(240,205,110,.85)}}
+.gcard-back.picked{transform:translateX(var(--x)) translateY(-24px) rotate(0deg) scale(1.06);
+  box-shadow:0 18px 32px rgba(0,0,0,.35)}
+.gcard-back.chosen{transform:translateX(0) translateY(-30px) scale(1.14);opacity:.92;
+  box-shadow:0 24px 44px rgba(0,0,0,.4)}
+.rarity{display:inline-block;font-size:12px;padding:3px 10px;border-radius:99px;margin-bottom:10px}
+.rarity.blue{background:#E3F4FB;color:#1D6F8C}
+.rarity.gold{background:#FFF4D6;color:#8A6412;box-shadow:0 0 12px rgba(230,190,80,.5)}
+html[data-theme="dark"] .rarity.blue{background:#12232C;color:#9FD9F0}
+html[data-theme="dark"] .rarity.gold{background:#33280F;color:#F2D26B}
+.gcard{background:linear-gradient(135deg,#F7FBFD,#FFFFFF);border:1px solid var(--line);border-radius:18px;
+  padding:16px;margin:6px 0 12px;box-shadow:0 8px 20px rgba(47,168,207,.12)}
+.gcard.flip{animation:cardFlip .85s cubic-bezier(.22,1,.36,1)}
+@keyframes cardFlip{from{transform:perspective(600px) rotateY(75deg) scale(.92);opacity:0}
+  to{transform:none;opacity:1}}
+.gcard-q{font-size:16px;font-weight:600;line-height:1.6;margin-top:10px}
+.opt.ok{background:#E6F7EF;border-color:#9BD9B8;color:#1F7A50}
+.opt.bad{background:#FDECEC;border-color:#F2B8B8;color:#A03333}
+.gwhy{margin-top:12px;font-size:14px;line-height:1.75;background:var(--bg2);border:1px solid var(--line);
+  border-radius:12px;padding:12px}
+.stage{position:relative;height:150px;border-radius:16px;overflow:hidden;border:1px solid var(--line);
+  background:linear-gradient(#EAF7FE 0%,#FFFFFF 100%);cursor:pointer}
+#runner{position:absolute;left:44px;bottom:0;width:32px;height:30px;border-radius:10px 10px 7px 7px;
+  box-shadow:0 4px 10px rgba(0,0,0,.12)}
+#runner:before{content:"";position:absolute;right:7px;top:8px;width:5px;height:5px;border-radius:50%;background:#0B1A22}
+#runner:after{content:"";position:absolute;left:-7px;bottom:4px;width:9px;height:7px;border-radius:4px;background:inherit}
+.dino-green{background:#4FBF7C}
+.dino-stone{background:#7C8FA3}
+.dino-berry{background:linear-gradient(135deg,#F7B6C8 0%,#E27C96 50%,#FBD6DF 100%)}
+.dino-sky{background:linear-gradient(135deg,#7FD3EE 0%,#3BA9DC 50%,#BFE9F8 100%)}
+.dino-neon{background:#123;box-shadow:0 0 10px #5BCEFA,0 0 22px rgba(245,169,184,.8)}
+.dino-neon:after{background:#5BCEFA;box-shadow:0 0 8px #5BCEFA}
+.dino-aurora{background:linear-gradient(120deg,#5BCEFA,#F5A9B8,#9B8CE0,#5BCEFA);
+  background-size:320% 320%;animation:auroraFlow 7s linear infinite}
+@keyframes auroraFlow{0%{background-position:0% 50%}100%{background-position:320% 50%}}
+.obstacle{position:absolute;bottom:0;width:16px;height:34px;border-radius:5px}
+.obstacle:before{content:"";position:absolute;left:-7px;top:11px;width:7px;height:11px;border-radius:3px;background:inherit}
+.obstacle:after{content:"";position:absolute;right:-7px;top:18px;width:7px;height:9px;border-radius:3px;background:inherit}
+.obstacle.wide:before{left:-8px;top:13px;height:12px}
+.obstacle.wide:after{right:-8px;top:20px}
+.obstacle.spike{animation:spike .3s ease-out}
+@keyframes spike{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+.cac-green{background:#3E9E62}
+.cac-stone{background:#8A9AA8}
+.cac-forest{background:linear-gradient(180deg,#5FBF8A 0%,#25704A 60%,#1B5236 100%)}
+.cac-sunset{background:linear-gradient(180deg,#F6B072 0%,#D9762C 55%,#A34E1C 100%)}
+.cac-lava{background:linear-gradient(180deg,#FFD08A 0%,#F26B3A 55%,#B32B14 100%);
+  box-shadow:0 0 12px rgba(242,107,58,.8);animation:lavaPulse 1.6s ease-in-out infinite}
+@keyframes lavaPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
+.cac-prism{background:linear-gradient(120deg,#5BCEFA,#F5A9B8,#9B8CE0,#5BCEFA);
+  background-size:300% 300%;animation:auroraFlow 6s linear infinite}
+.splash-wrap{position:fixed;inset:0;z-index:68;display:none;align-items:center;justify-content:center;
+  background:rgba(10,16,22,.28);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.splash-wrap.show{display:flex;animation:splashBg .4s ease-out}
+@keyframes splashBg{from{opacity:0}to{opacity:1}}
+.splash-icon svg.sp-icon{width:66px;height:66px;stroke:#fff;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 18px rgba(91,206,250,.75));
+  animation:spIcon .85s cubic-bezier(.34,1.6,.64,1) both}
+@keyframes spIcon{0%{opacity:0;transform:scale(.55) rotate(-10deg)}
+  60%{opacity:1;transform:scale(1.18) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+.splash-label{font-size:20px;letter-spacing:6px;color:#fff;margin-top:16px;
+  text-shadow:0 0 20px rgba(255,255,255,.35);animation:spLabel .6s cubic-bezier(.22,1,.36,1) .16s both}
+@keyframes spLabel{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.splash-text{font-size:46px;font-weight:800;letter-spacing:3px;color:#fff;
+  text-shadow:0 0 32px rgba(91,206,250,.75),0 0 70px rgba(245,169,184,.5)}
+.splash-text span{display:inline-block;animation:splashChar .95s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes splashChar{
+  0%{opacity:0;transform:translateY(22px) scale(.65) rotate(-8deg)}
+  55%{opacity:1;transform:translateY(-8px) scale(1.16) rotate(3deg)}
+  80%{transform:translateY(2px) scale(.98) rotate(-1deg)}
+  100%{transform:none}}
+.flash-wrap{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:rgba(8,12,16,.35);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px)}
+.flash-wrap.show{display:flex}
+.flash-box{text-align:center;animation:flashIn .9s cubic-bezier(.22,1,.36,1)}
+.flash-big{font-size:46px;font-weight:800;letter-spacing:4px;color:#49C97F;
+  text-shadow:0 0 26px rgba(73,201,127,.75),0 0 60px rgba(73,201,127,.45)}
+.flash-big.gold{color:#F2D26B;text-shadow:0 0 26px rgba(242,210,107,.8),0 0 62px rgba(242,210,107,.5)}
+.flash-xp{font-size:18px;font-weight:700;margin-top:10px;color:#F2D26B;
+  text-shadow:0 0 18px rgba(242,210,107,.6);animation:flashXp .9s cubic-bezier(.22,1,.36,1) .25s both}
+@keyframes flashIn{0%{opacity:0;transform:scale(.55)}60%{opacity:1;transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes flashXp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.xpfloat{position:absolute;left:66px;bottom:56px;font-size:13px;font-weight:800;color:#F2D26B;
+  text-shadow:0 0 12px rgba(242,210,107,.7);animation:xpUp .95s ease-out forwards;pointer-events:none}
+@keyframes xpUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-42px)}}
+.reveal-wrap{position:fixed;inset:0;z-index:66;display:none;align-items:center;justify-content:center;
+  padding:16px;background:rgba(8,12,16,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.reveal-wrap.show{display:flex}
+.reveal-card{width:100%;max-width:460px;max-height:86vh;overflow:auto;background:var(--card);
+  border:1px solid var(--line);border-radius:22px;padding:18px;transform-origin:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.reveal-card.in{animation:revealIn 1s cubic-bezier(.22,1,.36,1)}
+@keyframes revealIn{
+  0%{opacity:0;transform:perspective(900px) rotateY(-80deg) scale(.55)}
+  55%{opacity:1;transform:perspective(900px) rotateY(10deg) scale(1.05)}
+  80%{transform:perspective(900px) rotateY(-4deg) scale(.99)}
+  100%{transform:none}}
+#runStage.crash{animation:crashShake .45s ease-in-out}
+@keyframes crashShake{0%,100%{transform:none}15%{transform:translateX(-7px)}35%{transform:translateX(6px)}
+  55%{transform:translateX(-5px)}75%{transform:translateX(4px)}}
+#runner.hit{animation:hitFlash .6s ease-out}
+@keyframes hitFlash{0%{filter:none}30%{filter:brightness(1.9) saturate(1.6)}100%{filter:none}}
+html[data-theme="dark"] .reveal-card{background:#161C23;border-color:#2B3641}
+html[data-theme="dark"] .jumpbtn{
+  background:linear-gradient(135deg,#5BCEFA,#8FD9F0 55%,#F5A9B8);color:#08161D;
+  box-shadow:0 8px 20px rgba(47,168,207,.45),inset 0 -3px 0 rgba(0,0,0,.12)}
+html[data-theme="dark"] .jumpbtn:active,
+html[data-theme="dark"] .jumpbtn.down{transform:scale(.96) translateY(2px);
+  box-shadow:0 2px 8px rgba(47,168,207,.35),inset 0 2px 0 rgba(0,0,0,.18)}
+.revive-wrap{position:fixed;inset:0;z-index:64;display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(10,14,18,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.revive-wrap.show{display:flex}
+.revive-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px 18px;
+  width:100%;max-width:420px;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:reviveIn .7s cubic-bezier(.22,1,.36,1)}
+@keyframes reviveIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+html[data-theme="dark"] .revive-card{background:#161C23}
+.jumpbtn{width:100%;height:62px;margin-top:12px;border-radius:18px;border:none;
+  font-size:19px;font-weight:700;color:#08161D;letter-spacing:2px;
+  background:linear-gradient(135deg,var(--blue),#8FD9F0 55%,var(--pink));
+  box-shadow:0 8px 20px rgba(47,168,207,.35),inset 0 -3px 0 rgba(0,0,0,.08);
+  transition:transform .06s ease,box-shadow .06s ease}
+.jumpbtn:active,.jumpbtn.down{transform:scale(.93) translateY(3px);
+  box-shadow:0 2px 8px rgba(47,168,207,.25),inset 0 3px 0 rgba(0,0,0,.14);
+  filter:brightness(.95);transition:transform .08s ease,box-shadow .08s ease}
+html[data-theme="dark"] .jumpbtn{color:#08161D}
+.run-head{display:flex;justify-content:space-between;font-size:14px;color:var(--dim)}
+.run-head b{color:var(--ink);font-size:16px}
+html[data-theme="dark"] .gcard{background:linear-gradient(135deg,#141A21,#10161C);border-color:#2B3641;box-shadow:none}
+html[data-theme="dark"] .stage{background:linear-gradient(#0F1E26 0%,#0D1218 100%);border-color:#2B3641}
+html[data-theme="dark"] .opt.ok{background:#12301F;border-color:#2C6344;color:#8FE0B8}
+html[data-theme="dark"] .opt.bad{background:#33201F;border-color:#6B3A36;color:#F3A9A2}
+html[data-theme="dark"] .gwhy{background:#10161C;border-color:#2B3641}
+#annWrap .announce{animation:annCard 1.7s cubic-bezier(.22,1,.36,1) both}
+#annWrap .announce h2,#annWrap .announce .byline,#annWrap .announce p,#annWrap .announce .row{animation:annText 1.2s cubic-bezier(.22,1,.36,1) both}
+/* 切到后台时暂停装饰动画，省电不发烫 */
+html.app-hidden *,html.app-hidden *::before,html.app-hidden *::after{animation-play-state:paused !important}
+@media (prefers-reduced-motion: reduce){
+  *,*:before,*:after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
 </style>
 </head>
 <body>
-<div class="flag"></div>
 <header>
   <button class="mechip" id="meChip" type="button">
     <span class="mechip-avatar" id="chipAvatar">我</span>
@@ -207,7 +647,7 @@ button:active{transform:scale(.96)}
   <div class="flag" aria-hidden="true"></div>
   <div class="brand">
     <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7 3.5c0 4.9-7 9.3-7 9.3z"/></svg></span>
-    <h1>用药记录</h1>
+    <h1>hrt 记录</h1>
   </div>
   <p class="sub">记录 · 提醒 · 自察，不给剂量建议 · 数据只存在这台设备</p>
 </header>
@@ -215,85 +655,452 @@ button:active{transform:scale(.96)}
 <main>
 <!-- 记录 -->
 <section class="tab" id="tab-log">
-  <div class="card">
-    <div class="cardhead"><span>记一笔</span></div>
-    <div class="chips" id="typeChips">
-      <button class="chip on" data-type="med" type="button">用药</button>
-      <button class="chip" data-type="body" type="button">身体变化</button>
-      <button class="chip" data-type="note" type="button">随笔</button>
+  <div id="logHome">
+    <div class="card">
+      <div class="cardhead"><span>记录<button class="help" type="button" data-help="logHome">?</button></span></div>
+      <div class="entry" id="goDiary" data-ico="pen" style="cursor:pointer">
+        <div class="b"><div class="n">日记随笔</div><div class="d">写点什么，只有你自己看</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goSum" data-ico="sum" style="cursor:pointer">
+        <div class="b"><div class="n">就诊摘要</div><div class="d">整理成一段能给医生看的文字</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goTable" data-ico="table" style="cursor:pointer">
+        <div class="b"><div class="n">表格</div><div class="d">自建表格，可出折线、条形、饼图</div></div>
+        <span class="chev">›</span>
+      </div>
     </div>
-    <label>标题<input id="mTitle" placeholder="药名，例如 戊酸雌二醇" autocomplete="off"></label>
-    <div id="medFields">
+    <div class="card">
+      <div class="entry" id="goAllRec" data-ico="list" style="cursor:pointer">
+        <div class="b"><div class="n">全部记录</div><div class="d" id="cntHint">0 条</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goBackup" data-ico="sum" style="cursor:pointer">
+        <div class="b"><div class="n">备份</div><div class="d">导出或导入全部数据</div></div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="logAll" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">全部记录</b>
+      <button class="subclose" data-back="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>全部记录<button class="help" type="button" data-help="logList">?</button></span><span id="count"></span></div>
+      <input id="logQ" class="search" placeholder="搜记录：天气、体重、螺内酯…" autocomplete="off">
+      <div id="logSug"></div>
+      <div id="logList"></div>
+    </div>
+  </div>
+
+  <div id="logBackup" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">备份</b>
+      <button class="subclose" data-back="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>备份<button class="help" type="button" data-help="backup">?</button></span></div>
+      <button class="ghost" id="expBtn">导出 JSON</button>
+      <label style="margin-top:10px">导入 JSON（合并）
+        <input type="file" id="impFile" accept=".json,application/json">
+      </label>
+      <p class="hint">清浏览器数据或换手机会丢，定期导出一份放到网盘或电脑。名字、头像、背景也一起备份。</p>
+    </div>
+  </div>
+
+  <div id="logDiary" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">日记随笔</b>
+      <button class="subclose" data-back="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <label style="margin-top:0">标题<input id="mTitle" placeholder="可留空，会自动写「随笔」" autocomplete="off"></label>
+      <label>时间<input id="mTime" type="datetime-local"></label>
+      <label>内容<textarea id="mNote" placeholder="想写什么写什么"></textarea></label>
+      <button class="primary" id="saveBtn">记一笔</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>写过的随笔</span><span id="diaryCount"></span></div>
+      <div id="diaryList"></div>
+    </div>
+  </div>
+
+  <div id="logSum" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">就诊摘要</b>
+      <button class="subclose" data-back="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>范围与内容<button class="help" type="button" data-help="sumForm">?</button></span></div>
       <div class="row2">
-        <label>剂量<input id="mDose" placeholder="2 mg / 1 片 / 0.5 ml" autocomplete="off"></label>
-        <label>途径<select id="mRoute">
-          <option>口服</option><option>舌下</option><option>经皮</option>
-          <option>肌注</option><option>皮下</option><option>其他</option>
+        <label>范围<select id="range">
+          <option value="7">近 7 天</option>
+          <option value="30" selected>近 30 天</option>
+          <option value="90">近 90 天</option>
+          <option value="0">全部</option>
         </select></label>
       </div>
-    </div>
-    <div id="bodyFields" style="display:none">
+      <label>想跟医生说的话 / 想问的问题<textarea id="notes" placeholder="例如：最近两个月情绪波动大，想评估一下。"></textarea></label>
+      <button class="primary" id="genBtn">生成就诊摘要</button>
       <div class="row2">
-        <label>数值<input id="mValue" inputmode="decimal" placeholder="例如 62" autocomplete="off"></label>
-        <label>单位<input id="mUnit" placeholder="kg / cm" autocomplete="off"></label>
+        <button class="ghost" id="copyBtn">复制</button>
+        <button class="ghost" id="dlBtn">下载 .md</button>
       </div>
+      <pre class="out" id="out">点上面的按钮生成。</pre>
     </div>
-    <label>时间<input id="mTime" type="datetime-local"></label>
-    <label>备注<input id="mNote" placeholder="部位、感受，可留空" autocomplete="off"></label>
-    <button class="primary" id="saveBtn">记一笔</button>
-    <div class="chips" id="recentChips"></div>
+    <div class="card"><p class="hint" style="margin:0">把导出的 .md 当附件发给医生，或者发给 DSH Go 让它帮你整理、列问题。</p></div>
   </div>
 
-  <div class="card">
-    <div class="cardhead"><span>最近记录</span><span id="count"></span></div>
-    <div id="logList"></div>
-  </div>
-
-  <div class="card">
-    <div class="cardhead"><span>备份</span></div>
-    <button class="ghost" id="expBtn">导出 JSON</button>
-    <label style="margin-top:10px">导入 JSON（合并）
-      <input type="file" id="impFile" accept=".json,application/json">
-    </label>
-    <p class="hint">清浏览器数据或换手机会丢，定期导出一份放到网盘或电脑。</p>
-  </div>
-</section>
-
-<!-- 表格 -->
-<section class="tab" id="tab-table">
-  <div id="tblHome">
-    <div class="card">
-      <div class="cardhead"><span>表格<button class="help" type="button" data-help="table">?</button></span><span id="tblCount"></span></div>
-      <p class="hint" style="margin-top:0">自己建表：化验记录、用药对照、体重曲线、复诊安排，都行。点格子就能改。</p>
-      <button class="primary" id="tblNew">新建表格</button>
+  <div id="logTable" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">表格</b>
+      <button class="subclose" data-back="1" type="button">关闭</button>
     </div>
-    <div id="tblList"></div>
-  </div>
-
-  <div id="tblEdit" style="display:none">
-    <div class="card">
-      <div class="cardhead"><span id="tblTitle"></span><button class="ghost" id="tblBack" style="margin:0;padding:4px 12px;font-size:12px">返回</button></div>
-      <div class="chips" id="chartChips" style="margin-top:8px">
-        <button class="chip on" data-chart="none" type="button">表格</button>
-        <button class="chip" data-chart="line" type="button">折线</button>
-        <button class="chip" data-chart="bar" type="button">条形</button>
-        <button class="chip" data-chart="pie" type="button">饼图</button>
+    <div id="tblHome">
+      <div class="card">
+        <div class="cardhead"><span>我的表格<button class="help" type="button" data-help="table">?</button></span><span id="tblCount"></span></div>
+        <p class="hint" style="margin-top:0">化验记录、用药对照、体重曲线，都行。点格子就能改。</p>
+        <button class="primary" id="tblNew">新建表格</button>
       </div>
-      <div class="chartWrap" id="tblChart"></div>
-      <div class="tblWrap">
-        <table class="dyn"><thead><tr id="tblHead"></tr></thead><tbody id="tblBody"></tbody></table>
+      <div id="tblList"></div>
+    </div>
+    <div id="tblEdit" style="display:none">
+      <div class="card">
+        <div class="cardhead"><span id="tblTitle"></span><button class="ghost" id="tblBack" style="margin:0;padding:4px 12px;font-size:12px">返回列表</button></div>
+        <div class="chips" id="chartChips" style="margin-top:8px">
+          <button class="chip on" data-chart="none" type="button">表格</button>
+          <button class="chip" data-chart="line" type="button">折线</button>
+          <button class="chip" data-chart="bar" type="button">条形</button>
+          <button class="chip" data-chart="pie" type="button">饼图</button>
+        </div>
+        <div class="chartWrap" id="tblChart"></div>
+        <div class="tblWrap">
+          <table class="dyn"><thead><tr id="tblHead"></tr></thead><tbody id="tblBody"></tbody></table>
+        </div>
+        <div class="row2">
+          <button class="ghost" id="tblAddRow">+ 一行</button>
+          <button class="ghost" id="tblAddCol">+ 一列</button>
+        </div>
+        <button class="ghost" id="tblDel" style="width:100%">删除这张表</button>
       </div>
-      <div class="row2">
-        <button class="ghost" id="tblAddRow">+ 一行</button>
-        <button class="ghost" id="tblAddCol">+ 一列</button>
-      </div>
-      <button class="ghost" id="tblDel" style="width:100%">删除这张表</button>
     </div>
   </div>
 </section>
 
-<!-- 用药 -->
-<section class="tab" id="tab-med">
+<!-- 提醒 -->
+<section class="tab" id="tab-remind">
+  <div id="remHome">
+    <div class="card">
+      <div class="cardhead"><span>提醒<button class="help" type="button" data-help="remindForm">?</button></span><span class="tag">像闹钟</span></div>
+      <div class="entry" id="goNewRem" data-ico="bell" style="cursor:pointer">
+        <div class="b"><div class="n">新建提醒</div><div class="d">只提醒一次、每天、或自己挑星期几</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goRemList" data-ico="list" style="cursor:pointer">
+        <div class="b"><div class="n">提醒列表</div><div class="d" id="remCount">0 个</div></div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+    <div class="entry" id="goNotif" data-ico="bell" style="cursor:pointer">
+      <div class="b"><div class="n">通知与日历</div><div class="d">开通知、测试、导出到手机日历</div></div>
+      <span class="chev">›</span>
+    </div>
+  </div>
+
+  <div id="remNotif" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">通知与日历</b>
+      <button class="subclose" data-remback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="row2">
+        <button class="ghost" id="notifBtn">开启通知</button>
+        <button class="ghost" id="testNotif">测试一下</button>
+      </div>
+      <p class="hint" id="notifState"></p>
+      <button id="icsBtn" style="width:100%">导出到手机日历 (.ics)</button>
+      <p class="hint">网页提醒只在页面开着时有效，导入日历后关屏也会响。</p>
+    </div>
+  </div>
+
+  <div id="remNew" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">新建提醒</b>
+      <button class="subclose" data-remback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <label style="margin-top:0">提醒什么事<input id="rName" placeholder="吃药、喝水、复诊、上课" autocomplete="off"></label>
+      <label>时间<input id="rTime" type="time" value="09:00"></label>
+      <div class="cardhead" style="margin-top:14px"><span>多久一次<button class="help" type="button" data-help="repeat">?</button></span></div>
+      <div class="chips" id="repeatChips">
+        <button class="chip on" data-rep="once" type="button">只提醒一次</button>
+        <button class="chip" data-rep="daily" type="button">每天</button>
+        <button class="chip" data-rep="custom" type="button">自定义</button>
+      </div>
+      <div id="onceBox">
+        <label>哪天<input id="rDate" type="date"></label>
+      </div>
+      <div id="customBox" style="display:none">
+        <div class="chips" id="dayChips">
+          <button class="chip" data-day="1" type="button">一</button>
+          <button class="chip" data-day="2" type="button">二</button>
+          <button class="chip" data-day="3" type="button">三</button>
+          <button class="chip" data-day="4" type="button">四</button>
+          <button class="chip" data-day="5" type="button">五</button>
+          <button class="chip" data-day="6" type="button">六</button>
+          <button class="chip" data-day="0" type="button">日</button>
+        </div>
+        <p class="hint">选哪几天重复，可以多选。</p>
+      </div>
+      <button class="primary" id="addRem">添加提醒</button>
+    </div>
+  </div>
+
+  <div id="remList2" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">提醒列表</b>
+      <button class="subclose" data-remback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>全部提醒</span><span id="remCount2"></span></div>
+      <div id="remList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="tab" id="tab-sym">
+  <div class="card">
+    <input id="symQ" class="search" placeholder="搜一下：头痛 / 水肿 / 注射 / 停药…" autocomplete="off">
+    <div class="chips" id="symQuick">
+      <button class="chip" data-q="避雷" type="button">避雷</button>
+      <button class="chip" data-q="药物" type="button">药物</button>
+      <button class="chip" data-q="变化" type="button">变化</button>
+      <button class="chip" data-q="发育" type="button">发育</button>
+      <button class="chip" data-q="化验" type="button">化验</button>
+      <button class="chip" data-q="就医" type="button">就医</button>
+      <button class="chip" data-q="心理" type="button">心理</button>
+      <button class="chip" data-q="经验" type="button">经验</button>
+    </div>
+    <div id="symSug"></div>
+    <p class="hint" id="symRel" style="display:none;margin:6px 0 0"></p>
+    <div id="hisBox" style="display:none"></div>
+    <div class="card" id="symDetail" style="display:none">
+      <div class="cardhead"><span id="symDetailTitle"></span><button class="subclose" id="symDetailClose" type="button">关闭</button></div>
+      <div id="symDetailBody"></div>
+    </div>
+    <div class="resBox" id="resBox">
+      <div id="dailyWrap"></div>
+      <div id="siteBox"></div>
+      <div id="symList"></div>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <div class="cardhead"><span>说明</span></div>
+    这里是一个干净的站内知识库：症状、药物类别、化验指标、就医准备、心理、还有大量人分享过的共同经验。<b>只讲原理和风险，不给剂量</b>，也不做诊断。「经验」类是总结，不是标准答案。<br>知识库由公开资料整理，<b>未经医学审核</b>，不能替代医生。<br>想让自己的经历进知识库？写信到 <a href="mailto:libibocom@qq.com?subject=%E6%8A%95%E7%A8%BF%EF%BC%9A%E6%88%91%E7%9A%84%E7%BB%8F%E5%8E%86" style="color:var(--pink-d);font-weight:600;text-decoration:none">libibocom@qq.com</a>，题目写「投稿」，我会挑合适的整理成条目。
+  </div>
+  
+</section>
+
+<!-- 游戏 -->
+<section class="tab" id="tab-game">
+  <div id="gameHome">
+    <div class="card">
+      <div class="cardhead"><span>游戏<button class="help" type="button" data-help="game">?</button></span><span class="tag">科普</span></div>
+      <div class="gstats">
+        <div class="gstat gs-lv">
+          <div class="gring" data-ico="star"></div>
+          <b id="gLv" class="gnum">1</b>
+          <span class="glab">等级</span>
+        </div>
+        <div class="gstat gs-xp">
+          <div class="gring" data-ico="spark"></div>
+          <b id="gXp" class="gnum">0</b>
+          <span class="glab">经验</span>
+        </div>
+        <div class="gstat gs-hp">
+          <div class="gring" data-ico="heart"></div>
+          <b id="gHearts" class="gnum small">♥♥♥</b>
+          <span class="glab">今日爱心</span>
+        </div>
+      </div>
+      <div class="row2" style="margin-top:12px">
+        <button class="ghost" id="goCard" data-ico="cards" style="margin:0;padding:14px 8px">
+          <b style="display:block;font-size:15px">抽卡答题</b>
+          <span style="font-size:12px;color:var(--dim)">答对 +12 经验</span>
+        </button>
+        <button class="ghost" id="goRun" data-ico="run" style="margin:0;padding:14px 8px">
+          <b style="display:block;font-size:15px">跳一跳</b>
+          <span style="font-size:12px;color:var(--dim)">每周和自己比</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="entry" id="goScore" data-ico="chart" style="cursor:pointer">
+        <div class="b"><div class="n">我的成绩</div><div class="d">历史最佳、本周、连对</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goAch" data-ico="medal" style="cursor:pointer">
+        <div class="b"><div class="n">成就</div><div class="d">七个隐藏小目标</div></div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead"><span>更多</span></div>
+      <div class="entry" id="goShop" data-ico="shop" style="cursor:pointer">
+        <div class="b"><div class="n">商店</div><div class="d">用经验换小恐龙和仙人掌的皮肤</div></div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div id="gameCard" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">抽卡答题</b>
+      <button class="subclose" data-gback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div id="gachaBox"></div>
+      <p class="hint" id="gachaTip" style="display:none;text-align:center"></p>
+      <button class="primary" id="drawBtn">抽卡</button>
+    </div>
+  </div>
+
+  <div id="gameStats" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">我的成绩</b>
+      <button class="subclose" data-gback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>我的成绩</span></div>
+      <div class="entry"><div class="b"><div class="n">历史最佳</div></div><b id="gBest">0</b></div>
+      <div class="entry"><div class="b"><div class="n">本周最佳</div></div><b id="gWeek">0</b></div>
+      <div class="entry"><div class="b"><div class="n">上周最佳</div></div><b id="gWeekLast">0</b></div>
+      <div class="entry"><div class="b"><div class="n">当前连对</div></div><b id="gStreak">0</b></div>
+    </div>
+
+
+  </div>
+
+  <div id="gameAch" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">成就<button class="help" type="button" data-help="ach">?</button></b>
+      <button class="subclose" data-gback="1" type="button">关闭</button>
+    </div>
+    <div class="card"><div id="achList"></div></div>
+  </div>
+
+  <div id="gameShop" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">商店</b>
+      <button class="subclose" data-gback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <p class="hint" style="margin:0 0 4px">买过的点「换上」就换上啦～答对一题大概 12–22 经验。</p>
+      <div id="shopList"></div>
+    </div>
+  </div>
+
+  <div id="gameRun" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">跳一跳</b>
+      <button class="subclose" data-gback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="run-head"><span id="runHp">♥♥♥</span><span>得分 <b id="runNow">0</b></span></div>
+      <div id="runStage" class="stage" style="display:none">
+        <div id="track"></div>
+        <div id="runner"></div>
+      </div>
+      <button class="jumpbtn" id="jumpBtn" type="button" style="display:none">跳</button>
+      <p class="hint" style="margin-top:10px">点一下小跳，按住跳更高更远。细的仙人掌小跳能过，宽的要按住。撞到扣一颗心。</p>
+      <button class="primary" id="runBtn">开始</button>
+      <div id="runOver" style="display:none">
+        <p style="font-size:15px">本局 <b id="runScore">0</b> 分 · 历史最佳 <b id="runBestTxt">0</b></p>
+        <button class="primary" id="runAgain">再来一局</button>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 社交 -->
+<section class="tab" id="tab-social">
+  <div class="card">
+    <div class="cardhead"><span>社交<button class="help" type="button" data-help="social">?</button></span><span class="tag">投稿制</span></div>
+    <input id="soQ" class="search" placeholder="搜新鲜事：第一次打针、去医院、声音…" autocomplete="off">
+    <div id="soSug"></div>
+    <div id="soList"></div>
+  </div>
+  <div class="card">
+    <div class="cardhead"><span>怎么投稿</span></div>
+    <p style="font-size:14px;line-height:1.75">1. 写清楚你想分享的事，可以附一张图或一个文件<br>
+       2. 发到邮箱，或者加 QQ 发给我<br>
+       3. 我每周整理一次，合适的放到上面</p>
+    <p class="hint">这里不发实时动态，也不收广告和卖药的内容。署不署名你说了算～</p>
+    <button class="primary" id="soMail">用邮件投稿</button>
+    <button class="ghost" id="soQq" style="width:100%">复制 QQ 号</button>
+    <button class="ghost" id="soTpl" style="width:100%">复制投稿模板</button>
+  </div>
+</section>
+
+<!-- 测验 -->
+<section class="tab" id="tab-quiz">
+  <div id="qHome">
+    <div class="card">
+      <div class="cardhead"><span>测验<button class="help" type="button" data-help="quizModes">?</button></span><span class="tag">自评</span></div>
+      <div class="entry" id="goQuizGender" data-ico="brain" style="cursor:pointer">
+        <div class="b"><div class="n">性别认同倾向</div><div class="d">普通 12 题 / 专家 28 题</div></div>
+        <button class="ghost" data-quiz="gender" data-mode="2" type="button" style="margin:0;padding:4px 10px;font-size:12px">专家</button>
+      </div>
+      <div class="entry" id="goQuizOrient" data-ico="heart" style="cursor:pointer">
+        <div class="b"><div class="n">性取向倾向</div><div class="d">普通 10 题 / 专家 18 题</div></div>
+        <button class="ghost" data-quiz="orient" data-mode="2" type="button" style="margin:0;padding:4px 10px;font-size:12px">专家</button>
+      </div>
+      <div class="entry" id="goQuizPhq" data-ico="mood" style="cursor:pointer">
+        <div class="b"><div class="n">情绪状态（PHQ-9）</div><div class="d">普通 9 题 / 专家 14 题</div></div>
+        <button class="ghost" data-quiz="phq9" data-mode="2" type="button" style="margin:0;padding:4px 10px;font-size:12px">专家</button>
+      </div>
+      <div class="entry" id="goQuizGad" data-ico="worry" style="cursor:pointer">
+        <div class="b"><div class="n">焦虑（GAD-7）</div><div class="d">普通 7 题 / 专家 12 题</div></div>
+        <button class="ghost" data-quiz="gad7" data-mode="2" type="button" style="margin:0;padding:4px 10px;font-size:12px">专家</button>
+      </div>
+      <div class="entry" id="goQuizKnow" data-ico="book" style="cursor:pointer">
+        <div class="b"><div class="n">HRT 知识测验</div><div class="d">普通 10 题 / 专家 20 题，答错给解释</div></div>
+        <button class="ghost" data-quiz="hrt" data-mode="2" type="button" style="margin:0;padding:4px 10px;font-size:12px">专家</button>
+      </div>
+      <div class="entry" id="goQuizMed" data-ico="pill" style="cursor:pointer">
+        <div class="b"><div class="n">用药准备</div><div class="d">14 个问题，不是处方</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goQuizHis" data-ico="clock" style="cursor:pointer">
+        <div class="b"><div class="n">测过的结果</div><div class="d" id="quizHisCount">0 次</div></div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="qHisView" class="hidden">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">测过的结果</b>
+      <button class="subclose" id="qHisClose" type="button">关闭</button>
+    </div>
+    <div id="qHistory"></div>
+  </div>
+
+    <div id="medWrap" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">用药准备</b>
+      <button class="subclose" id="medCloseBtn" type="button">关闭</button>
+    </div>
+
   <div id="medIntro">
     <div class="card">
       <div class="cardhead"><span>用药准备<button class="help" type="button" data-help="med">?</button></span><span class="tag">不是处方</span></div>
@@ -319,139 +1126,9 @@ button:active{transform:scale(.96)}
     </div>
   </div>
   <div id="medResult" style="display:none"></div>
-</section>
-
-<!-- 提醒 -->
-<section class="tab" id="tab-remind">
-  <div class="card">
-    <div class="cardhead"><span>新建提醒<button class="help" type="button" data-help="remindForm">?</button></span></div>
-    <label>提醒什么事<input id="rName" placeholder="吃药、喝水、复诊、上课，都行" autocomplete="off"></label>
-    <label>时间<input id="rTime" type="time" value="09:00"></label>
-    <div class="cardhead" style="margin-top:14px"><span>多久一次<button class="help" type="button" data-help="repeat">?</button></span></div>
-    <div class="chips" id="repeatChips">
-      <button class="chip on" data-rep="once" type="button">只提醒一次</button>
-      <button class="chip" data-rep="daily" type="button">每天</button>
-      <button class="chip" data-rep="custom" type="button">自定义</button>
-    </div>
-    <div id="onceBox">
-      <label>哪天<input id="rDate" type="date"></label>
-    </div>
-    <div id="customBox" style="display:none">
-      <div class="chips" id="dayChips">
-        <button class="chip" data-day="1" type="button">一</button>
-        <button class="chip" data-day="2" type="button">二</button>
-        <button class="chip" data-day="3" type="button">三</button>
-        <button class="chip" data-day="4" type="button">四</button>
-        <button class="chip" data-day="5" type="button">五</button>
-        <button class="chip" data-day="6" type="button">六</button>
-        <button class="chip" data-day="0" type="button">日</button>
-      </div>
-      <p class="hint">选哪几天重复，可以多选。</p>
-    </div>
-    <button class="primary" id="addRem">添加提醒</button>
-    <div class="row2">
-      <button class="ghost" id="notifBtn">开启通知</button>
-      <button class="ghost" id="testNotif">测试一下</button>
-    </div>
-    <p class="hint" id="notifState"></p>
   </div>
 
-  <div class="card">
-    <div class="cardhead"><span>提醒列表<button class="help" type="button" data-help="remList">?</button></span><span id="remCount"></span></div>
-    <div id="remList"></div>
-    <button id="icsBtn">导出到手机日历 (.ics)</button>
-    <p class="hint">网页提醒只在页面开着时有效。每次添加后会问你要不要写进手机日历，导入后关屏也会响。</p>
-  </div>
-</section>
-
-<section class="tab" id="tab-sym">
-  <div class="card warn">
-    <div class="cardhead"><span>说明</span></div>
-    这里只帮你判断「要不要看医生」「该记什么」，<b>不提供药名和剂量</b>。下面的内容是常见情况的整理，不是诊断。
-  </div>
-  <div class="card" style="border-color:#F7C9D6">
-    <div class="cardhead"><span>用药避雷（重要）</span><span class="tag">先看这个</span></div>
-    <p class="hint" style="margin:0;line-height:1.8">
-      · 剂量不是越大越好，加量换不来更快，只换来更高风险<br>
-      · 避孕药不能当雌激素用，里面的成分风险完全不同<br>
-      · 同时吃两种抗雄药，副作用是叠加的<br>
-      · 长期不查血就调整，等于闭眼开车<br>
-      · 来源不明的药，剂量和真假都没人担保<br>
-      · 突然停药会反弹，想停要慢慢来并告诉医生<br>
-      · 出现单侧腿肿、气短、黄疸、剧烈头痛，立刻停并就医
-    </p>
-  </div>
-  <div class="card">
-    <input id="symQ" placeholder="搜一下：头痛 / 水肿 / 注射 / 停药…" autocomplete="off">
-    <div id="hisBox" style="display:none"></div>
-    <div id="symList"></div>
-  </div>
-</section>
-
-<!-- 摘要 -->
-<section class="tab" id="tab-sum">
-  <div class="card">
-    <div class="cardhead"><span>就诊摘要</span></div>
-    <div class="row2">
-      <label>范围<select id="range">
-        <option value="7">近 7 天</option>
-        <option value="30" selected>近 30 天</option>
-        <option value="90">近 90 天</option>
-        <option value="0">全部</option>
-      </select></label>
-    </div>
-    <label>想跟医生说的话 / 想问的问题<textarea id="notes" placeholder="例如：最近两个月情绪波动大，想评估一下；注射部位有硬结，问要不要换部位。"></textarea></label>
-    <button class="primary" id="genBtn">生成就诊摘要</button>
-    <div class="row2">
-      <button class="ghost" id="copyBtn">复制</button>
-      <button class="ghost" id="dlBtn">下载 .md</button>
-    </div>
-    <pre class="out" id="out">点上面的按钮生成。</pre>
-  </div>
-  <div class="card">
-    <p class="hint">把导出的 .md 文件当附件发给医生，或者发给 DSH Go 让它整理、列问题。这样不用把 AI 密钥放进网页里。</p>
-  </div>
-</section>
-
-<!-- 测验 -->
-<section class="tab" id="tab-quiz">
-  <div id="qHome">
-    <div class="card">
-      <div class="cardhead"><span>测验<button class="help" type="button" data-help="quizModes">?</button></span><span class="tag">自评</span></div>
-      <p class="hint" style="margin-top:0">都是自己填的自评工具，不是诊断。结果用比例或分数呈现，不给你下结论。</p>
-    </div>
-    <div class="card">
-      <div class="cardhead"><span>性别认同倾向</span><span class="tag">约 3 分钟</span></div>
-      <p class="hint" style="margin-top:0">看你的倾向落在哪、有多确定、身体上想要什么。</p>
-      <button class="primary" id="qStartNormal">普通模式 · 12 题</button>
-      <button class="ghost" id="qStartExpert">专家模式 · 28 题</button>
-    </div>
-    <div class="card">
-      <div class="cardhead"><span>性取向倾向</span><span class="tag">10 题</span></div>
-      <p class="hint" style="margin-top:0">看吸引力更常指向哪一边。同样不给结论，也不贴标签。</p>
-      <button class="primary" data-quiz="orient" data-mode="1">普通 · 10 题</button>
-      <button class="ghost" data-quiz="orient" data-mode="2">专家 · 18 题</button>
-    </div>
-    <div class="card">
-      <div class="cardhead"><span>情绪状态筛查</span><span class="tag">PHQ-9</span></div>
-      <p class="hint" style="margin-top:0">最近两周的情绪状态，9 道题。是筛查量表，不是诊断。</p>
-      <button class="primary" data-quiz="phq9" data-mode="1">普通 · 9 题</button>
-      <button class="ghost" data-quiz="phq9" data-mode="2">专家 · 14 题</button>
-    </div>
-    <div class="card">
-      <div class="cardhead"><span>焦虑筛查</span><span class="tag">GAD-7</span></div>
-      <p class="hint" style="margin-top:0">最近两周的焦虑程度，7 道题。同样是筛查。</p>
-      <button class="primary" data-quiz="gad7" data-mode="1">普通 · 7 题</button>
-      <button class="ghost" data-quiz="gad7" data-mode="2">专家 · 12 题</button>
-    </div>
-    <div id="qHistory"></div>
-    <div class="card">
-      <div class="cardhead"><span>更多</span></div>
-      <p class="hint" style="margin:0">睡眠、压力这类低风险量表可以再加。至于「我有没有某种精神疾病」的自测，我不做，原因写在说明里。</p>
-    </div>
-  </div>
-
-  <div id="qRun" style="display:none">
+<div id="qRun" style="display:none">
     <div class="card">
       <div class="cardhead"><span id="qProgress"></span><span class="tag" id="qModeTag"></span></div>
       <div class="pbar"><i id="qBarFill" style="width:0"></i></div>
@@ -467,44 +1144,105 @@ button:active{transform:scale(.96)}
 
 <!-- 我的 -->
 <section class="tab active" id="tab-me">
-  <div class="card">
-    <div class="cardhead"><span>我的<button class="help" type="button" data-help="profile">?</button></span><span class="tag">只在本机</span></div>
-    <div style="display:flex;gap:14px;align-items:center;margin-top:6px">
-      <div class="avatar" id="avatarBox">我</div>
-      <div style="flex:1;min-width:0">
-        <label style="margin-top:0">名字<input id="pName" placeholder="怎么称呼你" autocomplete="off"></label>
-        <button class="ghost" id="avatarBtn" style="width:100%">换头像</button>
-        <input type="file" id="avatarFile" accept="image/*" style="display:none">
+  <div id="meHome">
+    <div class="card">
+      <div class="cardhead"><span>我的<button class="help" type="button" data-help="profile">?</button></span><span class="tag">只在本机</span></div>
+      <div style="display:flex;gap:16px;align-items:center;margin-top:8px">
+        <div class="avatar" id="avatarBox">我</div>
+        <div style="flex:1;min-width:0">
+          <div class="bigname" id="meNameBig">还没有名字</div>
+          <div class="hint" style="margin:4px 0 0">只在这台手机上</div>
+        </div>
+      </div>
+      <div class="cardhead ach-toggle" id="achToggle" style="margin-top:18px;cursor:pointer">
+        <span>小游戏成就<button class="help" type="button" data-help="ach">?</button></span>
+        <span class="chev" id="achChev" style="transition:transform .35s cubic-bezier(.22,1,.36,1)">›</span>
+      </div>
+      <div id="achWrap" style="display:none">
+        <p class="hint" style="margin:0" id="myAch">还没有解锁成就</p>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="cardhead"><span>网页背景<button class="help" type="button" data-help="bg">?</button></span></div>
-    <p class="hint" style="margin-top:0">从相册选一张图，压缩后存在本机。文字下面会加一层半透明白，保证看得清。</p>
-    <label>背景可见度<input id="bgAlpha" type="range" min="0" max="100" step="5" value="60" style="padding:0;height:34px"></label>
-    <button class="primary" id="bgBtn">从相册选背景</button>
-    <button class="ghost" id="bgClear" style="width:100%">恢复默认</button>
-    <input type="file" id="bgFile" accept="image/*" style="display:none">
-  </div>
-
-  <div class="card">
-    <div class="cardhead"><span>反馈<button class="help" type="button" data-help="feedback">?</button></span></div>
-    <div class="entry">
-      <div class="b"><div class="n">邮箱</div><div class="d">libibocom@qq.com</div></div>
-      <button class="ghost" data-copy="libibocom@qq.com" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+    <div class="card">
+      <div class="entry" id="goSet" data-ico="set" style="cursor:pointer">
+        <div class="b"><div class="n">设置</div><div class="d">网页背景、深色模式、字体大小</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goFeed" data-ico="feed" style="cursor:pointer">
+        <div class="b"><div class="n">问题反馈</div><div class="d">邮箱和 QQ，有事直接找我</div></div>
+        <span class="chev">›</span>
+      </div>
+      <div class="entry" id="goPlan" data-ico="plan" style="cursor:pointer">
+        <div class="b"><div class="n">开发计划</div><div class="d">做过什么、接下来做什么</div></div>
+        <span class="chev">›</span>
+      </div>
     </div>
-    <div class="entry">
-      <div class="b"><div class="n">QQ</div><div class="d">150516059</div></div>
-      <button class="ghost" data-copy="150516059" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+
+    <div class="card">
+      <p class="hint" style="margin:0">头像、名字、背景都只待在这台手机上，不用账号，也不会传出去。想给别人用，把链接发过去就好，各用各的。</p>
     </div>
-    <p class="hint">发现 bug、想加功能、或者哪里看不懂，都可以找我。写清楚你用的是哪个功能、手机是什么系统，方便定位。</p>
   </div>
 
-  <div class="card">
-    <div class="cardhead"><span>说明</span></div>
-    <p class="hint" style="margin:0">头像、名字、背景都只存在这台设备，不需要账号，也不会上传。换手机或清浏览器数据会丢。</p>
-    <p class="hint">想给别人用：把网页链接或这个文件发过去就行，每个人都是各用各的，互相看不到对方的数据。</p>
+  <div id="meSet" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">设置</b>
+      <button class="subclose" data-meback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>头像与名字</span></div>
+      <div style="display:flex;gap:14px;align-items:center">
+        <div class="avatar" id="avatarBox2">我</div>
+        <div style="flex:1;min-width:0">
+          <label style="margin-top:0">名字<input id="pName" placeholder="怎么称呼你" autocomplete="off"></label>
+          <button class="ghost" id="avatarBtn" style="width:100%">换头像</button>
+          <input type="file" id="avatarFile" accept="image/*" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead"><span>网页背景<button class="help" type="button" data-help="bg">?</button></span></div>
+      <p class="hint" style="margin-top:0">从相册选一张图，压缩后存在本机。文字下面会加一层半透明，保证看得清。</p>
+      <label>背景可见度<input id="bgAlpha" type="range" min="0" max="100" step="5" value="60" style="padding:0;height:34px"></label>
+      <button class="primary" id="bgBtn">从相册选背景</button>
+      <button class="ghost" id="bgClear" style="width:100%">恢复默认</button>
+      <input type="file" id="bgFile" accept="image/*" style="display:none">
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>外观<button class="help" type="button" data-help="look">?</button></span></div>
+      <label style="margin-top:0">深色模式</label>
+      <div class="chips" id="themeChips">
+        <button class="chip on" data-theme="auto" type="button">跟随系统</button>
+        <button class="chip" data-theme="light" type="button">浅色</button>
+        <button class="chip" data-theme="dark" type="button">深色</button>
+      </div>
+      <label>字体大小</label>
+      <div class="chips" id="fontChips">
+        <button class="chip" data-font="s" type="button">小</button>
+        <button class="chip on" data-font="m" type="button">标准</button>
+        <button class="chip" data-font="l" type="button">大</button>
+      </div>
+      <p class="hint" id="verLine" style="margin-top:14px">版本 <span id="verNum"></span></p>
+    </div>
+  </div>
+
+  <div id="meFeed" style="display:none">
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px">
+      <b style="font-size:15px">问题反馈</b>
+      <button class="subclose" data-meback="1" type="button">关闭</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>联系方式<button class="help" type="button" data-help="feedback">?</button></span></div>
+      <div class="entry">
+        <div class="b"><div class="n">邮箱</div><div class="d">libibocom@qq.com</div></div>
+        <button class="ghost" data-copy="libibocom@qq.com" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+      </div>
+      <div class="entry">
+        <div class="b"><div class="n">QQ</div><div class="d">150516059</div></div>
+        <button class="ghost" data-copy="150516059" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+      </div>
+      <p class="hint">发现 bug、想加功能、或者哪里看不懂，都可以找我～ 写清楚你用的是哪个功能、手机是什么系统，方便定位。</p>
+    </div>
   </div>
 </section>
 </main>
@@ -518,12 +1256,6 @@ button:active{transform:scale(.96)}
   <button data-tab="log">
     <svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="14" rx="4"/><path d="M9 6V5a3 3 0 0 1 6 0v1"/><path d="M12 11v5M9.5 13.5h5"/></svg>
     记录</button>
-  <button data-tab="table">
-    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M4 10h16M4 15h16M10 5v14"/></svg>
-    表格</button>
-  <button data-tab="med">
-    <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="10" rx="5"/><path d="M9 12h6"/></svg>
-    用药</button>
   <button data-tab="remind">
     <svg viewBox="0 0 24 24"><path d="M18 15v-4a6 6 0 1 0-12 0v4l-2 2h16z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
     提醒</button>
@@ -533,23 +1265,81 @@ button:active{transform:scale(.96)}
   <button data-tab="quiz">
     <svg viewBox="0 0 24 24"><path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z"/><path d="M18 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>
     测验</button>
-  <button data-tab="sum">
-    <svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h4"/><path d="M9 13h6M9 17h4"/></svg>
-    摘要</button>
+  <button data-tab="game">
+    <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="8.5" cy="12" r="1.2"/><circle cx="15.5" cy="12" r="1.2"/><path d="M12 10v4"/></svg>
+    游戏</button>
+  <button data-tab="social">
+    <svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 4v-4H4z"/></svg>
+    社交</button>
 </nav>
+
+<button class="fab" id="fabPost" type="button" aria-label="投稿">+</button>
+
+<div class="post-wrap" id="postWrap" aria-hidden="true">
+  <div class="post-box">
+    <div class="post-head"><b>投稿新鲜事</b><button class="xbtn" id="postClose" type="button">×</button></div>
+    <p class="hint" style="margin:0 0 8px">选一种方式，剩下的按提示填。</p>
+    <button class="primary" id="postMail">用邮件写（推荐）</button>
+    <button class="ghost" id="postQq" style="width:100%">加 QQ 发</button>
+    <button class="ghost" id="postTpl" style="width:100%">只复制模板</button>
+  </div>
+</div>
 
 <div class="banner" id="banner"></div>
 
 <div class="announce-wrap" id="annWrap" aria-hidden="true">
   <div class="announce" role="dialog" aria-modal="true">
-    <h2>hrt记录网站</h2>
-    <p class="byline">制作人：面包miao</p>
-    <p><b>一个给自己用的记录小工具</b>：记用药、看身体变化、做心理自评、到点提醒。它不是医疗建议，也不做诊断。</p>
-    <p><b>数据只在你这台手机上</b>，不上传、不需要注册。换手机或清浏览器缓存会丢，记得偶尔点「记录 › 备份 › 导出 JSON」。</p>
-    <p style="margin-bottom:4px"><b>有问题找我</b>：</p>
+    <h2>嗨呀，欢迎来玩～</h2>
+    <p class="byline">小站作者：面包miao</p>
+    <p><b>不用注册，也不用登录，打开就能写～</b>你写的东西只待在这台手机上，不上传，谁也看不到。</p>
+    <p>可以写日记、看变化、设提醒、翻知识库（没有广告，也没有卖药的），还有自测和两个小游戏。答对题能攒经验，换皮肤、头像框、名字效果～</p>
+    <p>哪里看不懂就点旁边的问号，有事随时找我。</p>
     <div class="row"><span>邮箱 libibocom@qq.com</span><button class="ghost" data-copy="libibocom@qq.com" style="margin:0;padding:5px 12px;font-size:12px">复制</button></div>
     <div class="row"><span>QQ 150516059</span><button class="ghost" data-copy="150516059" style="margin:0;padding:5px 12px;font-size:12px">复制</button></div>
-    <button class="primary" id="annOk" style="margin-top:18px">知道了，开始用</button>
+    <button class="primary" id="annOk" style="margin-top:18px" disabled>3 秒后就能进去啦～</button>
+  </div>
+</div>
+
+<div class="splash-wrap" id="splashWrap">
+  <div class="splash-icon" id="splashIcon"></div>
+  <div class="splash-label" id="splashLabel"></div>
+  <div class="splash-text" id="splashText"></div>
+</div>
+
+<div class="flash-wrap" id="flashWrap">
+  <div class="flash-box">
+    <div class="flash-big" id="flashBig">正确</div>
+    <div class="flash-xp" id="flashXp"></div>
+  </div>
+</div>
+
+<div class="reveal-wrap" id="revealWrap">
+  <div class="reveal-card" id="revealCard">
+    <div id="gachaQ"></div>
+    <button class="ghost" id="cardNext" style="width:100%;display:none">再抽三张</button>
+  </div>
+</div>
+
+<div class="revive-wrap" id="reviveWrap">
+  <div class="revive-card">
+    <b style="font-size:17px">爱心用完了</b>
+    <p class="hint" style="margin:6px 0 12px">答对下面这题，恢复 1 颗爱心。</p>
+    <div id="reviveQ"></div>
+    <button class="ghost" id="reviveClose" style="width:100%">今天先不玩了</button>
+  </div>
+</div>
+
+<div class="plan-wrap" id="planWrap" aria-hidden="true">
+  <div class="plan-box">
+    <div class="plan-head">
+      <b>更新计划</b>
+      <button class="xbtn" id="planClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <div id="planBody"></div>
+    <div class="plan-foot">
+      <button class="ghost" id="planAdd" style="flex:1;margin:0">加一条</button>
+      <button class="ghost" id="planReset" style="flex:1;margin:0">清除 PIN</button>
+    </div>
   </div>
 </div>
 
@@ -588,19 +1378,157 @@ function pad(n){return n<10?"0"+n:""+n}
 function nowLocal(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())}
 function dayOf(iso){return (iso||"").slice(0,10)}
 function hhmm(iso){return (iso||"").slice(11,16)}
+function noticeSaved(label,id){
+  var old=$("savedTip");
+  if(old)old.remove();
+  var tip=document.createElement("div");
+  tip.className="savedtip";tip.id="savedTip";
+  var ic=document.createElement("span");ic.className="savedtip-ic";ic.textContent="✓";
+  var tx=document.createElement("span");tx.className="savedtip-tx";tx.textContent="已存进「记录」· "+label;
+  var go=document.createElement("button");go.type="button";go.textContent="去看看";
+  go.className="savedtip-go";
+  go.addEventListener("click",function(){
+    tip.remove();
+    document.querySelector('[data-tab="log"]').click();
+    setTimeout(function(){highlightEntry(id)},120);
+  });
+  tip.appendChild(ic);tip.appendChild(tx);tip.appendChild(go);
+  document.body.appendChild(tip);
+  setTimeout(function(){if(tip.parentNode)tip.remove()},5000);
+}
+function highlightEntry(id){
+  var rows=document.querySelectorAll("#logList .entry");
+  for(var i=0;i<rows.length;i++){
+    if(rows[i].getAttribute("data-id")===id){
+      var r=rows[i];
+      r.classList.add("hl");
+      try{r.scrollIntoView({block:"center"})}catch(e){}
+      setTimeout(function(){r.classList.remove("hl")},1600);
+      return;
+    }
+  }
+}
 function toast(msg){
   var b=$("banner");b.textContent=msg;b.classList.add("show");
   clearTimeout(toast.t);toast.t=setTimeout(function(){b.classList.remove("show")},3200);
 }
 
-/* ---------- 记录 ---------- */
-var ENTRY_TYPES={
-  med:{label:"用药"},
-  body:{label:"身体"},
-  note:{label:"随笔"},
-  quiz:{label:"测验"}
+/* ---------- 版本与更新 ---------- */
+var REDUCE=(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+var layerStack=[];
+var inPop=false;
+function pushLayer(closeFn){
+  layerStack.push(closeFn);
+  try{history.pushState({layer:layerStack.length},"")}catch(e){}
+}
+/* 界面上的「关闭」也要退掉自己压入的那层历史，否则返回键要按好几次 */
+function popLayer(){
+  if(!layerStack.length)return false;
+  inPop=true;
+  try{history.back();return true}
+  catch(e){inPop=false;layerStack.pop();return false}
+}
+window.addEventListener("popstate",function(){
+  inPop=true;
+  var f=layerStack.pop();
+  try{if(f)f()}finally{setTimeout(function(){inPop=false},0)}
+});
+var APP_VER=(document.querySelector('meta[name="app-version"]')||{}).content||"0";
+function showUpdateBar(ver){
+  var old=$("updBar");
+  if(old)old.remove();
+  var bar=document.createElement("div");
+  bar.className="savedtip";bar.id="updBar";
+  bar.style.zIndex="36";
+  var ic=document.createElement("span");ic.className="savedtip-ic";ic.textContent="↑";
+  var tx=document.createElement("span");tx.className="savedtip-tx";
+  tx.textContent="有新版本啦，点一下就好～";
+  var go=document.createElement("button");go.type="button";go.className="savedtip-go";go.textContent="刷新";
+  go.addEventListener("click",function(){location.reload()});
+  bar.appendChild(ic);bar.appendChild(tx);bar.appendChild(go);
+  document.body.appendChild(bar);
+  localStorage.setItem("hrthub.seenVer",ver);
+}
+function checkUpdate(){
+  if(location.protocol!=="http:"&&location.protocol!=="https:")return;
+  var last=parseInt(localStorage.getItem("hrthub.checkedAt")||"0",10);
+  if(Date.now()-last<86400000)return;
+  localStorage.setItem("hrthub.checkedAt",String(Date.now()));
+  if(typeof fetch!=="function")return;
+  var req;
+  try{
+    req=fetch(location.pathname,{cache:"no-cache"});
+  }catch(e){return}
+  req.then(function(r){
+    if(!r.ok)return null;
+    return r.text();
+  }).then(function(t){
+    if(!t)return;
+    var m=t.match(/name="app-version"\s+content="([^"]+)"/);
+    if(!m)return;
+    var latest=m[1];
+    if(latest!==APP_VER&&localStorage.getItem("hrthub.seenVer")!==latest){
+      showUpdateBar(latest);
+    }
+  }).catch(function(){});
+}
+
+/* ---------- 图标 ---------- */
+var ICONS={
+ set:'<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M4.3 7.6l1.9 1.1M17.8 15.3l1.9 1.1M4.3 16.4l1.9-1.1M17.8 8.7l1.9-1.1"/>',
+ feed:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 4v-4H4z"/>',
+ plan:'<path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h4"/><path d="M9 13h6M9 17h4"/>',
+ diary:'<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10l2 2h6.5A1.5 1.5 0 0 1 20 7.5v11A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 14h6M9 17h4"/>',
+ sum:'<path d="M6 4h9l4 4v12H6z"/><path d="M15 4v5h4"/><path d="M9 12h6M9 16h4"/>',
+ table:'<rect x="4" y="5" width="16" height="14" rx="3"/><path d="M4 10h16M4 15h16M10 5v14"/>',
+ bell:'<path d="M18 15v-4a6 6 0 1 0-12 0v4l-2 2h16z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ list:'<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/>',
+ brain:'<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 3 3V4z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-3 3V4z"/>',
+ heart:'<path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7 3.5c0 4.9-7 9.3-7 9.3z"/>',
+ mood:'<circle cx="12" cy="12" r="8.5"/><path d="M9 10h.01M15 10h.01"/><path d="M8.6 14.4a4 4 0 0 0 6.8 0"/>',
+ worry:'<path d="M6.5 18a4 4 0 0 1-.8-7.9A5.2 5.2 0 0 1 16 8.4a3.8 3.8 0 0 1 1.6 7.4"/><path d="M9 21l1.4-2.2M15 21l-1.4-2.2"/>',
+ book:'<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5V5.5"/>',
+ pill:'<rect x="3.5" y="9" width="17" height="6" rx="3" transform="rotate(-40 12 12)"/><path d="M9.5 14.5l5-5"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+ shop:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+ cards:'<rect x="7" y="4" width="10" height="14" rx="2"/><path d="M4.6 7.5 3.9 17a2 2 0 0 0 1.8 2.2l6 .5"/>',
+ run:'<circle cx="14" cy="5.5" r="1.8"/><path d="M12.5 9l-3 3 2.5 2 .8 4"/><path d="M9.5 12 6 13.5"/><path d="M15.5 9.5 18 12l-2.5 2"/>',
+ star:'<path d="M12 3.6l2.6 5.4 5.9.8-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.8l5.9-.8z"/>',
+ spark:'<path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z"/>',
+ trophy:'<path d="M8 4h8v4a4 4 0 0 1-8 0z"/><path d="M8 6H5v2a3 3 0 0 0 3 3M16 6h3v2a3 3 0 0 1-3 3"/><path d="M12 12v4M9 20h6"/>',
+ lock:'<rect x="5" y="10" width="14" height="10" rx="3"/><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"/>',
+ search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.4 4.4"/>',
+ pen:'<path d="M4 20l4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/><path d="M14.5 5.5l3 3"/>',
+ chart:'<path d="M4 20V5"/><path d="M4 20h16"/><path d="M8 16v-5M13 16V8M18 16v-3"/>',
+ medal:'<path d="M8 3h8v4a4 4 0 0 1-8 0z"/><path d="M8 5H5v2a3 3 0 0 0 3 3M16 5h3v2a3 3 0 0 1-3 3"/><path d="M12 12v3M9 19h6"/>'
 };
-var curType="med";
+function ico(name){
+  return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '+
+    'stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||"")+'</svg>';
+}
+function mountSearch(){
+  document.querySelectorAll("input.search").forEach(function(inp){
+    if(inp.parentNode&&inp.parentNode.classList.contains("searchwrap"))return;
+    var wrap=document.createElement("div");
+    wrap.className="searchwrap";
+    inp.parentNode.insertBefore(wrap,inp);
+    wrap.appendChild(inp);
+    var ic=document.createElement("span");
+    ic.className="sico";
+    ic.innerHTML=ico("search");
+    wrap.appendChild(ic);
+  });
+}
+function mountIcons(){
+  document.querySelectorAll("[data-ico]").forEach(function(el){
+    var host=el.querySelector(".n")||el;
+    if(host.querySelector(".ico"))return;
+    host.insertAdjacentHTML("afterbegin",ico(el.getAttribute("data-ico")));
+  });
+}
+
+/* ---------- 记录 ---------- */
+var ENTRY_TYPES={med:{label:"用药"},body:{label:"身体"},note:{label:"随笔"},quiz:{label:"测验"}};
 function typeOf(e){return ENTRY_TYPES[e.type]?e.type:"med"}
 function entryTitle(e){return e.title||e.name||"（无标题）"}
 function entryDesc(e){
@@ -612,40 +1540,45 @@ function entryDesc(e){
   if(t==="quiz")return e.note||"";
   return [e.dose,e.route,e.note].filter(Boolean).join(" · ");
 }
-function setType(t){
-  curType=t;
-  $("typeChips").querySelectorAll(".chip").forEach(function(c){
-    c.classList.toggle("on",c.dataset.type===t);
+var logQ="";
+function entryRow(e,onDelete){
+  var row=document.createElement("div");row.className="entry";
+  row.setAttribute("data-id",e.id);
+  var t=document.createElement("div");t.className="t";t.textContent=hhmm(e.at);
+  var b=document.createElement("div");b.className="b";
+  var n=document.createElement("div");n.className="n";
+  var badge=document.createElement("span");
+  badge.className="badge b-"+typeOf(e);badge.textContent=(ENTRY_TYPES[typeOf(e)]||{}).label||"";
+  n.appendChild(badge);
+  n.appendChild(document.createTextNode(entryTitle(e)));
+  var dd=document.createElement("div");dd.className="d";
+  dd.textContent=entryDesc(e);
+  b.appendChild(n);b.appendChild(dd);
+  var x=document.createElement("button");x.className="x";x.type="button";x.textContent="×";
+  x.addEventListener("click",function(){
+    if(!confirm("删除 "+(e.at.replace("T"," "))+" 的「"+entryTitle(e)+"」？"))return;
+    DB.entries=DB.entries.filter(function(o){return o.id!==e.id});
+    save();renderLog();
   });
-  $("medFields").style.display=t==="med"?"":"none";
-  $("bodyFields").style.display=t==="body"?"":"none";
-  $("mTitle").placeholder=t==="med"?"药名，例如 戊酸雌二醇":t==="body"?"项目，例如 体重、胸围":"随便写个标题";
-  $("mNote").placeholder=t==="note"?"正文，想写什么写什么":"部位、感受，可留空";
-}
-function renderChips(){
-  var seen={},list=[];
-  DB.entries.filter(function(e){return typeOf(e)==="med"}).slice().reverse().forEach(function(e){
-    var k=entryTitle(e);
-    if(!seen[k]&&list.length<8){seen[k]=1;list.push(e)}
-  });
-  var box=$("recentChips");box.innerHTML="";
-  list.forEach(function(e){
-    var b=document.createElement("button");
-    b.className="chip";b.type="button";b.textContent=entryTitle(e);
-    b.addEventListener("click",function(){
-      setType("med");
-      $("mTitle").value=entryTitle(e);$("mDose").value=e.dose||"";
-      $("mRoute").value=e.route||"口服";
-      $("mTitle").focus();
-    });
-    box.appendChild(b);
-  });
+  row.appendChild(t);row.appendChild(b);row.appendChild(x);
+  return row;
 }
 function renderLog(){
   var box=$("logList");box.innerHTML="";
-  var list=DB.entries.slice().sort(function(a,b){return a.at<b.at?1:-1});
-  $("count").textContent=list.length?list.length+" 条":"";
-  if(!list.length){box.innerHTML='<p class="hint">还没有记录。上面填一条试试。</p>';renderChips();return}
+  var q=(logQ||"").trim().toLowerCase();
+  var all=DB.entries.slice().sort(function(a,b){return a.at<b.at?1:-1});
+  var list=all.filter(function(e){
+    if(!q)return true;
+    var t=(entryTitle(e)+" "+(e.note||"")+" "+(e.dose||"")+" "+(e.route||"")+
+      " "+(e.value||"")+" "+(e.unit||"")+" "+((ENTRY_TYPES[typeOf(e)]||{}).label||"")).toLowerCase();
+    return t.indexOf(q)>=0;
+  });
+  $("count").textContent=q?(list.length?("找到 "+list.length+" 条"):"没找到"):(all.length?all.length+" 条":"");
+  if($("cntHint"))$("cntHint").textContent=all.length+" 条";
+  if(!list.length){
+    box.innerHTML=q?'<p class="hint">没有匹配的记录。换个词试试。</p>':'<p class="hint">还没有记录。</p>';
+    renderDiary();return;
+  }
   var lastDay="";
   list.forEach(function(e){
     var d=dayOf(e.at);
@@ -654,51 +1587,68 @@ function renderLog(){
       var g=document.createElement("div");g.className="daygroup";g.textContent=d;
       box.appendChild(g);
     }
-    var row=document.createElement("div");row.className="entry";
-    var t=document.createElement("div");t.className="t";t.textContent=hhmm(e.at);
-    var b=document.createElement("div");b.className="b";
-    var n=document.createElement("div");n.className="n";
-    var badge=document.createElement("span");
-    badge.className="badge b-"+typeOf(e);badge.textContent=ENTRY_TYPES[typeOf(e)].label;
-    n.appendChild(badge);
-    n.appendChild(document.createTextNode(entryTitle(e)));
-    var dd=document.createElement("div");dd.className="d";
-    dd.textContent=entryDesc(e);
-    b.appendChild(n);b.appendChild(dd);
-    var x=document.createElement("button");x.className="x";x.type="button";x.textContent="×";
-    x.title="删除这条";
-    x.addEventListener("click",function(){
-      if(!confirm("删除 "+(e.at.replace("T"," "))+" 的「"+entryTitle(e)+"」？"))return;
-      DB.entries=DB.entries.filter(function(o){return o.id!==e.id});save();renderLog();
-    });
-    row.appendChild(t);row.appendChild(b);row.appendChild(x);
-    box.appendChild(row);
+    box.appendChild(entryRow(e));
   });
-  renderChips();
+  renderDiary();
 }
-$("typeChips").querySelectorAll(".chip").forEach(function(c){
-  c.addEventListener("click",function(){setType(c.dataset.type)});
-});
+function renderDiary(){
+  var box=$("diaryList");
+  if(!box)return;
+  box.innerHTML="";
+  var notes=DB.entries.filter(function(e){return typeOf(e)==="note"})
+    .sort(function(a,b){return a.at<b.at?1:-1});
+  $("diaryCount").textContent=notes.length?notes.length+" 条":"";
+  if(!notes.length){box.innerHTML='<p class="hint">还没写过。上面写一条试试。</p>';return}
+  notes.forEach(function(e){box.appendChild(entryRow(e))});
+}
 $("saveBtn").addEventListener("click",function(){
-  var title=$("mTitle").value.trim();
-  if(!title){
-    if(curType==="note"){title="随笔"}
-    else{toast(curType==="body"?"先填项目名":"先填药名");$("mTitle").focus();return}
-  }
+  var title=$("mTitle").value.trim()||"随笔";
   var at=$("mTime").value||nowLocal();
-  var e={id:uid(),type:curType,title:title,at:at,note:$("mNote").value.trim()};
-  if(curType==="med"){e.dose=$("mDose").value.trim();e.route=$("mRoute").value}
-  if(curType==="body"){e.value=$("mValue").value.trim();e.unit=$("mUnit").value.trim()}
+  var note=$("mNote").value.trim();
+  if(!note&&title==="随笔"){toast("写点内容再存");$("mNote").focus();return}
+  var e={id:uid(),type:"note",title:title,at:at,note:note};
   DB.entries.push(e);
   save();renderLog();
-  $("mDose").value="";$("mNote").value="";$("mValue").value="";$("mTime").value=nowLocal();
-  toast("已记下："+title);
-  $("mTitle").focus();
+  $("mNote").value="";$("mTime").value=nowLocal();
+  toast("已记下");
+  $("mNote").focus();
+});
+function openSub(which){
+  ["logHome","logDiary","logSum","logTable","logAll","logBackup"].forEach(function(id){
+    var el=$(id);if(el)el.style.display="none";
+  });
+  var map={diary:"logDiary",sum:"logSum",table:"logTable",all:"logAll",backup:"logBackup"};
+  var el=$(map[which]);if(el)el.style.display="";
+  if(which==="all")renderLog();
+  pushLayer(closeSub);
+  window.scrollTo(0,0);
+}
+function closeSub(){
+  if(!inPop&&popLayer())return;
+  ["logDiary","logSum","logTable","logAll","logBackup"].forEach(function(id){
+    var el=$(id);if(el)el.style.display="none";
+  });
+  $("logHome").style.display="";
+  window.scrollTo(0,0);
+}
+$("goDiary").addEventListener("click",function(){openSub("diary")});
+$("goAllRec").addEventListener("click",function(){subSplash(SUB_ICON.list,"全部记录",function(){openSub("all")})});
+$("goBackup").addEventListener("click",function(){subSplash(SUB_ICON.backup,"备份",function(){openSub("backup")})});
+$("goSum").addEventListener("click",function(){openSub("sum")});
+$("goTable").addEventListener("click",function(){openSub("table");renderTblList()});
+document.querySelectorAll("[data-back]").forEach(function(b){
+  b.addEventListener("click",function(){closeSub()});
 });
 
 $("expBtn").addEventListener("click",function(){
   var d=new Date();
-  dl("用药记录备份-"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+".json",JSON.stringify(DB,null,2),"application/json");
+  var out={};
+  for(var k in DB)out[k]=DB[k];
+  out.profile=PRO;
+  out.game=GAME;
+  localStorage.setItem("hrthub.lastBackup",String(Date.now()));
+  dl("用药记录备份-"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+".json",
+    JSON.stringify(out,null,2),"application/json");
 });
 
 $("impFile").addEventListener("change",function(ev){
@@ -727,6 +1677,25 @@ $("impFile").addEventListener("change",function(ev){
         });
       }
       if(typeof s.notes==="string"&&s.notes.trim()&&!DB.notes.trim())DB.notes=s.notes;
+      if(s.game&&typeof s.game==="object"){
+        for(var k in s.game)if(k in GAME)GAME[k]=s.game[k];
+        saveGame();
+        if(typeof renderGameHome==="function")renderGameHome();
+      }
+      if(s.profile&&typeof s.profile==="object"){
+        if(typeof s.profile.name==="string")PRO.name=s.profile.name.slice(0,20);
+        if(typeof s.profile.avatar==="string")PRO.avatar=s.profile.avatar;
+        if(typeof s.profile.bg==="string")PRO.bg=s.profile.bg;
+        if(typeof s.profile.bgAlpha==="number")PRO.bgAlpha=s.profile.bgAlpha;
+        saveProfile();
+      }
+      if(Array.isArray(s.quiz)){
+        if(!DB.quiz)DB.quiz=[];
+        s.quiz.forEach(function(z){
+          if(!z||!z.at)return;
+          if(!DB.quiz.some(function(x){return x.at===z.at}))DB.quiz.push(z);
+        });
+      }
       if(Array.isArray(s.tables)){
         if(!DB.tables)DB.tables=[];
         s.tables.forEach(function(t){
@@ -734,7 +1703,7 @@ $("impFile").addEventListener("change",function(ev){
           if(!DB.tables.some(function(x){return x.id===t.id}))DB.tables.push(t);
         });
       }
-      save();renderLog();renderRem();renderTblList();$("notes").value=DB.notes;
+      save();renderLog();renderRem();renderTblList();applyProfile();$("notes").value=DB.notes;
       toast("导入完成，新增 "+add+" 条记录");
     }catch(err){toast("这个文件读不出来："+err.message)}
     ev.target.value="";
@@ -745,6 +1714,21 @@ $("impFile").addEventListener("change",function(ev){
 /* ---------- 提醒 ---------- */
 var curRep="once";
 var curDays=[];
+function remView(which){
+  if(which==="home"&&!inPop&&popLayer())return;
+  if(which!=="home")pushLayer(function(){remView("home")});
+  $("remHome").style.display=which==="home"?"":"none";
+  $("remNew").style.display=which==="new"?"":"none";
+  $("remList2").style.display=which==="list"?"":"none";
+  if($("remNotif"))$("remNotif").style.display=which==="notif"?"":"none";
+  window.scrollTo(0,0);
+}
+$("goNewRem").addEventListener("click",function(){remView("new")});
+$("goRemList").addEventListener("click",function(){remView("list");renderRem()});
+$("goNotif").addEventListener("click",function(){subSplash(SUB_ICON.notif,"通知与日历",function(){remView("notif")})});
+document.querySelectorAll("[data-remback]").forEach(function(b){
+  b.addEventListener("click",function(){remView("home")});
+});
 function repOf(r){
   if(r.repeat==="once"||r.repeat==="daily"||r.repeat==="custom")return r.repeat;
   return "daily";
@@ -767,7 +1751,8 @@ function remDesc(r){
 }
 function renderRem(){
   var box=$("remList");box.innerHTML="";
-  $("remCount").textContent=DB.reminders.length?DB.reminders.length+" 个":"";
+  if($("remCount2"))$("remCount2").textContent=DB.reminders.length?DB.reminders.length+" 个":"";
+  if($("remCount"))$("remCount").textContent=DB.reminders.length?DB.reminders.length+" 个":"暂无提醒";
   if(!DB.reminders.length){box.innerHTML='<p class="hint">还没有提醒。</p>';return}
   DB.reminders.slice().sort(function(a,b){return a.time<b.time?-1:1}).forEach(function(r){
     var row=document.createElement("div");row.className="entry";
@@ -810,6 +1795,7 @@ $("addRem").addEventListener("click",function(){
   }
   DB.reminders.push(r);
   save();renderRem();
+  remView("list");
   $("rName").value="";
   toast("已添加："+remDesc(r));
   setTimeout(function(){
@@ -818,7 +1804,7 @@ $("addRem").addEventListener("click",function(){
       exportIcs([r]);
       toast("已生成日历文件，打开它并选「导入」");
     }
-  },400);
+  },560);
 });
 function notifState(){
   var e=$("notifState");
@@ -967,6 +1953,184 @@ SYM=SYM.concat([
  {t:"十一酸睾酮",tag:"药物",c:"长效睾酮制剂，注射间隔长，血药浓度波动相对平缓，但一旦过量不容易快速回调。",r:"同上：红细胞压积、血压、情绪波动。",m:"注射日期、剂量、两次之间的感受。",a:"这个间隔合适吗？要不要改短效的？"},
  {t:"复方避孕药（避雷）",tag:"避雷",c:"含炔雌醇等成分，和医用雌二醇不是一回事，血栓风险明显更高，剂量也无法精确控制。",r:"任何用它替代雌激素的做法都该停下。",m:"如果已经在用，记下用了多久、每天几次。",a:"我现在该换成什么？怎么换才安全？"}
 ]);
+SYM=SYM.concat([
+ {t:"皮肤变细腻、出油变少",tag:"变化",c:"开始 HRT 后几个月，很多人会发现皮肤摸起来更细、出油减少、毛孔看起来不那么明显。这是皮脂分泌下降的正常变化。",r:"突然大面积红疹、脱皮、脓疱；用新产品后过敏。",m:"从哪天开始、出油变化、有没有换护肤品。",a:"我需要换护肤品吗？现在的洗面奶会不会太强？"},
+ {t:"脸型变柔和、面部脂肪变化",tag:"变化",c:"面部脂肪重新分布，通常 6 个月后逐渐看得出来，脸颊和下颌线会变柔和。这是变化最慢、最需要耐心的一项。",r:"单侧面部肿胀、麻木、疼痛。",m:"每隔一两个月同一角度拍一张照片，比凭感觉准。",a:"这个速度正常吗？大概还要多久？"},
+ {t:"脂肪重新分布（腰、臀、大腿）",tag:"变化",c:"脂肪会往臀部和腿根走，腰腹比例下降，通常 3 到 12 个月变化最明显。",r:"体重骤变、局部明显肿块。",m:"腰围、臀围、体重的定期记录。",a:"这段变化和我现在的体重的关系是什么？"},
+ {t:"肌肉量下降、力气变小",tag:"变化",c:"肌肉量下降是常见变化，表现为提重物变吃力、耐力变化。不是生病，但需要靠运动维持。",r:"明显无力到影响日常、伴随心慌或水肿。",m:"记录搬重物的感受、每周运动次数。",a:"我该做哪种运动来保住肌肉？"},
+ {t:"乳房发育的几个阶段",tag:"发育",c:"常见顺序：先胀痛和乳核，再长出轮廓，然后逐渐丰满，整个过程通常 1 到 3 年，速度个体差异很大。",r:"单侧硬块、皮肤凹陷、乳头溢液、不对称突然加剧。",m:"每月同一时间自检，记录大小和触感变化。",a:"我现在的阶段正常吗？还需要多久？"},
+ {t:"乳晕和乳头的变化",tag:"发育",c:"乳晕可能变大、颜色变深、乳头变敏感，这是发育过程中的常见部分。",r:"持续疼痛、破溃、异常分泌物。",m:"变化时间和程度，有没有疼痛。",a:"这个敏感程度正常吗？需要处理吗？"},
+ {t:"胡须和体毛长得慢了",tag:"变化",c:"雄激素被压住后，体毛会变细、长得变慢，但已经粗硬的胡须靠激素很难完全消退，通常要靠脱毛。",r:"短期内反而变多、伴随其他异常。",m:"哪里的毛、变化速度、有没有做脱毛。",a:"我适合哪种脱毛方式？会不会影响皮肤？"},
+ {t:"体味和出汗变淡",tag:"变化",c:"汗味、体味变淡是很常见的早期变化之一，通常在头几个月就能感觉到。",r:"突然多汗、夜间盗汗、伴随发热。",m:"什么时候开始、出汗量变化。",a:"这个变化正常吗？"},
+ {t:"性欲和反应的变化",tag:"变化",c:"性欲常常先下降、之后可能回升；勃起和射精的变化因人而异，有的明显，有的几乎没变。",r:"疼痛、持续不适、影响生活。",m:"变化时间、程度、对生活的影响。",a:"这是方案带来的吗？需不需要调整？"},
+ {t:"皮肤变干、变敏感",tag:"变化",c:"皮脂下降的同时，皮肤可能变干、对护肤品更敏感，尤其脸颊和眼周。",r:"红肿、刺痛、起皮，用什么都刺痛。",m:"用什么产品、什么时候开始、变化部位。",a:"我该换什么护肤品？需不需要看皮肤科？"},
+ {t:"情绪更稳、波动变小",tag:"变化",c:"不少人报告情绪更平稳、焦虑感下降，这通常是正向变化，也和「终于开始做了」的心理作用有关。",r:"持续低落、失去兴趣、有伤害自己的念头——及时求助。",m:"每周给自己的情绪打个分，记下来。",a:"这种变化会一直持续吗？"},
+ {t:"体重上升但体型变好",tag:"变化",c:"体重可能上升，但脂肪分布变了，看起来反而更协调。只看体重容易误判。",r:"短期快速增加、明显水肿、尿量减少。",m:"体重、腰围、臀围一起记，别只看体重。",a:"我这个体重变化需要干预吗？"},
+ {t:"头发：掉发变少或变化",tag:"变化",c:"雄激素下降后，头皮出油和掉发可能减少；但激素波动期也可能短期掉发增多。",r:"短期内大量脱落、成片掉。",m:"每天大概掉多少、变化持续多久。",a:"需要查铁和甲状腺吗？"},
+ {t:"声音不会变（先说清楚）",tag:"变化",c:"激素对已经变声的声带作用很小，指望靠药让声音变高通常不现实，需要靠语音训练。",r:"说话疼、持续嘶哑超过两周。",m:"现在的音高、有没有练过。",a:"本地有没有语音训练的资源？"}
+]);
+
+var SITE=[
+ {label:"记录",desc:"记用药、身体变化、随笔",kw:["记录","记一笔","日志","备忘"],tab:"log"},
+ {label:"表格",desc:"自建表格，能出折线、条形、饼图",kw:["表格","图表","曲线","饼图","条形"],tab:"table"},
+ {label:"用药准备",desc:"14 个问题，看离安全的方案还差什么",kw:["用药","方案","准备","评估"],tab:"med"},
+ {label:"提醒",desc:"自定义闹钟，可导入手机日历",kw:["提醒","闹钟","日历","通知","定时"],tab:"remind"},
+ {label:"测验",desc:"性别认同、性取向、情绪、焦虑、HRT 知识",kw:["测验","测试","自测","答题","题目"],tab:"quiz"},
+ {label:"性取向测试",desc:"普通 10 题 / 专家 18 题",kw:["性取向","取向","喜欢男","喜欢女"],tab:"quiz"},
+ {label:"性别认同测试",desc:"普通 12 题 / 专家 28 题",kw:["性别认同","跨性别","我是女生","性别"],tab:"quiz"},
+ {label:"PHQ-9 情绪筛查",desc:"普通 9 题 / 专家 14 题",kw:["抑郁","情绪","phq","低落"],tab:"quiz"},
+ {label:"GAD-7 焦虑筛查",desc:"普通 7 题 / 专家 12 题",kw:["焦虑","gad","紧张"],tab:"quiz"},
+ {label:"HRT 知识测验",desc:"普通 10 题 / 专家 20 题，答错给解释",kw:["知识","常识","考题","答题卡"],tab:"quiz"},
+ {label:"就诊摘要",desc:"生成一段能给医生看的文字",kw:["摘要","就诊","看病","导出文字"],tab:"sum"},
+ {label:"我的",desc:"头像、名字、背景、深色模式、字体",kw:["我的","头像","背景","深色","字体","名字","外观"],tab:"me"},
+ {label:"反馈",desc:"邮箱和 QQ",kw:["反馈","邮箱","qq","联系","bug","报错"],tab:"me"},
+ {label:"备份",desc:"导出或导入 JSON",kw:["备份","导出","导入","恢复数据"],tab:"log"},
+ {label:"公告",desc:"这个网站是干什么的、制作人是谁",kw:["公告","介绍","关于","是什么","制作人","这是"],act:"announce"}
+];
+function showSuggest(box,pool,q,onPick){
+  if(!box)return;
+  box.innerHTML="";
+  var k=(q||"").trim().toLowerCase();
+  if(!k)return;
+  var seen={},out=[];
+  for(var i=0;i<pool.length;i++){
+    var t=pool[i];
+    if(!t)continue;
+    if(t.toLowerCase().indexOf(k)<0)continue;
+    if(seen[t])continue;
+    seen[t]=1;out.push(t);
+    if(out.length>=6)break;
+  }
+  if(!out.length)return;
+  var wrap=document.createElement("div");wrap.className="chips";wrap.style.marginTop="8px";
+  out.forEach(function(t){
+    var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=t;
+    b.addEventListener("click",function(){onPick(t)});
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap);
+}
+function symPool(){
+  var p=SITE.map(function(x){return x.label});
+  SYM.forEach(function(x){p.push(x.t)});
+  return p;
+}
+function logPool(){
+  var p=[];
+  DB.entries.forEach(function(e){p.push(entryTitle(e))});
+  return p;
+}
+function renderSite(q){
+  var box=$("siteBox");
+  if(!box)return;
+  box.innerHTML="";
+  var k=(q||"").trim().toLowerCase();
+  if(!k)return;
+  var hits=SITE.filter(function(it){
+    if(it.label.toLowerCase().indexOf(k)>=0)return true;
+    if(it.desc.toLowerCase().indexOf(k)>=0)return true;
+    for(var i=0;i<it.kw.length;i++){
+      if(it.kw[i].toLowerCase().indexOf(k)>=0)return true;
+    }
+    return false;
+  });
+  if(!hits.length)return;
+  hits.sort(function(a,b){
+    var ra=a.label.toLowerCase().indexOf(k)>=0?0:1;
+    var rb=b.label.toLowerCase().indexOf(k)>=0?0:1;
+    return ra-rb;
+  });
+  var head=document.createElement("div");
+  head.className="cardhead";head.style.marginTop="12px";
+  var sp=document.createElement("span");sp.textContent="站内 · 直接跳过去";
+  head.appendChild(sp);box.appendChild(head);
+  hits.forEach(function(it){
+    var row=document.createElement("div");row.className="entry";
+    var b=document.createElement("div");b.className="b";
+    var n=document.createElement("div");n.className="n";n.textContent=it.label;
+    var d=document.createElement("div");d.className="d";d.textContent=it.desc;
+    b.appendChild(n);b.appendChild(d);
+    var go=document.createElement("button");go.type="button";go.className="savedtip-go";go.textContent="去";
+    go.style.margin="0";
+    go.addEventListener("click",function(){
+      if(it.act==="announce"){
+        $("annWrap").classList.add("show");
+        $("annWrap").setAttribute("aria-hidden","false");
+        document.body.style.overflow="hidden";
+        return;
+      }
+      var btn=document.querySelector('[data-tab="'+it.tab+'"]');
+      if(btn)btn.click();
+    });
+    row.appendChild(b);row.appendChild(go);
+    box.appendChild(row);
+  });
+}
+SYM=SYM.concat([
+ {t:"HRT 是什么",tag:"基础",c:"用激素让身体往认同的性别方向变化。它不是一次性的，是长期的过程，需要定期看指标。",r:"任何宣传「几周见效」「不用查血」的说法都要警惕。",m:"开始时间、用的类别、最近一次化验。",a:"我需要长期用吗？大概多久复查一次？"},
+ {t:"雌激素和抗雄分别管什么",tag:"基础",c:"雌激素负责「长」：皮肤、脂肪、乳房；抗雄负责「压」：把雄激素降到不影响雌激素起作用的水平。两者不是替代关系。",r:"只吃抗雄不补雌激素，可能出现骨质疏松和情绪问题。",m:"两个分别是什么、各用了多久。",a:"我可以只用一个吗？"},
+ {t:"血药浓度和目标区间",tag:"基础",c:"化验值有参考的目标区间，低了效果不足，高了增加风险。区间不是「越高越好」的分数线。",r:"数值远高于区间、伴随头痛胸闷。",m:"每次化验的日期和数值，做个趋势。",a:"我现在的数值在区间里吗？"},
+ {t:"首过效应（口服 vs 经皮）",tag:"基础",c:"口服要先过肝脏，部分被代谢掉，同时影响血脂和凝血因子；经皮绕过肝脏，但吸收因人而异。",r:"口服期间血脂异常、肝功能升高。",m:"用的哪种方式、有没有换过、换完的化验变化。",a:"我适合哪种？换方式后要多久复查？"},
+ {t:"雌二醇这项化验怎么看",tag:"化验",c:"看的是血液里的雌激素水平，和你的给药时间关系很大——刚用完药和快用完时测，数值能差很多。",r:"数值长期低于区间（效果不足）或远高于区间。",m:"抽血时间距离上次用药多久。",a:"这次结果要不要等下次换个时间再测？"},
+ {t:"睾酮这项化验怎么看",tag:"化验",c:"男性化治疗里看睾酮是否在目标区间，通常要在两次给药之间测，避免测到峰值。",r:"数值过低（效果不足）或过高（红细胞增多风险）。",m:"抽血时间和上次注射的间隔。",a:"我的谷值够吗？"},
+ {t:"催乳素这项化验怎么看",tag:"化验",c:"部分抗雄药和雌激素会让催乳素升高。轻度升高常见，持续升高要评估。",r:"伴随溢乳、头痛、视力变化。",m:"数值、复查间隔、当时用什么药。",a:"需要换药或复查吗？"},
+ {t:"肝功能（ALT、AST）怎么看",tag:"化验",c:"肝脏代谢激素，所以要定期看。轻度波动常见，持续升高要处理。",r:"超过参考上限两倍以上、伴黄疸或右上腹痛。",m:"数值、有没有喝酒、有没有吃别的药。",a:"需要停药还是换给药方式？"},
+ {t:"血脂四项",tag:"化验",c:"总胆固醇、甘油三酯、低密度、高密度。口服雌激素和睾酮都可能让它变化。",r:"甘油三酯特别高，伴腹痛要警惕胰腺炎。",m:"数值、当时空腹没有、用的什么给药方式。",a:"需不需要换方式或调整饮食？"},
+ {t:"血常规和红细胞压积",tag:"化验",c:"睾酮会促进造血，红细胞压积过高会让血变稠，增加血栓风险。",r:"持续头痛、面红、胸闷、视物模糊。",m:"数值、最近有没有脱水或大量出汗。",a:"需要减量、放血还是多喝水？"},
+ {t:"肾功能和电解质",tag:"化验",c:"有些抗雄药会影响钾和肾功能，所以肌酐、血钾要一起看。",r:"乏力、心慌、肌肉无力（可能高钾）。",m:"数值、有没有同时补钾或吃保钾类药物。",a:"我的钾安全吗？要多久查一次？"},
+ {t:"血栓：谁风险高、怎么早发现",tag:"风险",c:"血栓是 HRT 最需要防的急症之一。吸烟、肥胖、久坐、有凝血病史、年龄偏大都会抬高风险。",r:"单侧小腿肿痛、突发气短胸痛、咯血——立刻就医。",m:"有没有久坐、长途旅行、吸烟、家族血栓史。",a:"我的风险算高吗？要不要做评估？"},
+ {t:"乳腺需要做什么检查",tag:"风险",c:"激素会让乳腺组织变化，定期自检和必要的影像检查能早发现问题。",r:"单侧硬块、皮肤凹陷、乳头溢液、腋下肿块。",m:"发现时间、位置、大小、有没有变化。",a:"我需要做超声还是钼靶？多久一次？"},
+ {t:"骨密度",tag:"风险",c:"长期性激素水平过低会影响骨密度，尤其是抗雄用得多、雌激素不足的时候。",r:"腰背痛、身高变矮、轻微碰撞就骨折。",m:"有没有查过骨密度、平时有没有负重运动。",a:"我需要补钙或查骨密度吗？"},
+ {t:"情绪和激素的关系",tag:"风险",c:"激素波动会影响情绪，情绪也会影响你对效果的判断。两边都要看，不要只归因于一边。",r:"持续两周以上的低落、失去兴趣、有伤害自己的念头——及时求助。",m:"每周情绪打分、和用药时间的关系。",a:"这是方案带来的，还是别的原因？"},
+ {t:"怎么挂号、挂哪个科",tag:"就医",c:"国内常见路径：三甲医院内分泌科，或精神科/心理科先做评估。部分城市有专门的性别门诊。",r:"被拒诊或不知道去哪时，别自己扛着瞎试。",m:"你所在城市、有没有试过、结果如何。",a:"本地有没有看这个的医生？"},
+ {t:"见到医生怎么说",tag:"就医",c:"三段式最有效：我现在的情况、我想要什么、我担心什么。带纸或手机备忘录，别指望临场组织语言。",r:"医生明显不熟悉时，别争辩，换个医生。",m:"把「记录 › 摘要」导出来带着。",a:"我需要做哪些检查？大概多久复诊？"},
+ {t:"复诊要带什么",tag:"就医",c:"带三样：上次的化验单、这段时间的记录、你想问的问题清单。",r:"只带一句「我不舒服」，医生很难判断。",m:"用摘要功能生成，一次带齐。",a:"这次需要调整吗？下次什么时候来？"},
+ {t:"费用大概怎么算",tag:"就医",c:"长期开销是三块：药费、化验费、复诊挂号费。化验往往比药贵，别只算药钱。",r:"中途因为钱断掉，比慢慢来更伤身体。",m:"每月大致支出、能持续多久。",a:"有没有更经济的方案？"},
+ {t:"戒烟",tag:"生活",c:"吸烟会明显增加血栓风险，这是 HRT 里最值得先处理的一件事。戒不掉也要如实告诉医生。",r:"吸烟同时出现腿肿、气短。",m:"每天几支、吸了多久、有没有尝试戒过。",a:"有没有辅助戒烟的办法？"},
+ {t:"运动和肌肉",tag:"生活",c:"激素会让肌肉量下降，靠力量训练能保住一部分力量和体型。",r:"运动后持续疼痛、心慌。",m:"每周运动次数、项目、感受。",a:"我该做哪种运动？强度怎么定？"},
+ {t:"护肤：干燥和敏感",tag:"生活",c:"激素变化后皮肤可能变干、变敏感，护肤要往简单走：温和清洁、保湿、防晒。",r:"红肿刺痛、起皮、用什么都刺激。",m:"用什么产品、什么时候开始、部位。",a:"需不需要看皮肤科？"},
+ {t:"网上剂量表为什么不能照抄",tag:"误区",c:"别人的剂量是配别人的体重、吸收、肝功能和化验结果的。照抄等于用别人的答案答自己的题。",r:"任何「通用方案」都值得怀疑。",m:"你自己的化验值和用药后的反应。",a:"我的情况适合多少？——这个问题只能问医生。"},
+ {t:"出柜前要想什么",tag:"心理",c:"先想清楚：告诉谁、什么时候、最坏的结果你能不能承受、有没有退路。不用一次告诉所有人。",r:"如果可能失去住所或经济来源，先准备好安全网。",m:"谁知道、谁支持、万一失败的退路。",a:"我需不需要先找个人商量？"},
+ {t:"怎么和家里沟通",tag:"心理",c:"先讲感受再讲概念，比一上来甩术语有用。给材料、给时间，不要指望一次谈成。",r:"对方情绪激烈时，暂停比硬碰硬好。",m:"谁比较可能支持、谁需要时间。",a:"有没有家人可以一起去的咨询？"},
+ {t:"网络信息怎么筛",tag:"心理",c:"看来源、看日期、看有没有讲风险。只讲好处、不讲监测的信息，基本可以跳过。",r:"「包治」「秘方」「不用查血」这类说法直接排除。",m:"把这个来源和别的来源对一下。",a:"这个说法有依据吗？"}
+]);
+SYM=SYM.concat([
+ {t:"性别认同不是「选择」",tag:"心理",c:"认同不是某天决定的事，更像是慢慢确认「哪种描述更像我」。有人很早清楚，有人很晚才想明白，都正常。",r:"如果长期因为这件事痛苦到影响吃饭睡觉，那不是「想太多」，值得找人谈。",m:"从什么时候开始有这种感觉、什么时候最强烈。",a:"我需不需要找专业的人聊聊？"},
+ {t:"性取向和性别认同不是一回事",tag:"心理",c:"认同回答「我是谁」，取向回答「我被谁吸引」。两者可以各自独立，也可以一起变化。",r:"被别人的标签框住而感到窒息。",m:"两个问题分开想，别混在一起。",a:"我需要现在就给自己定一个标签吗？——不需要。"},
+ {t:"内化恐跨是什么样的",tag:"心理",c:"长期听多了负面评价，人会把这些评价变成自己的声音：「我这样是不是不正常」「我太显眼了」。这不是你的错，是被环境教出来的。",r:"出现强烈的自我厌恶、羞耻到不敢出门。",m:"什么时候最明显、和谁在一起时最明显。",a:"怎么把这种声音和自己的想法分开？"},
+ {t:"性别焦虑和抑郁的区别",tag:"心理",c:"抑郁是整体情绪低落、失去兴趣；性别焦虑是针对性别相关的事难受。两者常常同时出现，但处理方式不完全一样。",r:"有伤害自己的念头——先处理这个，别的往后放。",m:"用 PHQ-9 记情绪，用记录记焦虑触发点。",a:"我需要先处理哪一个？"},
+ {t:"社交焦虑很常见",tag:"心理",c:"怕被看、怕被评价、怕说话声音。这在过渡期尤为普遍，不是性格缺陷。",r:"回避到无法上学上班、无法出门。",m:"什么场合最紧张、身体有什么反应。",a:"需要做评估吗？有没有练习的方法？"},
+ {t:"想找心理咨询，从哪开始",tag:"心理",c:"可以从三甲医院心理科/精神科、学校心理中心、或正规平台开始。第一次不一定要讲全部，讲你能讲的部分就行。",r:"遇到不专业的咨询师，可以换人，不用忍。",m:"你想解决的具体困扰、持续多久。",a:"你了解跨性别的议题吗？"},
+ {t:"自我接纳是有阶段的",tag:"心理",c:"常见的过程：否认、困惑、试探、接受、整合。有人在某个阶段停很久，也有人来回跳，都不是失败。",r:"卡在强烈羞耻里出不来。",m:"现在大概在哪个阶段、什么让你往前一步。",a:"下一步可以做的最小一件事是什么？"},
+
+ {t:"第一次去医院是什么体验",tag:"经验",c:"很多人的共同点：紧张到说不全、被问「什么时候开始的」、被要求先做心理评估。带一张写好要点的纸会轻松很多。",r:"遇到明显不友善的医生，可以换一家，不必纠缠。",m:"挂号科室、医生问的问题、开了哪些检查。",a:"下一步要做什么检查？多久复诊？"},
+ {t:"第一次自己打针",tag:"经验",c:"社区里最常被提到的几件事：手抖、扎不进去、拔针后出血、忘了消毒。多数人几次之后就熟练了。",r:"红肿扩大、发热、化脓——去医院。",m:"部位、时间、有没有不适。",a:"我的注射方法对不对？"},
+ {t:"乳房发育的真实节奏",tag:"经验",c:"很多人分享：前几个月只有胀痛和硬核，半年后才看得出轮廓，一年后才比较明显。两侧不同步非常常见。",r:"单侧硬块、皮肤凹陷、溢液。",m:"每月同一时间拍同角度照片，比凭感觉准。",a:"我这个节奏正常吗？"},
+ {t:"被认出来，或者被误认",tag:"经验",c:"有人被叫对了会很开心，也有人被盯着看会很不舒服。多数人的经验是：越在意越紧张，越自然越少被注意。",r:"被尾随、被拍、被骚扰——先保证安全，再考虑报警。",m:"什么场合、对方做了什么、你的感受。",a:"遇到这种情况怎么处理更安全？"},
+ {t:"声音训练怎么开始",tag:"经验",c:"社区里常见做法：先练气息和共鸣位置，再练音高；每天短时间、贵在坚持。很多人说比想象中难，但确实有效。",r:"练到嗓子疼、嘶哑超过两周——停下休息。",m:"每天练多久、什么动作最有效。",a:"有没有靠谱的训练资源？"},
+ {t:"家里人的反应",tag:"经验",c:"常见的不只是「反对」和「支持」，更多是长时间的沉默、反复、慢慢松动。有人用一年才接受。",r:"出现暴力或断经济来源，先保证安全。",m:"谁知道了、态度怎么变化。",a:"要不要找人一起和家里谈？"},
+ {t:"怎么找到同类的社群",tag:"经验",c:"社群的价值在于「有人走过这条路」。但也要挑：能讲风险、不推销、不逼你按某个标准活的，才值得待。",r:"有人开始卖药、拉你私聊转账——立刻退。",m:"你在哪些社群、感觉如何。",a:"这个社群里有没有可以请教的人？"},
+ {t:"拍照记录变化",tag:"经验",c:"很多人后悔没早点开始拍。固定角度、固定光线、每个月一张，一年后回看最有说服力。",r:"不要为了对比强迫自己看不想看的角度。",m:"用「记录」记日期，照片存本地。",a:"需要记录哪些角度？"},
+ {t:"名字和证件",tag:"经验",c:"改名、改证件性别在不同地方流程差别很大，通常需要医院证明或评估材料。越早开始收集材料越好。",r:"有人声称「代办证件」——基本是骗局。",m:"当地要求、已准备的材料。",a:"本地具体流程是什么？"},
+ {t:"校园和职场",tag:"经验",c:"很多人的经验是：先小范围告诉一两个人，观察反应，再决定范围。比起一次摊牌，渐进更安全。",r:"被公开、被议论、被排挤——留证据，找可信的成年人或 HR。",m:"告诉过谁、反应如何。",a:"学校或公司有没有相关规定？"},
+ {t:"怎么判断网上的信息靠不靠谱",tag:"经验",c:"三个标准：有没有说清风险、有没有讲监测、有没有催你立刻行动。只讲好处又催你的，通常是生意。",r:"「包好」「秘方」「保证效果」——直接跳过。",m:"多个来源对比一下再决定。",a:"这个说法有依据吗？"}
+]);
+SYM=SYM.concat([
+ {t:"熬夜、作息乱",tag:"生活",c:"睡不够会直接影响情绪、食欲和判断力，也会让激素的波动更明显。很多人说「感觉药不管用了」，其实是连续几天没睡好。",r:"连续熬夜后出现心慌、明显低落、白天无法正常工作学习——别硬扛，先规律睡眠。",m:"几点睡、睡几小时、第二天状态，记一周就能看出规律。",a:"我的情绪波动和睡眠有没有关系？需要调整作息吗？"},
+ {t:"喝酒和抽烟",tag:"生活",c:"酒精会影响肝脏代谢，抽烟会明显增加血栓风险。这两样都会和你正在做的事互相拖累。",r:"喝酒后出现明显不适、吃药后喝酒、每天吸烟——都要告诉医生。",m:"一周喝几次、每次多少；每天几支烟。",a:"我需要先戒哪一样？有没有辅助的办法？"},
+ {t:"作息调整的小办法",tag:"生活",c:"固定起床时间比固定睡觉时间更有用。睡前少看屏幕、白天晒点太阳，比硬躺有用。",r:"长期入睡困难超过一个月，白天完全受影响。",m:"连续两周记录入睡和起床时间。",a:"需不需要先处理睡眠问题？"}
+]);
+SYM=SYM.concat([
+ {t:"衣服尺码和版型怎么选",tag:"生活",c:"女装尺码不统一，同一个码在不同牌子能差两号。比起码数，看肩宽、胸围、腰围这几个实测尺寸更准。",r:"试穿时肩线掉到手臂、腋下卡住，说明肩宽不对，换版型比换码更有效。",m:"记下自己合身的肩宽、胸围、腰围，买衣服直接对这三个数。",a:"我这个身形适合哪种版型？"},
+ {t:"内衣和胸罩怎么挑",tag:"生活",c:"下胸围决定底围，上胸围减下胸围决定杯型。发育期变化快，别一次买太多。",r:"钢圈压胸、肩带勒出红印、底围上滑——都是尺码不对。",m:"每两三个月量一次上、下胸围。",a:"我现在该选哪种杯型？"},
+ {t:"化妆入门：先学遮和修",tag:"生活",c:"新手最有用的是两件事：遮住胡青、把轮廓修柔和。其他的可以慢慢来。",r:"皮肤刺痛、闷痘、卸不干净——先停用。",m:"用的什么产品、有没有过敏。",a:"我的肤色适合什么色号？"},
+ {t:"胡青怎么遮",tag:"生活",c:"胡青偏蓝灰，直接用遮瑕膏会发灰。先用橘色或桃色的校正产品压掉青，再上粉底。",r:"皮肤发炎、毛囊炎期间先别遮。",m:"用的校正色和粉底搭配。",a:"我需要先做脱毛还是先学遮？"},
+ {t:"脱毛方式怎么选",tag:"生活",c:"剃毛快但维持短，蜜蜡维持久但疼，激光对深色毛发最有效。激素会让体毛变细变慢，但已经粗硬的很难自己消退。",r:"剃后大片红疹、毛囊炎反复。",m:"方式、部位、维持时间、有没有刺激。",a:"我适合哪种？要注意什么？"},
+ {t:"发型和脸型",tag:"生活",c:"想柔化轮廓，重点是挡住硬线条：侧分、刘海、层次都能用。发量少的人别选太贴头皮的直发。",r:"头皮发痒、掉发明显增加。",m:"喜欢的风格、发量和发质。",a:"我适合什么发型？"},
+ {t:"饮食：蛋白质和糖",tag:"生活",c:"激素会让肌肉量下降，蛋白质吃够能保住一部分。糖吃多会让血糖和情绪一起波动。",r:"突然掉秤、持续乏力、暴食。",m:"每天大概吃什么、体重变化。",a:"我需要补蛋白吗？"},
+ {t:"公共场合的小技巧",tag:"生活",c:"很多人会准备几个小习惯：提前看好洗手间位置、包里备一件外套、说话时降低音量靠气息。",r:"被尾随、被拍、被骚扰——先保证安全再报警。",m:"什么场合让你最紧张。",a:"遇到麻烦怎么处理更安全？"},
+ {t:"声音日常怎么练",tag:"生活",c:"重点不是把嗓子捏尖，而是把发声位置往上提、加上气息。每天练 5 分钟，比一次练半小时有效。",r:"嗓子疼、嘶哑超过两周——停下休息。",m:"每天练多久、哪种练习最有用。",a:"有没有靠谱的练习资源？"}
+]);
 var HIS=[];
 function loadHis(){try{var a=JSON.parse(localStorage.getItem("hrthub.his")||"[]");if(Array.isArray(a))HIS=a}catch(e){HIS=[]}}
 function saveHis(){try{localStorage.setItem("hrthub.his",JSON.stringify(HIS))}catch(e){}}
@@ -997,31 +2161,213 @@ function renderHis(){
   box.appendChild(head);box.appendChild(wrap);
   box.style.display="";
 }
-function renderSym(q){
-  var box=$("symList");box.innerHTML="";
-  var k=(q||"").trim().toLowerCase();
-  var list=SYM.filter(function(s){
-    if(!k)return true;
-    return (s.t+s.c+s.r+s.m+s.a+s.tag).toLowerCase().indexOf(k)>=0;
-  });
-  if(!list.length){box.innerHTML='<p class="hint">没找到。换个词试试，或者把症状写进「摘要」里带去问医生。</p>';return}
-  list.forEach(function(s){
-    var d=document.createElement("details");
-    var sum=document.createElement("summary");
-    sum.appendChild(document.createTextNode(s.t));
-    var tg=document.createElement("span");tg.className="tag";tg.textContent=s.tag;
-    sum.appendChild(tg);
-    d.appendChild(sum);
-    [["常见情况",s.c],["要立刻就医的信号",s.r],["记下来",s.m],["问医生",s.a]].forEach(function(p){
-      var kv=document.createElement("div");kv.className="kv";
-      var b=document.createElement("b");b.textContent=p[0];
-      kv.appendChild(b);kv.appendChild(document.createTextNode(p[1]));
-      d.appendChild(kv);
+var SYN=[
+ ["胸","乳房","胸部","乳腺"],
+ ["腿肿","水肿","浮肿","肿胀"],
+ ["头晕","眩晕","头昏"],
+ ["吃药","用药","服药","药物"],
+ ["停药","断药","减量"],
+ ["漏服","忘记吃药","漏药"],
+ ["打针","注射","针"],
+ ["抽血","化验","血检","查血"],
+ ["肝","肝功能","转氨酶"],
+ ["血压","高血压"],
+ ["脱发","掉发","头发"],
+ ["情绪","心情","低落","抑郁"],
+ ["失眠","睡不着","睡眠","熬夜","晚睡","通宵","作息","早睡"],
+ ["体重","长胖","胖"],
+ ["声音","嗓子","音"],
+ ["胡须","胡子","体毛","毛发"],
+ ["孕酮","孕激素","黄体酮"],
+ ["雌激素","雌二醇"],
+ ["抗雄","雄激素"],
+ ["副作用","不良反应","反应"],
+ ["头疼","头痛"],
+ ["心跳","心慌","心悸"],
+ ["胸闷","气短","喘"],
+ ["月经","周期","出血"],
+ ["检查","体检","复查"],
+ ["抽烟","吸烟","香烟","烟"],
+ ["喝酒","饮酒","酒精","酒"],
+ ["服装","衣服","穿搭","版型","尺码","肩宽"],
+ ["化妆","妆容","粉底","遮瑕","口红"],
+ ["皮肤","肤质","出油","痘痘","毛孔"],
+ ["发育","长大","生长"],
+ ["脂肪","体型","身材","分布"],
+ ["脸","面部","轮廓","脸颊"],
+ ["肌肉","力气","力量"],
+ ["体味","出汗","汗味","味道"]
+];
+function expandQ(q){
+  var out={};out[q]=1;
+  SYN.forEach(function(g){
+    var hit=false;
+    for(var i=0;i<g.length;i++){
+      if(g[i].indexOf(q)>=0){hit=true;break}
+    }
+    if(hit)g.forEach(function(w){
+      if(q.length>=2||w.indexOf(q)>=0)out[w]=1;
     });
-    box.appendChild(d);
+  });
+  return Object.keys(out);
+}
+var dailyTimer=null,dailyIdx=0;
+function stopDaily(){if(dailyTimer){clearInterval(dailyTimer);dailyTimer=null}}
+function fillDaily(){
+  var wrap=$("dailyWrap");
+  if(!wrap)return;
+  var x=SYM[dailyIdx%SYM.length];
+  wrap.innerHTML="";
+  var card=document.createElement("div");
+  card.className="daily";card.id="dailyCard";
+  var head=document.createElement("div");head.className="daily-h";
+  var tag=document.createElement("span");tag.className="tag";tag.textContent=x.tag;
+  head.appendChild(tag);
+  head.appendChild(document.createTextNode(x.t));
+  card.appendChild(head);
+  [["常见情况",x.c],["要立刻就医的信号",x.r],["记下来",x.m],["问医生",x.a]].forEach(function(pp){
+    var kv=document.createElement("div");kv.className="kv";
+    var bb=document.createElement("b");bb.textContent=pp[0];
+    kv.appendChild(bb);kv.appendChild(document.createTextNode(pp[1]));
+    card.appendChild(kv);
+  });
+  var foot=document.createElement("div");foot.className="daily-f";
+  foot.textContent="每日一条 · 输入关键词可看全部";
+  card.appendChild(foot);
+  wrap.appendChild(card);
+  startDailyBar();
+}
+function startDailyBar(){
+  var old=document.querySelector("#dailyWrap .daily-bar");
+  if(old)old.remove();
+  var bar=document.createElement("div");bar.className="daily-bar";
+  var i=document.createElement("i");bar.appendChild(i);
+  $("dailyWrap").appendChild(bar);
+}
+function openSymDetail(x){
+  pushLayer(function(){closeSymDetail()});
+  $("symDetailTitle").textContent=x.t;
+  var body=$("symDetailBody");
+  body.innerHTML="";
+  var tag=document.createElement("span");tag.className="tag";tag.textContent=x.tag;
+  tag.style.marginBottom="8px";tag.style.display="inline-block";
+  body.appendChild(tag);
+  [["常见情况",x.c],["要立刻就医的信号",x.r],["记下来",x.m],["问医生",x.a]].forEach(function(pp){
+    var kv=document.createElement("div");kv.className="kv";
+    var bb=document.createElement("b");bb.textContent=pp[0];
+    kv.appendChild(bb);kv.appendChild(document.createTextNode(pp[1]));
+    body.appendChild(kv);
+  });
+  $("resBox").style.display="none";
+  $("symDetail").style.display="";
+  window.scrollTo(0,0);
+}
+function closeSymDetail(){
+  if(!inPop&&popLayer())return;
+  $("symDetail").style.display="none";
+  $("resBox").style.display="";
+  window.scrollTo(0,0);
+}
+$("symDetailClose").addEventListener("click",closeSymDetail);
+function nextDaily(){
+  var card=$("dailyCard");
+  if(!card){fillDaily();return}
+  card.classList.add("out");
+  setTimeout(function(){
+    dailyIdx=(dailyIdx+1)%SYM.length;
+    fillDaily();
+    var nc=$("dailyCard");
+    if(nc){
+      nc.classList.add("in");
+      nc.classList.remove("out");
+      setTimeout(function(){nc.classList.remove("in")},900);
+    }
+  },400);
+}
+function startDaily(){
+  var wrap=$("dailyWrap");
+  if(wrap)wrap.style.display="";
+  fillDaily();
+  stopDaily();
+  dailyTimer=setInterval(function(){
+    if($("tab-sym").classList.contains("active"))nextDaily();
+  },6000);
+}
+function renderSym(q){
+  var res=$("resBox"),rel=$("symRel"),box=$("symList"),daily=$("dailyWrap");
+  var k=(q||"").trim().toLowerCase();
+  if(!k){
+    if(rel){rel.style.display="none";rel.textContent=""}
+    box.innerHTML="";
+    if(daily)daily.style.display="";
+    startDaily();
+    return;
+  }
+  stopDaily();
+  if(daily)daily.style.display="none";
+  if(res)res.style.display="";
+  var terms=expandQ(k);
+  if(rel){
+    if(terms.length>1){
+      rel.textContent="也在找："+terms.filter(function(t){return t!==k}).join("、");
+      rel.style.display="";
+    }else{rel.textContent="";rel.style.display="none"}
+  }
+  var list=SYM.filter(function(x){
+    var text=(x.t+x.c+x.r+x.m+x.a+x.tag).toLowerCase();
+    for(var i=0;i<terms.length;i++){if(text.indexOf(terms[i])>=0)return true}
+    return false;
+  }).sort(function(p1,p2){
+    var a1=p1.t.toLowerCase().indexOf(k)>=0?0:1;
+    var a2=p2.t.toLowerCase().indexOf(k)>=0?0:1;
+    return a1-a2;
+  });
+  box.innerHTML="";
+  if(!list.length){
+    box.innerHTML='<p class="hint" style="margin:12px 0 4px">没找到。换个词试试，或者把症状写进「摘要」里带去问医生。</p>';
+    return;
+  }
+  var head=document.createElement("div");head.className="cardhead";
+  var sp=document.createElement("span");sp.textContent="找到 "+list.length+" 条";
+  head.appendChild(sp);box.appendChild(head);
+  list.forEach(function(x,ii){
+    var row=document.createElement("div");
+    row.className="hitrow";
+    row.style.animationDelay=Math.min(ii*30,360)+"ms";
+    var b=document.createElement("div");b.className="b";
+    var n=document.createElement("div");n.className="n";
+    var tag=document.createElement("span");tag.className="tag";tag.textContent=x.tag;
+    n.appendChild(tag);n.appendChild(document.createTextNode(x.t));
+    b.appendChild(n);
+    row.appendChild(b);
+    var ch=document.createElement("span");ch.className="chev";ch.textContent="›";
+    row.appendChild(ch);
+    row.addEventListener("click",function(){openSymDetail(x)});
+    box.appendChild(row);
   });
 }
-$("symQ").addEventListener("input",function(){renderSym(this.value)});
+$("symQ").addEventListener("input",function(){
+  renderSym(this.value);renderSite(this.value);
+  var that=this;
+  showSuggest($("symSug"),symPool(),this.value,function(t){
+    that.value=t;renderSym(t);renderSite(t);
+  });
+});
+$("symQuick").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){
+    var q=c.getAttribute("data-q");
+    $("symQ").value=q;
+    renderSym(q);renderSite(q);
+    $("symQuick").querySelectorAll(".chip").forEach(function(x){x.classList.toggle("on",x===c)});
+  });
+});
+$("logQ").addEventListener("input",function(){
+  var that=this;
+  logQ=this.value;renderLog();
+  showSuggest($("logSug"),logPool(),this.value,function(t){
+    that.value=t;logQ=t;renderLog();
+  });
+});
 $("symQ").addEventListener("focus",function(){renderHis()});
 $("symQ").addEventListener("change",function(){pushHis(this.value)});
 $("symQ").addEventListener("keydown",function(e){
@@ -1061,9 +2407,20 @@ function buildSummary(){
       L.push("- "+parts+(e.note?"（"+e.note+"）":""));
     });
     L.push("");
-  }else{
-    L.push("> 这段时间没有用药记录。");
+  }else if(!all.length){
+    L.push("> 这段时间没有记录。");
     L.push("");
+  }
+  var noteE=all.filter(function(e){return typeOf(e)==="note"});
+  if(noteE.length){
+    L.push("## 随笔");
+    L.push("");
+    noteE.forEach(function(e){
+      L.push("### "+e.at.slice(0,10)+" · "+entryTitle(e));
+      L.push("");
+      if(e.note)L.push(e.note);
+      L.push("");
+    });
   }
   if(bodies.length){
     L.push("## 身体变化");
@@ -1260,6 +2617,110 @@ QCFG.gad7.extra=[
  "担心影响到睡眠",
  "因为这些事去看过医生"
 ];
+/* ---------- HRT 知识测验 ---------- */
+QCFG.hrt={
+  kind:"knowledge",title:"HRT 知识测验",base:10,
+  intro:"考考常识。答错不丢人，看解释比分数重要。",
+  items:[
+   {q:"觉得效果来得慢，把剂量加大一点，会让变化更快出现吗？",
+    o:["会，量越大越快","不会，只增加风险","看个人体质","不确定"],a:1,
+    why:"血药浓度有目标区间。超过区间不会加速变化，只会抬高血栓、肝损、催乳素升高的风险。"},
+   {q:"复方避孕药能不能当作雌激素来用？",
+    o:["能，成分差不多","不能，风险不同","短期可以","看情况"],a:1,
+    why:"复方避孕药常含炔雌醇，和医用雌二醇不是一回事，血栓风险明显更高，剂量也很难精确控制。"},
+   {q:"激素能让已经变声的嗓子重新变高吗？",
+    o:["能，坚持就有效","不能，要靠训练","只能变一点","看年龄"],a:1,
+    why:"声带结构在青春期后已经定型。激素基本不改变音高，需要靠语音训练。"},
+   {q:"下面哪一项通常不会因为 HRT 而改变？",
+    o:["皮肤出油","脂肪分布","骨骼和喉结","肌肉量"],a:2,
+    why:"骨骼、喉结这些已经定型的结构不会因激素改变。脂肪、皮肤、肌肉量会变。"},
+   {q:"开始 HRT 以后，需要定期查哪些？",
+    o:["只查激素","激素和肝功","加上血脂和血常规","以上都要"],a:3,
+    why:"常见监测项包括肝肾功能、血脂、血常规、激素水平，部分方案还要催乳素。"},
+   {q:"突然出现单侧小腿肿痛，最该做的是？",
+    o:["先观察几天","冷敷","立刻就医","换一双鞋"],a:2,
+    why:"单侧下肢肿痛要优先排除血栓，这是不能等的情况。越早就医越好。"},
+   {q:"抗雄药的作用是什么？",
+    o:["直接让胸部发育","把雄激素压下去","补充雌激素","改善情绪"],a:1,
+    why:"抗雄本身不是「女性化药」，它是把雄激素压住，让雌激素能起作用。"},
+   {q:"乳房的发育大概需要多长时间接近完成？",
+    o:["几周","三到六个月","一到三年","五年以上"],a:2,
+    why:"通常 1 到 3 年，个体差异很大。前几个月往往只有胀痛和乳核。"},
+   {q:"不小心漏服了一次，一般应该怎么处理？",
+    o:["下次吃双倍补回来","按原计划继续，别加倍","干脆停两天","无所谓"],a:1,
+    why:"偶尔漏一次很常见。加倍补并不会更好，反而可能让血药浓度波动更大。"},
+   {q:"突然停掉激素，身体通常会怎样？",
+    o:["没什么变化","会慢慢恢复原状","水平骤降，可能情绪反弹","效果会保留"],a:2,
+    why:"突然停会让激素水平骤降，情绪和身体都会有反弹。想停应该慢慢来并与医生讨论。"},
+   {q:"睾酮治疗里，尤其要盯哪一项指标？",
+    o:["血糖","红细胞压积","尿酸","视力"],a:1,
+    why:"睾酮促进造血，红细胞压积过高会增加血栓风险，需要定期查血常规。"},
+   {q:"催乳素升高通常和什么有关？",
+    o:["和 HRT 完全无关","部分抗雄药和雌激素","只和睡眠有关","只和饮食有关"],a:1,
+    why:"部分抗雄药（如环丙孕酮）和雌激素都可能让催乳素升高，需要复查确认。"},
+   {q:"吸烟对 HRT 最主要的影响是什么？",
+    o:["影响不大","降低效果","明显增加血栓风险","让药失效"],a:2,
+    why:"吸烟会明显增加血栓风险，这是开始 HRT 之前最值得先处理的一件事。"},
+   {q:"关于孕激素，下面哪种说法更接近事实？",
+    o:["证据和雌激素一样充分","证据不如雌激素充分","完全没有作用","必须加"],a:1,
+    why:"孕激素在部分方案里用于乳房发育或情绪，但证据不如雌激素充分，副作用要单独评估。"},
+   {q:"HRT 之后，已经长出来的粗硬胡须会？",
+    o:["完全消失","明显变软消失","长得变慢，但不完全消退","反而变多"],a:2,
+    why:"体毛会变细、长得变慢，但已经粗硬的胡须通常要靠脱毛处理。"},
+   {q:"脂肪重新分布一般在什么时候比较明显？",
+    o:["一周内","三个月内","三到十二个月","三年以后"],a:2,
+    why:"通常 3 到 12 个月变化最明显，腰臀比例会逐渐改变。"},
+   {q:"口服和经皮给药，对血脂的影响哪个更大？",
+    o:["经皮更大","口服更大","一样","都没有影响"],a:1,
+    why:"口服要经过肝脏首过代谢，对血脂和凝血因子的影响比经皮大一些。"},
+   {q:"出现眼白发黄、右上腹痛，应该？",
+    o:["继续观察","多喝水","立刻停并就医","换个牌子"],a:2,
+    why:"这是肝损伤的信号，要立刻停用并就医，别拖。"},
+   {q:"「剂量越高效果越好」这句话？",
+    o:["对","错","看年龄","看体重"],a:1,
+    why:"错。剂量和效果不是线性关系，超出区间只增加风险。"},
+   {q:"想保留生育能力，应该在什么时候和医生谈？",
+    o:["开始之前","用了一年之后","结婚时","想起来再说"],a:0,
+    why:"有些变化发生后不可逆，所以要保留生育能力必须在开始之前就谈。"}
+  ]
+};
+function qShowKnowledgeResult(){
+  var z=lastQuiz;
+  var pct=Math.round(z.score/z.total*100);
+  var grade=pct>=90?"很扎实":pct>=70?"基本清楚":pct>=50?"还差一点":"建议再过一遍";
+  var html='<div class="card res">'+
+    '<div class="cardhead"><span>成绩<button class="help" type="button" data-help="knowRes">?</button></span><span class="tag">'+z.title+'</span></div>'+
+    '<div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 4px">'+
+    '<span style="font-size:34px;font-weight:700;color:var(--pink-d)">'+z.score+'</span>'+
+    '<span style="color:var(--dim);font-size:13px">/ '+z.total+' 题 · '+pct+'%</span></div>'+
+    '<p style="font-size:15px"><b>'+grade+'</b></p>'+
+    '<p class="hint" style="margin:10px 0 0">答对 '+z.score+' 题，答错 '+(z.total-z.score)+' 题。下面只列答错的。</p>'+
+    '</div>';
+  if(z.wrong.length){
+    html+='<div class="card"><div class="cardhead"><span>答错的 '+z.wrong.length+' 题</span></div>';
+    z.wrong.forEach(function(w,i){
+      html+='<div class="kv" style="margin-top:14px"><b>第 '+(i+1)+' 题</b>'+
+        '<div style="font-size:15px;margin:4px 0 6px">'+esc(w.q)+'</div>'+
+        '<div style="font-size:14px;color:#8A3B52;margin-bottom:4px">你选：'+esc(w.chose)+'</div>'+
+        '<div style="font-size:14px;color:#1D6F8C;margin-bottom:4px">正确：'+esc(w.right)+'</div>'+
+        '<div style="font-size:14px;line-height:1.65">'+esc(w.why)+'</div></div>';
+    });
+    html+='</div>';
+  }else{
+    html+='<div class="card"><div class="cardhead"><span>全对</span></div><p>一题没错。这个程度的常识，去找医生谈方案时会轻松很多。</p></div>';
+  }
+  html+='<div class="card"><div class="cardhead"><span>保存<button class="help" type="button" data-help="resSave">?</button></span></div>'+
+    '<button class="primary" id="qSave">把这次成绩存进记录</button>'+
+    '<div class="row2"><button class="ghost" id="qAgain">重做</button><button class="ghost" id="qHome2">回到测验</button></div></div>';
+  $("qResult").innerHTML=html;
+  qView("result");
+  $("qSave").addEventListener("click",function(){
+    saveQuizRecord(z.score+"/"+z.total+" 题 · "+pct+"%");
+  });
+  $("qAgain").addEventListener("click",function(){qStart("hrt",z.mode)});
+  $("qHome2").addEventListener("click",function(){qView("home");renderQuizHistory()});
+}
+
 var cur={id:"",cfg:null,mode:1,idx:0,ans:[],perm:[]};
 var lastQuiz=null;
 
@@ -1281,6 +2742,7 @@ function qItem(i){
   return c.items[i];
 }
 function qView(which){
+  if($("qHisView")&&which!=="home")$("qHisView").classList.add("hidden");
   $("qHome").style.display=which==="home"?"":"none";
   $("qRun").style.display=which==="run"?"":"none";
   $("qResult").style.display=which==="result"?"":"none";
@@ -1316,7 +2778,7 @@ function qRender(){
   var box=$("qOpts");box.innerHTML="";
   var order=cur.perm[cur.idx]||[];
   order.forEach(function(oi){
-    var txt=cur.cfg.kind==="scale"?cur.cfg.options[oi]:it.o[oi][0];
+    var txt=cur.cfg.kind==="scale"?cur.cfg.options[oi]:(cur.cfg.kind==="knowledge"?it.o[oi]:it.o[oi][0]);
     var b=document.createElement("button");
     b.className="opt";b.type="button";b.textContent=txt;
     b.addEventListener("click",function(){qPick(oi)});
@@ -1330,6 +2792,19 @@ function qPick(i){
 }
 function qFinish(){
   var tot=qTotal();
+  if(cur.cfg.kind==="knowledge"){
+    var right=0,wrong=[];
+    for(var k=0;k<tot;k++){
+      var it=cur.cfg.items[k],pick=cur.ans[k];
+      if(pick===it.a)right++;
+      else wrong.push({q:it.q,chose:it.o[pick],right:it.o[it.a],why:it.why});
+    }
+    lastQuiz={at:Date.now(),kind:"knowledge",id:"hrt",title:cur.cfg.title,
+      score:right,total:tot,wrong:wrong,mode:cur.mode};
+    qShowKnowledgeResult();
+    window.scrollTo(0,0);
+    return;
+  }
   if(cur.cfg.kind==="scale"){
     var base=cur.cfg.items.length;
     var score=0,item9=0,extraHit=0;
@@ -1389,7 +2864,8 @@ function saveQuizRecord(entryNote){
   DB.quiz.push(lastQuiz);
   DB.entries.push({id:uid(),type:"quiz",title:lastQuiz.title,at:nowLocal(),note:entryNote});
   save();renderLog();renderQuizHistory();
-  toast("已存进记录");
+  var last=DB.entries[DB.entries.length-1];
+  noticeSaved(lastQuiz.title,last?last.id:"");
 }
 function qShowDistResult(){
   var z=lastQuiz,r=z.r,cfg=cur.cfg;
@@ -1450,7 +2926,7 @@ function qShowScaleResult(){
   else advice="这个分数建议尽快找精神科或心理科评估，不要自己扛着，也不要靠加药或喝酒来顶。";
   var crisis="";
   if(z.item9>0){
-    crisis='<div class="card warn" style="margin-top:12px"><b>关于第 9 题</b><p style="margin:6px 0 0">你选了有伤害自己的念头。这种情况不要一个人扛：现在就联系一个你信得过的人，或者去最近的医院急诊／精神科；如果你觉得自己马上会做伤害自己的事，拨 120。</p></div>';
+    crisis='<div class="card warn" style="margin-top:12px"><b>关于第 9 题</b><p style="margin:6px 0 0">你选了有伤害自己的念头。这种情况不要一个人扛：现在就联系一个你信得过的人，或者去最近的医院急诊／精神科；如果你觉得自己马上会做伤害自己的事，拨 120；也可以打全国心理援助热线 12356。</p></div>';
   }
   var html='<div class="card res">'+
     '<div class="cardhead"><span>结果<button class="help" type="button" data-help="scaleRes">?</button></span><span class="tag">'+z.title+'</span></div>'+
@@ -1472,13 +2948,15 @@ function qShowScaleResult(){
 }
 function renderQuizHistory(){
   var box=$("qHistory");if(!box)return;
+  if($("quizHisCount"))$("quizHisCount").textContent=(DB.quiz||[]).length+" 次";
   var list=DB.quiz||[];
   if(!list.length){box.innerHTML="";return}
   var html='<div class="card"><div class="cardhead"><span>测过的结果</span><span>'+list.length+' 次</span></div>';
   list.slice().reverse().forEach(function(z){
     var d=new Date(z.at);
     var head="",sub="";
-    if(z.kind==="scale"){head=z.title+" "+z.score+"/"+z.max;sub=z.band}
+    if(z.kind==="knowledge"){head=z.title+" "+z.score+"/"+z.total;sub=Math.round(z.score/z.total*100)+"%"}
+    else if(z.kind==="scale"){head=z.title+" "+z.score+"/"+z.max;sub=z.band}
     else{
       var arr=Object.keys(z.r).map(function(k){return [k,z.r[k]]}).sort(function(x,y){return y[1]-x[1]});
       var labels={f:"女性",m:"男性",n:"非二元",u:"仍在探索",w:"偏向女性",b:"双向或多向",a:"少有吸引"};
@@ -1502,7 +2980,27 @@ function renderQuizHistory(){
 }
 
 /* ---------- 我的（本机） ---------- */
-var PRO={name:"",avatar:"",bg:"",bgAlpha:60};
+var PRO={name:"",avatar:"",bg:"",bgAlpha:60,theme:"auto",font:"m",frame:"none",nameFx:"none"};
+var THEME_MQ=(window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null);
+function applyTheme(){
+  var t=PRO.theme||"auto";
+  var dark=(t==="dark")||(t==="auto"&&THEME_MQ&&THEME_MQ.matches);
+  document.documentElement.setAttribute("data-theme",dark?"dark":"light");
+  var m=document.querySelector('meta[name="theme-color"]');
+  if(m)m.setAttribute("content",dark?"#0D1218":"#5BCEFA");
+  var box=$("themeChips");
+  if(box)box.querySelectorAll(".chip").forEach(function(c){
+    c.classList.toggle("on",c.getAttribute("data-theme")===t);
+  });
+}
+function applyFont(){
+  var f=PRO.font||"m";
+  document.body.style.zoom=(f==="l")?"1.12":(f==="s"?"0.94":"1");
+  var box=$("fontChips");
+  if(box)box.querySelectorAll(".chip").forEach(function(c){
+    c.classList.toggle("on",c.getAttribute("data-font")===f);
+  });
+}
 function saveProfile(){try{localStorage.setItem("hrthub.profile",JSON.stringify(PRO))}catch(e){toast("存不下了，换张小一点的图")}}
 function loadProfile(){
   try{
@@ -1511,7 +3009,7 @@ function loadProfile(){
   }catch(e){}
   applyProfile();
 }
-var TAB_NAMES={me:"主页",log:"记录",table:"表格",med:"用药",remind:"提醒",sym:"搜索",quiz:"测验",sum:"摘要"};
+var TAB_NAMES={me:"主页",log:"记录",remind:"提醒",sym:"搜索",quiz:"测验",game:"游戏",social:"社交"};
 function currentTab(){
   var el=document.querySelector(".tab.active");
   return el?el.id.replace("tab-",""):"me";
@@ -1531,21 +3029,34 @@ function updateChip(){
   else av.textContent=(PRO.name||"我").slice(0,1);
   nm.textContent=PRO.name||"我的";
 }
+var FRAME_CLS={none:"",ring:"fr-ring",grad:"fr-grad",orbit:"fr-orbit"};
+var NAMEFX_CLS={none:"",grad:"nf-grad",shine:"nf-shine"};
+function paintLook(){
+  ["avatarBox","avatarBox2"].forEach(function(id){
+    var el=$(id);if(!el)return;
+    el.className="avatar "+(FRAME_CLS[PRO.frame||"none"]||"");
+    el.innerHTML=PRO.avatar?'<img alt="头像" src="'+PRO.avatar+'">':(PRO.name||"我").slice(0,1);
+  });
+  var nm=$("meNameBig");
+  if(nm){
+    nm.textContent=PRO.name||"还没有名字";
+    nm.className="bigname "+(NAMEFX_CLS[PRO.nameFx||"none"]||"");
+  }
+}
 function applyProfile(){
   if($("pName"))$("pName").value=PRO.name||"";
   refreshTitle();
+  applyTheme();
+  applyFont();
   updateChip();
-  var box=$("avatarBox");
-  if(box){
-    if(PRO.avatar)box.innerHTML='<img alt="头像" src="'+PRO.avatar+'">';
-    else box.textContent=(PRO.name||"我").slice(0,1);
-  }
+  paintLook();
   var v=(typeof PRO.bgAlpha==="number")?PRO.bgAlpha:60;
   if($("bgAlpha"))$("bgAlpha").value=v;
   if(PRO.bg){
     var a=(0.92-0.8*(v/100)).toFixed(3);
+    var base=(document.documentElement.getAttribute("data-theme")==="dark")?"13,18,24":"255,255,255";
     document.body.style.backgroundImage=
-      "linear-gradient(rgba(255,255,255,"+a+"),rgba(255,255,255,"+a+")),url("+JSON.stringify(PRO.bg)+")";
+      "linear-gradient(rgba("+base+","+a+"),rgba("+base+","+a+")),url("+JSON.stringify(PRO.bg)+")";
     document.body.style.backgroundSize="cover";
     document.body.style.backgroundPosition="center";
     document.body.style.backgroundAttachment="fixed";
@@ -1702,13 +3213,80 @@ function medFinish(){
     var txt=[];
     if(risk.length)txt.push("风险：" + risk.join("；"));
     if(prep.length)txt.push("待办：" + prep.join("；"));
-    DB.entries.push({id:uid(),type:"note",title:"用药准备评估",at:nowLocal(),
-      note:(txt.join(" ｜ ")||"准备清单已完成").slice(0,300)});
-    save();renderLog();toast("已存进记录");
+    var e={id:uid(),type:"note",title:"用药准备评估",at:nowLocal(),
+      note:(txt.join(" ｜ ")||"准备清单已完成").slice(0,300)};
+    DB.entries.push(e);
+    save();renderLog();noticeSaved("用药准备评估",e.id);
   });
   $("medAgain").addEventListener("click",medStart);
   $("medHome").addEventListener("click",function(){medView("intro")});
 }
+
+/* ---------- 社交（投稿制） ---------- */
+var SOCIAL=[];
+function postTemplate(){
+  return "【投稿】新鲜事\n\n想分享的事：\n\n\n（可以附一张图或一个文件，在邮件里点添加附件）\n"+
+    "要不要署名：要 / 不要\n联系方式（可选）：\n";
+}
+function mailtoUrl(){
+  return "mailto:libibocom@qq.com?subject="+encodeURIComponent("投稿：新鲜事")+
+    "&body="+encodeURIComponent(postTemplate());
+}
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){toast("已复制")},function(){toast("复制失败，长按手动选")});
+  }else toast(t);
+}
+function renderSocial(q){
+  var box=$("soList");
+  if(!box)return;
+  box.innerHTML="";
+  if(!SOCIAL.length){
+    box.innerHTML='<p class="hint" style="margin-top:10px">还没有新鲜事。第一批会在每周整理投稿后上线。</p>';
+    return;
+  }
+  var k=(q||"").trim().toLowerCase();
+  var list=SOCIAL.filter(function(x){
+    if(!k)return true;
+    return (x.t+x.body+x.tag).toLowerCase().indexOf(k)>=0;
+  });
+  if(!list.length){box.innerHTML='<p class="hint" style="margin-top:10px">没找到。换个词试试。</p>';return}
+  list.forEach(function(x){
+    var row=document.createElement("div");row.className="entry";
+    var b=document.createElement("div");b.className="b";
+    var n=document.createElement("div");n.className="n";n.textContent=x.t;
+    var d=document.createElement("div");d.className="d";d.textContent=x.d+" · "+x.tag;
+    var p=document.createElement("div");p.style.cssText="font-size:14px;line-height:1.65;margin-top:6px";
+    p.textContent=x.body;
+    b.appendChild(n);b.appendChild(d);b.appendChild(p);
+    row.appendChild(b);box.appendChild(row);
+  });
+}
+function postPool(){
+  var p=["投稿","新鲜事","邮箱","qq"];
+  SOCIAL.forEach(function(x){p.push(x.t)});
+  return p;
+}
+function showPost(v){
+  $("postWrap").classList.toggle("show",v);
+  $("postWrap").setAttribute("aria-hidden",v?"false":"true");
+}
+$("fabPost").addEventListener("click",function(){showPost(true)});
+$("postClose").addEventListener("click",function(){showPost(false)});
+$("postWrap").addEventListener("click",function(e){if(e.target===this)showPost(false)});
+$("postMail").addEventListener("click",function(){showPost(false);location.href=mailtoUrl()});
+$("postQq").addEventListener("click",function(){showPost(false);copyText("150516059")});
+$("postTpl").addEventListener("click",function(){showPost(false);copyText(postTemplate())});
+$("soMail").addEventListener("click",function(){location.href=mailtoUrl()});
+$("soQq").addEventListener("click",function(){copyText("150516059")});
+$("soTpl").addEventListener("click",function(){copyText(postTemplate())});
+$("soQ").addEventListener("input",function(){
+  var v=this.value;
+  renderSocial(v);
+  showSuggest($("soSug"),postPool(),v,function(t){
+    $("soQ").value=t;renderSocial(t);
+  });
+});
 
 /* ---------- 表格 ---------- */
 var curTbl=null;
@@ -1840,8 +3418,8 @@ function axisSvg(d,kind){
   function Y(v){return P+ih-(v-min)/(max-min)*ih}
   var out='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
   out+='<line x1="'+P+'" y1="'+(H-P)+'" x2="'+(W-P)+'" y2="'+(H-P)+'" stroke="#D9E9F2"/>';
-  out+='<text x="3" y="'+(P+4)+'" font-size="9" fill="#8FA3B3">'+max.toFixed(1)+'</text>';
-  out+='<text x="3" y="'+(H-P)+'" font-size="9" fill="#8FA3B3">'+min.toFixed(1)+'</text>';
+  out+='<text x="3" y="'+(P+4)+'" font-size="9" fill="var(--dim)">'+max.toFixed(1)+'</text>';
+  out+='<text x="3" y="'+(H-P)+'" font-size="9" fill="var(--dim)">'+min.toFixed(1)+'</text>';
   if(kind==="bar"){
     var step=iw/d.length,bw=Math.min(26,step*0.62);
     d.forEach(function(p,i){
@@ -1857,9 +3435,9 @@ function axisSvg(d,kind){
       out+='<circle class="pt" cx="'+(P+step2*i)+'" cy="'+Y(p[1])+'" r="3.4" fill="#fff" stroke="#2FA8CF" stroke-width="2"/>';
     });
   }
-  out+='<text x="'+P+'" y="'+(H-8)+'" font-size="9" fill="#8FA3B3">'+esc(d[0][0])+'</text>';
+  out+='<text x="'+P+'" y="'+(H-8)+'" font-size="9" fill="var(--dim)">'+esc(d[0][0])+'</text>';
   if(d.length>1){
-    out+='<text x="'+(W-P)+'" y="'+(H-8)+'" font-size="9" fill="#8FA3B3" text-anchor="end">'+esc(d[d.length-1][0])+'</text>';
+    out+='<text x="'+(W-P)+'" y="'+(H-8)+'" font-size="9" fill="var(--dim)" text-anchor="end">'+esc(d[d.length-1][0])+'</text>';
   }
   return out+'</svg>';
 }
@@ -1882,7 +3460,7 @@ function pieSvg(d){
   });
   d.slice(0,6).forEach(function(p,i){
     out+='<rect x="178" y="'+(28+i*20)+'" width="9" height="9" rx="2" fill="'+CHART_COLORS[i%6]+'"/>';
-    out+='<text x="193" y="'+(36+i*20)+'" font-size="10" fill="#4E6273">'+esc(String(p[0]).slice(0,8))+' '+Math.round(p[1])+'</text>';
+    out+='<text x="193" y="'+(36+i*20)+'" font-size="10" fill="var(--dim)">'+esc(String(p[0]).slice(0,8))+' '+Math.round(p[1])+'</text>';
   });
   return out+'</svg>';
 }
@@ -1923,36 +3501,786 @@ $("tblDel").addEventListener("click",function(){
   save();backTbl();
 });
 $("tblBack").addEventListener("click",backTbl);
+$("medCloseBtn").addEventListener("click",function(){
+  $("medWrap").style.display="none";
+  $("qHome").style.display="";
+  window.scrollTo(0,0);
+});
 $("medStart").addEventListener("click",medStart);
 $("medSkip").addEventListener("click",medSkip);
 $("medBack").addEventListener("click",function(){
   if(medState.i>0){medState.i--;medRender()}
 });
 
+/* ---------- 更新计划 ---------- */
+var PLAN_DONE=[
+ {d:"11-16",t:"最早的版本：记录、提醒、症状对照、就诊摘要",s:"done"},
+ {d:"11-17",t:"加测验（性别认同）、测验结果进记录、备忘录式记录",s:"done"},
+ {d:"11-17",t:"性取向 / PHQ-9 / GAD-7，全部加专家模式",s:"done"},
+ {d:"11-17",t:"表格功能：自建表、折线/条形/饼图",s:"done"},
+ {d:"11-17",t:"站点上线 GitHub Pages，网址 yuhangou78-alt.github.io/hrt",s:"done"},
+ {d:"11-17",t:"用药准备（14 问，不给方案）+ 药物科普 + 避雷",s:"done"},
+ {d:"11-17",t:"深色模式、字体大小、可读性调整",s:"done"},
+ {d:"11-17",t:"搜索：关联词、联想提示词、站内跳转、记录内搜索",s:"done"},
+ {d:"11-17",t:"知识库扩到 109 条，加心理与经验两类",s:"done"},
+ {d:"11-17",t:"「我的」：头像、名字、背景、反馈邮箱与 QQ",s:"done"},
+ {d:"11-17",t:"社交（投稿制）：右下角 + 号、邮件投稿、QQ、模板",s:"done"},
+ {d:"11-17",t:"记录改版：日记随笔 / 就诊摘要 / 表格三个入口，用药并入测验",s:"done"},
+ {d:"11-17",t:"小游戏：抽卡答题、跳一跳、经验与隐藏成就",s:"done"}
+];
+var PLAN_TODO=[
+ {d:"待定",t:"新鲜事（伪社交广场）：站内投稿入口 → 邮箱/QQ → 每周整理一次，把有价值的投稿放进站内。不做实时发布，不做陌生人私信。",s:"plan"},
+ {d:"待定",t:"投稿规则页：什么能投、什么不收、署名怎么处理、能不能撤回。",s:"plan"},
+ {d:"待定",t:"文件夹分类：日记随笔、表格、测验、提醒、搜索五处自己建分类。",s:"plan"},
+ {d:"待定",t:"举报与审核：把目前的邮箱举报变成站内列表，只有管理员能看。",s:"plan"},
+ {d:"待定",t:"离线可用（PWA）：加 service worker，断网也能开。",s:"plan"},
+ {d:"待定",t:"知识库继续扩充，按社群反馈补条目。",s:"doing"},
+ {d:"待定",t:"访问统计：知道有没有人用，不做用户追踪。",s:"plan"}
+];
+function pinHash(p){
+  var h=0;
+  for(var i=0;i<p.length;i++)h=(h*31+p.charCodeAt(i))|0;
+  return String(h);
+}
+function loadPlanExtra(){
+  try{return JSON.parse(localStorage.getItem("hrthub.plan")||"[]")}catch(e){return []}
+}
+function savePlanExtra(a){try{localStorage.setItem("hrthub.plan",JSON.stringify(a))}catch(e){}}
+function openPlan(){
+  var saved=localStorage.getItem("hrthub.pin");
+  if(!saved){
+    var p1=prompt("第一次打开，设一个 4 位数字（只有你自己知道，忘了只能清除重设）：");
+    if(p1===null)return;
+    if(!/^\d{4}$/.test(p1)){toast("要 4 位数字");return}
+    localStorage.setItem("hrthub.pin",pinHash(p1));
+    toast("设好了，记住它");
+  }else{
+    var p2=prompt("输入 4 位密码：");
+    if(p2===null)return;
+    if(pinHash(p2)!==saved){toast("密码不对");return}
+  }
+  renderPlan();
+  $("planWrap").classList.add("show");
+  $("planWrap").setAttribute("aria-hidden","false");
+}
+function closePlan(){
+  $("planWrap").classList.remove("show");
+  $("planWrap").setAttribute("aria-hidden","true");
+}
+function renderPlan(){
+  var box=$("planBody");
+  box.innerHTML="";
+  function block(title,list){
+    var h=document.createElement("div");
+    h.style.cssText="font-size:12px;color:var(--dim);margin:14px 0 2px;letter-spacing:.5px";
+    h.textContent=title;box.appendChild(h);
+    list.forEach(function(it){
+      var row=document.createElement("div");row.className="plan-item";
+      var d=document.createElement("div");d.className="pd";d.textContent=it.d;
+      var t=document.createElement("div");t.className="pt";
+      t.textContent=it.t;
+      if(it.s){
+        var sp=document.createElement("span");
+        sp.className="ps "+it.s;
+        sp.textContent=it.s==="done"?"已完成":(it.s==="doing"?"进行中":"计划");
+        t.appendChild(sp);
+      }
+      row.appendChild(d);row.appendChild(t);
+      box.appendChild(row);
+    });
+  }
+  block("已经做完的",PLAN_DONE);
+  block("接下来要做的",PLAN_TODO);
+  var extra=loadPlanExtra();
+  if(extra.length)block("我后来加的",extra);
+}
+/* ---------- 小游戏 ---------- */
+var GAME={xp:0,best:0,hearts:3,heartDate:"",week:{},ach:{},cards:0,streak:0,right:0,revives:0,days:[],dino:"green",cactus:"green",skins:{},frames:{},namefx:{}};
+function loadGame(){
+  try{
+    var g=JSON.parse(localStorage.getItem("hrthub.game")||"{}");
+    for(var k in g)if(k in GAME)GAME[k]=g[k];
+  }catch(e){}
+  ensureDaily();
+  var today=dayOf(nowLocal());
+  if(GAME.days.indexOf(today)<0){GAME.days.push(today);if(GAME.days.length>60)GAME.days.shift()}
+  saveGame();
+}
+function saveGame(){try{localStorage.setItem("hrthub.game",JSON.stringify(GAME))}catch(e){}}
+function ensureDaily(){
+  var today=dayOf(nowLocal());
+  if(GAME.heartDate!==today){
+    GAME.hearts=3;
+    GAME.heartDate=today;
+    saveGame();
+  }
+  return GAME.hearts;
+}
+function weekKey(offset){
+  var d=new Date();
+  if(offset)d.setDate(d.getDate()+offset*7);
+  var t=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  t.setDate(t.getDate()+3-((t.getDay()+6)%7));
+  var w1=new Date(t.getFullYear(),0,4);
+  var n=1+Math.round(((t-w1)/86400000-3+((w1.getDay()+6)%7))/7);
+  return t.getFullYear()+"-W"+n;
+}
+function gameLevel(){return Math.floor(GAME.xp/100)+1}
+function addXp(n){GAME.xp+=n;saveGame();renderGameHome()}
+
+var ACH=[
+ {id:"first",t:"第一张卡",d:"答对第一道抽卡题"},
+ {id:"streak5",t:"五连对",d:"连续答对 5 题"},
+ {id:"streak10",t:"十连对",d:"连续答对 10 题"},
+ {id:"cards50",t:"抽卡 50 张",d:"累计抽卡 50 次"},
+ {id:"run50",t:"跑过 50 分",d:"跳一跳单局 50 分"},
+ {id:"revive",t:"绝地反击",d:"用答题救回一次爱心"},
+ {id:"week3",t:"坚持三天",d:"一周内有 3 天来玩"}
+];
+function unlock(id){
+  if(GAME.ach[id])return false;
+  GAME.ach[id]=dayOf(nowLocal());
+  saveGame();
+  var a=null;
+  for(var i=0;i<ACH.length;i++)if(ACH[i].id===id)a=ACH[i];
+  if(a)toast("解锁成就："+a.t);
+  if(typeof renderGameHome==="function")renderGameHome();
+  return true;
+}
+function checkAch(){
+  if(GAME.streak>=5)unlock("streak5");
+  if(GAME.streak>=10)unlock("streak10");
+  if(GAME.cards>=50)unlock("cards50");
+  if(GAME.runBest50)unlock("run50");
+  var wk=GAME.days.slice(-7);
+  if(wk.length>=3)unlock("week3");
+}
+
+/* ---------- 抽卡答题 ---------- */
+var GAMEQ=QCFG.hrt.items.concat([
+ {q:"口服和经皮给药，哪个对肝脏的负担更大？",o:["口服","经皮","一样","都没负担"],a:0,
+  why:"口服要先过肝脏代谢，对肝功能和血脂、凝血因子的影响更大。经皮绕过这一步。"},
+ {q:"抗雄药通常要额外监测哪两项？",o:["血糖和尿酸","肝功能和催乳素","视力和听力","骨密度和肺功能"],a:1,
+  why:"部分抗雄药会影响肝脏和催乳素水平，这两项是常规复查内容。"},
+ {q:"血栓最典型的早期信号是？",o:["双侧腿都酸","单侧小腿肿痛","手指发麻","打喷嚏"],a:1,
+  why:"单侧下肢肿痛要优先排除血栓，这是不能等的情况。"},
+ {q:"开始 HRT 之前，最值得先改的生活习惯是？",o:["熬夜","吸烟","喝咖啡","吃辣"],a:1,
+  why:"吸烟会明显增加血栓风险，这是性价比最高的一项改变。"},
+ {q:"乳房发育最早出现的信号通常是？",o:["明显变大","胀痛和乳核","溢液","皮肤变化"],a:1,
+  why:"多数人先是乳头下方胀痛、摸到乳核，之后才有轮廓。"},
+ {q:"睾酮治疗里最需要盯的血指标之一？",o:["血小板","红细胞压积","尿酸","血糖"],a:1,
+  why:"睾酮促进造血，红细胞压积过高会让血变稠，增加血栓风险。"},
+ {q:"漏服一次药，通常该怎么处理？",o:["下次吃双倍","按原计划继续","停两天","换一种药"],a:1,
+  why:"偶尔漏一次很常见，加倍补反而让浓度波动更大。"},
+ {q:"想保留生育能力，应该在什么时候谈？",o:["开始之前","用了一年","准备结婚","随时都行"],a:0,
+  why:"有些变化发生后不可逆，所以要在开始前就和医生讨论。"},
+ {q:"声音变高主要靠什么？",o:["加大雌激素","语音训练","多喝水","时间"],a:1,
+  why:"声带结构在青春期后已定型，激素对它作用有限。"},
+ {q:"下面哪一项通常不会因为激素而改变？",o:["皮肤出油","脂肪分布","骨骼","肌肉量"],a:2,
+  why:"骨骼、喉结这些定型结构不会因激素改变。"},
+ {q:"出现眼白发黄、右上腹痛，应该？",o:["继续观察","多喝水","立刻停并就医","换个牌子"],a:2,
+  why:"这是肝损伤信号，要立刻停用并就医。"},
+ {q:"催乳素升高通常和什么有关？",o:["和 HRT 无关","部分抗雄药和雌激素","只和睡眠有关","只和饮食有关"],a:1,
+  why:"部分抗雄药和雌激素都可能让催乳素升高，需要复查确认。"},
+ {q:"关于孕激素的证据强度？",o:["和雌激素一样充分","不如雌激素充分","完全没作用","必须加"],a:1,
+  why:"孕激素在部分方案里使用，但证据不如雌激素充分，副作用要单独评估。"},
+ {q:"脂肪重新分布一般在什么时候明显？",o:["一周内","一个月","三到十二个月","三年后"],a:2,
+  why:"通常 3 到 12 个月变化最明显，腰臀比例会逐渐改变。"},
+ {q:"复方避孕药能当作雌激素用吗？",o:["能","不能","短期可以","看情况"],a:1,
+  why:"复方避孕药常含炔雌醇，血栓风险更高，剂量也难以控制。"},
+ {q:"把剂量加大，效果会来得更快吗？",o:["会","不会","看体质","不确定"],a:1,
+  why:"血药浓度有目标区间，超出不会加速变化，只会增加风险。"},
+ {q:"定期查血最主要的意义是？",o:["证明自己在努力","早发现异常","让医生开心","省钱"],a:1,
+  why:"肝肾功能、血脂、血常规、激素水平靠感觉是感觉不出来的。"},
+ {q:"心理状态明显很差时，应该？",o:["先开始用药","先处理情绪和求助","不管它","加量"],a:1,
+  why:"情绪问题会干扰对效果的判断，也可能和激素变化互相放大。"},
+ {q:"网上别人的剂量表能照抄吗？",o:["能","不能","参考就行","看体重"],a:1,
+  why:"剂量要配你的体重、吸收、肝功能和化验结果，照抄等于用别人的答案答自己的题。"},
+ {q:"体毛和胡须在 HRT 后会？",o:["完全消失","立刻变软","变细变慢，但粗硬的难完全消退","反而变多"],a:2,
+  why:"体毛会长得慢、变细，但已经粗硬的胡须通常要靠脱毛。"}
+]);
+/* ---------- 抽卡（三张选一） ---------- */
+var GAMEQ_EXPERT=[
+ {q:"口服雌激素和经皮给药，对凝血因子的影响哪个更大？",o:["口服","经皮","一样","都没有"],a:0,
+  why:"口服经肝脏首过代谢，会影响凝血因子和血脂；经皮绕过肝脏，影响相对小。"},
+ {q:"螺内酯需要额外关注哪一项血值？",o:["血钾","血糖","尿酸","血小板"],a:0,
+  why:"螺内酯有保钾作用，血钾过高会出现乏力、心慌、肌肉无力，需要定期查。"},
+ {q:"红细胞压积过高的直接风险是什么？",o:["贫血","血液变稠、血栓风险上升","血糖升高","骨密度下降"],a:1,
+  why:"睾酮促进造血，压积过高会让血变稠，增加血栓风险，需要查血常规。"},
+ {q:"已经变声之后，激素对声带的影响是？",o:["能让声带变薄","基本不改变结构","能提高音高","能消除喉结"],a:1,
+  why:"声带结构在青春期后定型，激素基本不改变，需要语音训练。"},
+ {q:"开始 HRT 前，哪一项最影响医生给你的方案？",o:["身高体重","肝功能、血脂、凝血和病史","星座","饮食习惯"],a:1,
+  why:"这些决定能用什么、用多少、多久复查一次，是方案的地基。"},
+ {q:"催乳素持续升高需要警惕什么？",o:["贫血","垂体问题","骨折","近视"],a:1,
+  why:"持续升高可能与垂体有关，需要复查并评估是否调整方案。"},
+ {q:"关于「剂量越大效果越好」，正确的理解是？",o:["对，成正比","错，超出区间只增加风险","对，但仅限前三个月","看体重决定"],a:1,
+  why:"血药浓度有目标区间，超出不会更快，只会增加血栓、肝损等风险。"},
+ {q:"出现单侧小腿肿痛，正确处理是？",o:["热敷","按摩","尽快就医排除血栓","抬高休息观察一周"],a:2,
+  why:"单侧下肢肿痛优先排除血栓，热敷和按摩反而有风险。"}
+];
+GAMEQ=GAMEQ.concat([
+ {q:"HRT 之后皮肤变干，护肤品应该怎么选？",o:["清洁力越强越好","温和清洁 + 保湿","多刷酸","不用管"],a:1,
+  why:"皮脂分泌下降后皮肤更容易干和敏感，温和清洁和保湿比强效产品更重要。"},
+ {q:"胡青发灰，用哪种颜色先校正？",o:["蓝色","橘色或桃色","墨绿","纯白"],a:1,
+  why:"胡青偏蓝灰，橘/桃是它的对比色，先压掉青再上粉底才不会发灰。"},
+ {q:"激光脱毛对什么样的毛发更有效？",o:["浅色绒毛","深色粗毛","白发","都差不多"],a:1,
+  why:"激光靠色素吸收能量，颜色越深、越粗效果越明显；浅色毛发反应差。"},
+ {q:"胸罩尺码主要看哪两个数？",o:["身高和体重","上胸围和下胸围","腰围和臀围","年龄和肩宽"],a:1,
+  why:"下胸围定底围，上胸围减下胸围定杯型。"},
+ {q:"声音训练最该练什么？",o:["把嗓子捏尖","共鸣位置和气息","大声喊","憋气"],a:1,
+  why:"捏尖容易伤声带，重点是提高共鸣位置、用气息支撑。"},
+ {q:"为什么要注意蛋白质摄入？",o:["为了长高","保住肌肉量","让药更有效","没影响"],a:1,
+  why:"激素会让肌肉量下降，蛋白质吃够能保住一部分力量和体型。"},
+ {q:"糖吃太多对情绪的影响是？",o:["没有影响","血糖波动带动情绪波动","让人更平静","提高睡眠质量"],a:1,
+  why:"血糖起落会影响精力和情绪，这在过渡期尤其明显。"},
+ {q:"肩比较宽，穿衣上可以怎么处理？",o:["穿横条纹垫肩","选落肩或 V 领","穿高领紧身","越大越好"],a:1,
+  why:"落肩、V 领能把视线往下引，弱化肩线；垫肩和横条会放大。"}
+]);
+var CG={card:null,answered:false,sel:null,cards:[],rarity:1};
+function startGacha(){
+  CG.answered=false;CG.sel=null;CG.card=null;
+  $("gachaQ").style.display="none";
+  $("gachaQ").innerHTML="";
+  $("drawBtn").style.display="none";
+  $("cardNext").style.display="none";
+  var box=$("gachaBox");
+  box.innerHTML="";
+  CG.cards=[];
+  var expertSlot=(Math.random()<0.10)?Math.floor(Math.random()*3):-1;
+  var wrap=document.createElement("div");
+  wrap.className="gacha";
+  for(var i=0;i<3;i++){
+    var c=document.createElement("div");
+    var isExp=(i===expertSlot);
+    c.className="gcard-back"+(isExp?" expert":"");
+    c.style.setProperty("--x",((i-1)*94)+"px");
+    c.style.setProperty("--r",((i-1)*9)+"deg");
+    c.style.zIndex=String(i+1);
+    c.setAttribute("data-i",i);
+    var face=document.createElement("div");
+    face.className="gback-face";
+    face.textContent="?";
+    c.appendChild(face);
+    c.addEventListener("click",function(ev){tapCard(parseInt(ev.currentTarget.getAttribute("data-i"),10))});
+    wrap.appendChild(c);
+    CG.cards.push({el:c,expert:isExp});
+  }
+  box.appendChild(wrap);
+  $("gachaTip").textContent="选一张。点一下会抽出来，再点一下才算选定。";
+  $("gachaTip").style.display="";
+}
+function tapCard(i){
+  if(CG.sel===i){confirmCard(i);return}
+  CG.sel=i;
+  CG.cards.forEach(function(c,k){
+    c.el.classList.toggle("picked",k===i);
+    c.el.style.zIndex=(k===i)?"30":String(k+1);
+  });
+  var tip=$("gachaTip");
+  tip.textContent=CG.cards[i].expert?"这张在发光……要选它吗？再点一下确认。":"再点一下确认选这张。";
+}
+function confirmCard(i){
+  var c=CG.cards[i];
+  c.el.classList.add("chosen");
+  $("gachaTip").textContent="";
+  $("gachaTip").style.display="none";
+  var expert=c.expert;
+  var pool=expert?GAMEQ_EXPERT:GAMEQ;
+  CG.card=pool[Math.floor(Math.random()*pool.length)];
+  CG.rarity=expert?2:1;
+  GAME.cards++;saveGame();checkAch();
+  setTimeout(function(){
+    revealQuestion(expert);
+    $("revealWrap").classList.add("show");
+    var rc=$("revealCard");
+    rc.classList.remove("in");
+    void rc.offsetWidth;
+    rc.classList.add("in");
+  },650);
+}
+function revealQuestion(expert){
+  var box=$("gachaQ");
+  box.style.display="";
+  box.innerHTML="";
+  var banner=document.createElement("div");
+  banner.className="rarity "+(expert?"gold":"blue");
+  banner.textContent=expert?"专家卡 · 答对 +30 经验":"普通卡 · 答对 +12 经验";
+  box.appendChild(banner);
+  var card=document.createElement("div");
+  card.className="gcard flip";
+  var q=document.createElement("div");q.className="gcard-q";q.textContent=CG.card.q;
+  card.appendChild(q);
+  box.appendChild(card);
+  var opts=document.createElement("div");opts.id="cardOpts";
+  var order=CG.card.o.map(function(_,k){return k});
+  for(var j=order.length-1;j>0;j--){var k2=Math.floor(Math.random()*(j+1));var t=order[j];order[j]=order[k2];order[k2]=t}
+  order.forEach(function(oi){
+    var b=document.createElement("button");
+    b.className="opt";b.type="button";b.textContent=CG.card.o[oi];
+    b.addEventListener("click",function(){answerCard(oi,b,opts,expert)});
+    opts.appendChild(b);
+  });
+  box.appendChild(opts);
+  renderGameStats();
+}
+function showFlash(big,sub,tone){
+  $("flashBig").textContent=big;
+  $("flashBig").className="flash-big"+(tone==="gold"?" gold":"");
+  $("flashXp").textContent=sub||"";
+  $("flashWrap").classList.add("show");
+  setTimeout(function(){$("flashWrap").classList.remove("show")},1750);
+}
+function answerCard(oi,btn,opts,expert){
+  if(CG.answered)return;
+  CG.answered=true;
+  var right=(oi===CG.card.a);
+  Array.prototype.forEach.call(opts.children,function(b){b.disabled=true});
+  if(right){
+    btn.classList.add("ok");
+    GAME.streak++;GAME.right++;
+    var base=expert?30:12;
+    var gain=base+Math.min(GAME.streak,10);
+    addXp(gain);
+    unlock("first");
+    checkAch();
+    showFlash("正确","+"+gain+" 经验",expert?"gold":"green");
+  }else{
+    btn.classList.add("bad");
+    Array.prototype.forEach.call(opts.children,function(b){
+      if(b.textContent===CG.card.o[CG.card.a])b.classList.add("ok");
+    });
+    GAME.streak=0;saveGame();
+    toast("答错了，看解释");
+  }
+  var why=document.createElement("div");
+  why.className="gwhy";
+  why.textContent=CG.card.why;
+  $("gachaQ").appendChild(why);
+  $("cardNext").style.display="";
+  renderGameStats();
+}
+
+/* ---------- 跳一跳 ---------- */
+var RUN={on:false,score:0,hearts:0,y:0,vy:0,obs:[],raf:null,t:0,speed:5,over:false,inv:0,reviveQ:null};
+function floatXp(txt){
+  var st=$("runStage");
+  if(!st)return;
+  var el=document.createElement("div");
+  el.className="xpfloat";
+  el.textContent=txt+" 经验";
+  st.appendChild(el);
+  setTimeout(function(){el.remove()},950);
+}
+function stageW(){
+  var w=$("runStage")?$("runStage").clientWidth:0;
+  return w>60?w:320;
+}
+function runStart(){
+  ensureDaily();
+  if(GAME.hearts<=0){
+    $("runOver").style.display="";
+    $("runStage").style.display="none";
+    $("runBtn").style.display="none";
+    $("jumpBtn").style.display="none";
+    showRevive();
+    return;
+  }
+  RUN.on=true;RUN.over=false;RUN.score=0;RUN.y=0;RUN.vy=0;RUN.obs=[];RUN.t=0;RUN.speed=3.6;RUN.inv=0;RUN.grace=100;RUN.hold=false;RUN.holdF=0;
+  RUN.hearts=GAME.hearts;
+  $("runOver").style.display="none";
+  $("runStage").style.display="";
+  $("runBtn").style.display="none";
+  $("runner").style.bottom="0px";
+  $("jumpBtn").style.display="";
+  $("track").innerHTML="";
+  renderRunStats();
+  if(RUN.raf)cancelAnimationFrame(RUN.raf);
+  RUN.raf=requestAnimationFrame(runLoop);
+}
+function runJumpDown(){
+  if(!RUN.on||RUN.over)return;
+  if(RUN.y<=0){RUN.vy=11.6;RUN.hold=true;RUN.holdF=0}
+}
+function runJumpUp(){RUN.hold=false}
+function runLoop(){
+  if(!RUN.on)return;
+  RUN.t++;
+  var g=1.0;
+  if(RUN.hold&&RUN.vy>0&&RUN.holdF<12){g=0.55;RUN.holdF++}
+  RUN.y+=RUN.vy;
+  RUN.vy-=g;
+  if(RUN.y<0){RUN.y=0;RUN.vy=0;RUN.hold=false}
+  $("runner").style.bottom=RUN.y+"px";
+  if(RUN.inv>0)RUN.inv--;
+  if(RUN.grace>0)RUN.grace--;
+  if(RUN.grace===0&&RUN.t%100===0){
+    var wide=(Math.random()<0.28);
+    var ob=document.createElement("div");
+    ob.className="obstacle "+(wide?"wide ":"")+skinClass("cactus");
+    var startX=stageW();
+    ob.style.left=startX+"px";
+    if(wide)ob.style.width="34px";
+    $("track").appendChild(ob);
+    RUN.obs.push({el:ob,pos:startX,w:wide?34:16,hit:false,scored:false});
+  }
+  var rw=30,rLeft=44,rRight=74;
+  for(var i=RUN.obs.length-1;i>=0;i--){
+    var o=RUN.obs[i];
+    o.pos-=RUN.speed;
+    o.el.style.left=o.pos+"px";
+    if(o.pos<-40){o.el.remove();RUN.obs.splice(i,1);continue}
+    var oLeft=o.pos,oRight=o.pos+(o.w||16);
+    var overlap=(oRight>rLeft)&&(oLeft<rRight);
+    if(overlap&&RUN.y<26&&!o.hit&&RUN.inv<=0){
+      o.hit=true;o.el.classList.add("spike");
+      RUN.hearts--;GAME.hearts=RUN.hearts;saveGame();
+      RUN.inv=14;RUN.speed=Math.max(2.8,RUN.speed-0.25);
+      renderRunStats();
+      if(RUN.hearts<=0){runOver();return}
+    }
+    if(RUN.grace>0)continue;
+    if(!o.hit&&oRight<rLeft&&!o.scored){
+      o.scored=true;RUN.score+=2;
+      GAME.xp+=1;saveGame();
+      floatXp("+1");
+      renderGameStats();renderRunStats();
+      if(RUN.score>=50&&!GAME.runBest50){GAME.runBest50=true;saveGame();checkAch()}
+    }
+  }
+  RUN.raf=requestAnimationFrame(runLoop);
+}
+function runStop(){
+  RUN.on=false;
+  if(RUN.raf)cancelAnimationFrame(RUN.raf);
+}
+function runOver(){
+  RUN.on=false;RUN.over=true;
+  if(RUN.raf)cancelAnimationFrame(RUN.raf);
+  if(RUN.score>GAME.best)GAME.best=RUN.score;
+  var wk=weekKey();
+  GAME.week[wk]=Math.max(GAME.week[wk]||0,RUN.score);
+  saveGame();
+  $("runner").classList.remove("hit");
+  void $("runStage").offsetWidth;
+  $("runStage").classList.add("crash");
+  $("runner").classList.add("hit");
+  setTimeout(function(){
+    $("runStage").classList.remove("crash");
+    $("runner").classList.remove("hit");
+  },760);
+  $("runOver").style.display="";
+  $("runScore").textContent=RUN.score;
+  $("runBestTxt").textContent=GAME.best;
+  $("runBtn").style.display="";
+  $("jumpBtn").style.display="none";
+  if(GAME.hearts<=0){
+    setTimeout(function(){
+      $("runStage").style.display="none";
+      showRevive();
+    },820);
+  }
+}
+function showRevive(){
+  drawReviveCard();
+  $("reviveWrap").classList.add("show");
+}
+function drawReviveCard(){
+  RUN.reviveQ=GAMEQ[Math.floor(Math.random()*GAMEQ.length)];
+  var box=$("reviveQ");
+  box.innerHTML="";
+  var q=document.createElement("div");q.className="gcard-q";q.textContent=RUN.reviveQ.q;
+  box.appendChild(q);
+  var wrap=document.createElement("div");
+  RUN.reviveQ.o.forEach(function(txt,oi){
+    var b=document.createElement("button");b.className="opt";b.type="button";b.textContent=txt;
+    b.addEventListener("click",function(){
+      if(oi===RUN.reviveQ.a){
+        GAME.hearts=1;GAME.revives=1;saveGame();unlock("revive");
+        toast("答对了，恢复 1 颗爱心");
+        $("reviveWrap").classList.remove("show");
+        runStart();
+      }else{
+        b.classList.add("bad");
+        toast("答错了，明天再来");
+        $("reviveWrap").classList.remove("show");
+        renderGameHome();
+      }
+    });
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap);
+}
+
+/* ---------- 商店与皮肤 ---------- */
+var SKINS={
+  dino:[
+    {id:"green",t:"经典绿",tier:"普通单色",price:0,cls:"dino-green"},
+    {id:"stone",t:"石青",tier:"普通单色",price:25,cls:"dino-stone"},
+    {id:"berry",t:"草莓双色",tier:"华丽杂色",price:70,cls:"dino-berry"},
+    {id:"sky",t:"晴空双色",tier:"华丽杂色",price:90,cls:"dino-sky"},
+    {id:"neon",t:"霓虹",tier:"艳丽动画",price:180,cls:"dino-neon"},
+    {id:"aurora",t:"极光",tier:"艳丽动画",price:260,cls:"dino-aurora"}
+  ],
+  cactus:[
+    {id:"green",t:"仙人掌绿",tier:"普通单色",price:0,cls:"cac-green"},
+    {id:"stone",t:"灰岩",tier:"普通单色",price:25,cls:"cac-stone"},
+    {id:"forest",t:"深林",tier:"华丽杂色",price:70,cls:"cac-forest"},
+    {id:"sunset",t:"落日",tier:"华丽杂色",price:90,cls:"cac-sunset"},
+    {id:"lava",t:"熔岩",tier:"艳丽动画",price:180,cls:"cac-lava"},
+    {id:"prism",t:"棱镜",tier:"艳丽动画",price:260,cls:"cac-prism"}
+  ]
+};
+function owned(kind,id){
+  if(id==="green")return true;
+  return (GAME.skins&&GAME.skins[kind+"-"+id])?true:false;
+}
+function skinClass(kind){
+  var cur=kind==="dino"?(GAME.dino||"green"):(GAME.cactus||"green");
+  var list=SKINS[kind];
+  for(var i=0;i<list.length;i++)if(list[i].id===cur)return list[i].cls;
+  return list[0].cls;
+}
+function applySkins(){
+  var r=$("runner");
+  if(r){
+    r.className="";
+    r.classList.add(skinClass("dino"));
+  }
+}
+function buy(kind,id){
+  var list=SKINS[kind],item=null;
+  for(var i=0;i<list.length;i++)if(list[i].id===id)item=list[i];
+  if(!item)return;
+  if(owned(kind,id)){
+    if(kind==="dino")GAME.dino=id;else GAME.cactus=id;
+    saveGame();applySkins();renderShop();toast("已换上");
+    return;
+  }
+  if(GAME.xp<item.price){toast("经验不够，还差 "+(item.price-GAME.xp));return}
+  GAME.xp-=item.price;
+  if(!GAME.skins)GAME.skins={};
+  GAME.skins[kind+"-"+id]=1;
+  if(kind==="dino")GAME.dino=id;else GAME.cactus=id;
+  saveGame();applySkins();renderShop();renderGameHome();toast("买到了，已换上");
+}
+function renderShop(){
+  var box=$("shopList");
+  if(!box)return;
+  box.innerHTML="";
+  function group(kind,label){
+    var head=document.createElement("div");
+    head.className="cardhead";head.style.marginTop="12px";
+    var hs=document.createElement("span");hs.textContent=label;
+    head.appendChild(hs);box.appendChild(head);
+    var tiers=["普通单色","华丽杂色","艳丽动画"];
+    tiers.forEach(function(tier){
+      var sub=document.createElement("div");
+      sub.style.cssText="font-size:11px;color:var(--dim);margin:10px 0 0";
+      sub.textContent=tier;box.appendChild(sub);
+      SKINS[kind].filter(function(x){return x.tier===tier}).forEach(function(it){
+        var row=document.createElement("div");row.className="entry";
+        var b=document.createElement("div");b.className="b";
+        var n=document.createElement("div");n.className="n";n.textContent=it.t;
+        var d=document.createElement("div");d.className="d";
+        var cur=(kind==="dino"?(GAME.dino||"green"):(GAME.cactus||"green"))===it.id;
+        d.textContent=cur?"使用中":(owned(kind,it.id)?"已拥有":(it.price+" 经验"));
+        b.appendChild(n);b.appendChild(d);
+        var btn=document.createElement("button");
+        btn.type="button";btn.className=cur?"ghost":"primary";
+        btn.style.cssText="margin:0;padding:6px 12px;font-size:12px;width:auto";
+        btn.textContent=cur?"已用":(owned(kind,it.id)?"换上":"买");
+        btn.addEventListener("click",function(){buy(kind,it.id)});
+        row.appendChild(b);row.appendChild(btn);
+        box.appendChild(row);
+      });
+    });
+  }
+  function oldGroup(title,kind){
+    var h=document.createElement("div");
+    h.style.cssText="font-size:12px;color:var(--dim);margin:10px 0 2px";
+    h.textContent=title;box.appendChild(h);
+    SKINS[kind].forEach(function(it){
+      var row=document.createElement("div");row.className="entry";
+      var b=document.createElement("div");b.className="b";
+      var n=document.createElement("div");n.className="n";n.textContent=it.t;
+      var d=document.createElement("div");d.className="d";
+      var cur=(kind==="dino"?(GAME.dino||"green"):(GAME.cactus||"green"))===it.id;
+      d.textContent=cur?"使用中":(owned(kind,it.id)?"已拥有":(it.price+" 经验"));
+      b.appendChild(n);b.appendChild(d);
+      var btn=document.createElement("button");
+      btn.type="button";btn.className=cur?"ghost":"primary";
+      btn.style.cssText="margin:0;padding:6px 12px;font-size:12px;width:auto";
+      btn.textContent=cur?"已用":(owned(kind,it.id)?"换上":"买");
+      btn.addEventListener("click",function(){buy(kind,it.id)});
+      row.appendChild(b);row.appendChild(btn);
+      box.appendChild(row);
+    });
+  }
+  group("dino","小恐龙");
+  group("cactus","障碍物");
+  var FRAMES=[
+    {id:"none",t:"无边框",tier:"普通",price:0,cls:""},
+    {id:"ring",t:"细银环",tier:"普通",price:40,cls:"fr-ring"},
+    {id:"grad",t:"渐变环",tier:"华丽",price:90,cls:"fr-grad"},
+    {id:"orbit",t:"流光环",tier:"动画",price:180,cls:"fr-orbit"}
+  ];
+  var NAMEFX=[
+    {id:"none",t:"普通字",tier:"普通",price:0,cls:""},
+    {id:"grad",t:"渐变字",tier:"华丽",price:80,cls:"nf-grad"},
+    {id:"shine",t:"流光字",tier:"动画",price:160,cls:"nf-shine"}
+  ];
+  function wearGroup(title,list,kind){
+    var head=document.createElement("div");head.className="cardhead";head.style.marginTop="14px";
+    var hs=document.createElement("span");hs.textContent=title;head.appendChild(hs);box.appendChild(head);
+    list.forEach(function(it){
+      var row=document.createElement("div");row.className="entry";
+      var b=document.createElement("div");b.className="b";
+      var n=document.createElement("div");n.className="n";n.textContent=it.t;
+      var d=document.createElement("div");d.className="d";
+      var cur=(kind==="frame"?(PRO.frame||"none"):(PRO.nameFx||"none"))===it.id;
+      var owns=(it.id==="none")||(GAME[kind==="frame"?"frames":"namefx"]||{})[it.id];
+      d.textContent=cur?"使用中":(owns?"已拥有":(it.price+" 经验"));
+      b.appendChild(n);b.appendChild(d);
+      var btn=document.createElement("button");btn.type="button";
+      btn.className=cur?"ghost":"primary";
+      btn.style.cssText="margin:0;padding:6px 12px;font-size:12px;width:auto";
+      btn.textContent=cur?"已用":(owns?"换上":"买");
+      btn.addEventListener("click",function(){
+        if(owns){
+          if(kind==="frame")PRO.frame=it.id;else PRO.nameFx=it.id;
+          saveProfile();paintLook();renderShop();toast("换上啦");
+          return;
+        }
+        if(GAME.xp<it.price){toast("经验不够，还差 "+(it.price-GAME.xp));return}
+        GAME.xp-=it.price;
+        if(!GAME[kind==="frame"?"frames":"namefx"])GAME[kind==="frame"?"frames":"namefx"]={};
+        GAME[kind==="frame"?"frames":"namefx"][it.id]=1;
+        if(kind==="frame")PRO.frame=it.id;else PRO.nameFx=it.id;
+        saveGame();saveProfile();paintLook();renderShop();renderGameHome();toast("买到了，已经换上");
+      });
+      row.appendChild(b);row.appendChild(btn);
+      box.appendChild(row);
+    });
+  }
+  wearGroup("头像框",FRAMES,"frame");
+  wearGroup("名字效果",NAMEFX,"namefx");
+
+  var heal=document.createElement("div");heal.className="entry";
+  var hb=document.createElement("div");hb.className="b";
+  var hn=document.createElement("div");hn.className="n";hn.textContent="恢复全部爱心";
+  var hd=document.createElement("div");hd.className="d";hd.textContent="30 经验，立刻回满 3 颗";
+  hb.appendChild(hn);hb.appendChild(hd);
+  var hbtn=document.createElement("button");hbtn.type="button";hbtn.className="primary";
+  hbtn.style.cssText="margin:0;padding:6px 12px;font-size:12px;width:auto";
+  hbtn.textContent="换";
+  hbtn.addEventListener("click",function(){
+    if(GAME.xp<30){toast("经验不够，还差 "+(30-GAME.xp));return}
+    GAME.xp-=30;GAME.hearts=3;GAME.heartDate=dayOf(nowLocal());
+    saveGame();renderGameHome();renderGameStats();toast("爱心补满了");
+  });
+  heal.appendChild(hb);heal.appendChild(hbtn);
+  box.appendChild(heal);
+}
+
+/* ---------- 渲染 ---------- */
+function renderGameStats(){
+  if($("gXp"))$("gXp").textContent=GAME.xp;
+  if($("gLv"))$("gLv").textContent=gameLevel();
+  if($("gHearts"))$("gHearts").textContent="♥".repeat(Math.max(0,GAME.hearts))+"♡".repeat(Math.max(0,3-GAME.hearts));
+  if($("gStreak"))$("gStreak").textContent=GAME.streak;
+}
+function renderRunStats(){
+  if($("runHp"))$("runHp").textContent="♥".repeat(Math.max(0,RUN.hearts))+"♡".repeat(Math.max(0,3-RUN.hearts));
+  if($("runNow"))$("runNow").textContent=RUN.score;
+}
+function renderGameHome(){
+  ensureDaily();
+  renderGameStats();
+  if($("gBest"))$("gBest").textContent=GAME.best;
+  var wk=weekKey();
+  if($("gWeek"))$("gWeek").textContent=GAME.week[wk]||0;
+  if($("gWeekLast"))$("gWeekLast").textContent=GAME.week[weekKey(-1)]||0;
+  achGrid($("achList"));
+  renderShop();
+  applySkins();
+  renderAchInProfile();
+}
+function achGrid(box){
+  if(!box)return;
+  box.innerHTML="";
+  var grid=document.createElement("div");
+  grid.className="achgrid";
+  ACH.forEach(function(a){
+    var got=!!GAME.ach[a.id];
+    var cell=document.createElement("div");
+    cell.className="achcell"+(got?" got":"");
+    var ic=document.createElement("div");
+    ic.className="achic";
+    ic.innerHTML=ico(got?"trophy":"lock");
+    var nm=document.createElement("div");nm.className="achn";nm.textContent=a.t;
+    var dt=document.createElement("div");dt.className="achd";
+    dt.textContent=got?GAME.ach[a.id].slice(5):a.d;
+    cell.appendChild(ic);cell.appendChild(nm);cell.appendChild(dt);
+    grid.appendChild(cell);
+  });
+  box.appendChild(grid);
+}
+function renderAchInProfile(){
+  achGrid($("myAch"));
+}
+var splashTimer=null;
+function splash(title,cb){
+  $("splashIcon").innerHTML="";
+  $("splashIcon").style.display="none";
+  $("splashLabel").style.display="none";
+  var box=$("splashText");
+  box.style.display="";
+  box.innerHTML="";
+  for(var i=0;i<title.length;i++){
+    var sp=document.createElement("span");
+    sp.textContent=title[i];
+    sp.style.animationDelay=(i*0.11)+"s";
+    box.appendChild(sp);
+  }
+  if(REDUCE){if(cb)cb();return}
+  $("splashWrap").classList.add("show");
+  clearTimeout(splashTimer);
+  splashTimer=setTimeout(function(){
+    $("splashWrap").classList.remove("show");
+    if(cb)cb();
+  },800);
+}
+function gameView(which){
+  if(which==="gameHome"&&!inPop&&popLayer())return;
+  if(which!=="gameHome")pushLayer(function(){gameView("gameHome")});
+  ["gameHome","gameCard","gameRun","gameShop","gameStats","gameAch"].forEach(function(id){
+    var el=$(id);if(el)el.style.display="none";
+  });
+  var el=$(which);if(el)el.style.display="";
+  if(which!=="gameRun")runStop();
+  window.scrollTo(0,0);
+}
+
 /* ---------- 说明 ---------- */
 var HELP={
- header:{t:"这是什么",a:"一个只存在你手机里的用药记录页：记一笔、到点提醒、症状对照、自测、生成就诊摘要。",b:"底部分栏切换。数据不上传服务器，换设备前先在「记录 › 备份」里导出一份。"},
- mName:{t:"药名",a:"你用的药叫什么。商品名、通用名、缩写都行，只要你自己认得出。",b:"直接打字。记过的药会出现在下面的小按钮里，点一下自动填好，不用每次重敲。"},
- mTitle:{t:"标题",a:"这一条叫什么。用药就写药名，身体就写项目（体重、胸围），随笔随便写。",b:"记过的药名会变成下面的小按钮，点一下自动填好。随笔可以留空，会自动写成「随笔」。"},
- mValue:{t:"数值",a:"这一项是多少，比如体重 62。",b:"只填数字，单位在右边单独填。以后看趋势、算变化都靠它。"},
- mUnit:{t:"单位",a:"数值的单位，比如 kg、cm。",b:"跟数值配着写。同类项目用同一个单位，趋势才不会错。"},
- mDose:{t:"剂量",a:"这一次用了多少。",b:"数字加单位，或者「半片」「一泵」这种写法都行。它只用来记录和对照，页面不会拿它算建议。"},
- mRoute:{t:"途径",a:"药怎么进身体：口服、舌下、经皮、肌注、皮下。",b:"从下拉里选。以后再改方案时，途径的变化和剂量的变化可以分开看。"},
+ header:{t:"这是啥呀",a:"一个只待在你手机里的小工具：写日记、设提醒、翻知识库、做自测，还能生成给医生看的小结，外加两个小游戏～",b:"底下那排按钮就是各个房间，点的时候会闪过图标，挨个逛逛就行。东西都不上传，换手机前记得在「记录 › 备份」里存一份哦。"},
+ mTitle:{t:"标题",a:"这一条叫什么，随便写；留空会自动写成「随笔」。",b:"标题和内容都会进搜索，也会出现在就诊摘要里。"},
  mTime:{t:"时间",a:"这一次用药的时间，默认是现在。",b:"补记以前的事就点它改。日期和时间一起填。"},
  mNote:{t:"备注",a:"想额外记的东西：注射部位、当时的感觉、有没有漏掉。",b:"可以留空。写的内容会跟着进就诊摘要。"},
  save:{t:"记一笔",a:"把上面填的内容存成一条记录，存在这台设备上。",b:"填完点它，会提示「已记下」。之后在「最近记录」里能看到，点每条右边的 × 可以删，删前会再确认。"},
- logList:{t:"最近记录",a:"按日期分组的全部记录，最新的在最上面。",b:"只读，不用操作。觉得某条记错了就点 × 删掉重记。"},
- backup:{t:"备份",a:"把全部数据打包成 JSON 文件，或者从备份里读回来。",b:"导出会下载一个文件，存网盘或传电脑；换手机时用「导入」选它，重复的会自动跳过，不会记两遍。"},
+ logSearch:{t:"搜记录",a:"在已经记下的内容里找。标题、备注、剂量、数值都会一起搜。",b:"输入「天气」就能找到写了天气的那条；输入「体重」能找到所有体重记录。点下面的提示词可以直接填。"},
+ logList:{t:"最近记录",a:"按日期分组的全部记录，最新的在最上面。上面那个搜索框可以按词筛。",b:"搜「天气」「体重」这类词，标题、备注、剂量、数值都会一起找。记录错了点 × 删掉重记。"},
+ backup:{t:"备份",a:"把你写的东西打包成一个小文件，换手机时能搬过去～",b:"点导出会下载一个 json，存网盘或发给电脑都行。换设备时用「导入」选它，重复的会自动跳过，不会记两遍。"},
  rName:{t:"提醒什么事",a:"到点弹出来时显示的那句话。",b:"短一点更好认，比如「吃药」「喝水」「复诊」。"},
  rTime:{t:"提醒时间",a:"每天几点提醒你。",b:"选一个时间点。加多个提醒时，它们各按各的时间响。"},
- remindForm:{t:"新建提醒",a:"不只是吃药，什么事都能提醒：喝水、复诊、上课、交作业。",b:"写清楚提醒什么事，选时间，再选多久一次，点「添加提醒」。"},
+ remindForm:{t:"新建提醒",a:"什么事都能提醒：喝水、复诊、上课、交作业～",b:"写一句提醒什么，选个时间，再挑多久响一次，点「添加提醒」就好啦。"},
  repeat:{t:"多久一次",a:"只提醒一次：到那天那个点响一次。每天：天天响。自定义：自己挑星期几，可以多选。",b:"选「自定义」后，下面出现一到日的按钮，点一下选中，再点一下取消。"},
  notif:{t:"开启通知",a:"让浏览器允许这个页面给你发通知。",b:"点一下，系统会弹权限窗口，选「允许」。之前拒绝过，得去浏览器设置里手动改回来。"},
  test:{t:"测试一下",a:"立刻发一条通知，看看通不通。",b:"点它。手机弹出「测试提醒」就是通的；没弹，多半是权限没给，换用下面的日历导出更稳。"},
  remList:{t:"提醒列表",a:"已经加上的提醒，按时间排。",b:"点 × 删掉一个。网页的提醒只在页面开着时才可靠，别指望它像闹钟一样。"},
  ics:{t:"导出到手机日历",a:"把提醒变成一个日历文件，导入后由系统闹钟负责响。",b:"点它会下载 .ics，用手机日历打开并导入。导入后关屏也会响，这是最靠谱的提醒方式。"},
- symIntro:{t:"症状对照说明",a:"这些条目帮你判断「要不要去看医生」和「该记什么」，不是诊断，也不给用药建议。",b:"搜一个词或点开一条。每条都写了：常见情况、要立刻就医的信号、该记什么、问医生什么。"},
- symSearch:{t:"搜索",a:"在症状条目里找关键词。",b:"输入「头痛」「水肿」「注射」这类词，列表会实时筛。清空就显示全部。"},
+ symIntro:{t:"说明",a:"站内知识库，分八类：避雷、药物、变化、发育、化验、就医、心理、经验。只讲原理和风险，不给剂量，也不做诊断。",b:"上面一排是快捷筛选。「经验」类是把很多人的共同经历总结成条目，不是标准答案，也不是医学结论。"},
+ symSearch:{t:"搜索",a:"在一个干净的站内知识库里找：症状、药物类别、化验指标、就医准备、生活与心理，没有广告和卖药链接。",b:"输入关键词，出来两块：上面是「站内」入口，点「去」直接跳页；下面是知识条目。输入时会冒出联想的提示词，点一下就能填。"},
  range:{t:"统计范围",a:"生成摘要时取最近多少天的记录。",b:"给医生看一个周期选 30 天；想看换方案前后的对比，选 90 天或全部。"},
  notes:{t:"想说的话",a:"给医生看的补充：最近的困扰、想问的问题。",b:"自由写。生成摘要时会单独成一段，不会被记录淹没。"},
  sumForm:{t:"就诊摘要",a:"把记录、统计、提醒和你的补充整理成一段 Markdown 文字。",b:"选好范围、写完想说的话，点「生成就诊摘要」，下面会出现完整内容，可以复制或存成文件。"},
@@ -1961,11 +4289,18 @@ var HELP={
  dl:{t:"下载 .md",a:"把摘要存成一个 .md 文件。",b:"点它会下载。这个文件可以直接当附件发给医生，或者发给 DSH Go 让它帮你整理、列问题。"},
  out:{t:"摘要内容",a:"上面生成的文字在这里预览。",b:"长按可以选中一部分复制。内容不满意，改范围或补充后再生成一次。"},
  feedback:{t:"反馈",a:"联系方式放在这里，方便你提问题、报 bug、或者提想法。",b:"邮箱和 QQ 都可以点「复制」。写的时候带上：你用的是哪个功能、手机是安卓还是苹果、看到的是什么提示。"},
- med:{t:"用药准备",a:"不问药名、不给剂量。它只把见医生前该想清楚的事问一遍，最后告诉你还差什么。",b:"点开始，一次一题，可以跳过。做完会给一张清单，存进记录后能带进摘要里。"},
- table:{t:"表格",a:"自己建的表：想记什么就建什么列，点格子直接改。",b:"点「新建表格」起个名字；点列标题改列名，点格子改内容；「+ 一行」「+ 一列」随时加。长按没有用，点就对了。"},
- profile:{t:"我的",a:"这里只有三样东西：头像、名字、网页背景。不需要账号，也不会传到任何地方。",b:"名字直接在框里改，边打边保存；头像点「换头像」从相册选，会裁成圆形。"},
+ med:{t:"用药准备",a:"不问你吃什么药、也不给你剂量。它只是陪你把见医生前该想清楚的事过一遍～",b:"一次一题，随时能跳。做完会给你一张小清单，可以存进记录，见医生时直接拿出来。"},
+ logHome:{t:"记录",a:"三个小抽屉：日记随笔、就诊摘要、表格。下面那一长串是你写过的全部，还能搜～",b:"点抽屉进去，右上角「关闭」就回来啦。"},
+ table:{t:"表格",a:"想记什么就建什么表，点格子就能改～",b:"先起个名字，然后点列标题改列名，点格子填内容。「+ 一行」「+ 一列」随便加，别长按，点就对了。"},
+ profile:{t:"我的",a:"这里显示你的头像、名字和小游戏成就。不需要账号，也不会传到任何地方。",b:"想改头像和名字，点下面「设置」进去改。头像框和名字效果可以在小游戏商店用经验换～"},
+ game:{t:"游戏",a:"两个小游戏，顺便记点常识～抽卡答题拿经验，跳一跳躲仙人掌。升级靠经验，爱心每天回满 3 颗。",b:"抽卡一次三张，点一下抽出来、再点一下才算选好。金色专家卡 10% 概率，答对 +30。经验能去商店换皮肤、头像框、名字效果，也能花 30 换回满爱心。"},
+ social:{t:"社交",a:"一个很安静的角落：你写信给我，我每周挑一些放上来。没有实时刷屏，也没有陌生人打扰～",b:"点右下角那个 +，选「用邮件写」，标题和模板我都帮你填好啦。这里是「投稿制」，页面上没有发布按钮——收到投稿后由我整理进页面，所以每周才会更新一次。"},
+ ach:{t:"成就",a:"七个小目标，解锁了会亮起来，金色奖杯就是拿到了。",b:"都在游戏里自然完成：答对题、连续答对、抽卡次数、跑分、用答题救回爱心、坚持来玩。不用刻意刷～"},
+ plan:{t:"开发计划",a:"我的小本本：做过什么、接下来想做什么。藏在这里，要看得输 4 位密码。",b:"第一次点会让你设个 4 位数字，忘掉也没关系，弹层里有「清除 PIN」可以重设。它不是加密哦，懂技术的能看到，别写敏感的东西。"},
+ look:{t:"外观",a:"深色模式和字体大小。深色模式可以跟随系统，也可以固定浅色或深色。",b:"点一下就生效，选择存在本机～字小选「大」，觉得挤就选「标准」。"},
  bg:{t:"网页背景",a:"把一张自己喜欢的图铺在整页后面，文字底下的白色半透明层保证还能看清。",b:"点「从相册选背景」选图，会自动压缩到 1280 像素宽再存本机。想回到默认，点「恢复默认」。"},
- quizModes:{t:"测验",a:"四个测验：性别认同、性取向、情绪（PHQ-9）、焦虑（GAD-7）。每个都有普通和专家两档，专家题更多、问得更细。",b:"先做普通；想更细就做专家。量表类的专家模式会多几道不计分的补充题，用来判断影响程度。"},
+ quizModes:{t:"测验",a:"四个小测验，都分普通和专家两档～专家题多、问得细。",b:"点整行是普通，点右边「专家」是加长版。量表类的专家模式会多几道不计分的补充题，用来看看影响有多大。"},
+ knowRes:{t:"成绩",a:"答对几题、百分比，还有错题的正确答案和解释。",b:"分数只是参考，看错题的解释更重要。存进记录后可以在摘要里看到。"},
  scaleRes:{t:"分数和区间",a:"分数是把每道题的频率加起来。区间是对应的严重程度，用来决定「要不要去看看」。",b:"它反映最近两周的主观感受，会随状态变。分数高不等于「你有病」，低也不等于「没事」。"},
  quizRun:{t:"答题",a:"一次一题，选一个就翻到下一题。",b:"「上一题」可以回去改；「退出」不保存当前进度。选项顺序每次都会打乱，避免顺手点第一个把分数抬高。"},
  resList:{t:"倾向分布",a:"四条比例加起来是 100%，表示你更靠近哪边，不是「有多大可能是跨性别」。",b:"看最高的两条就够了，别盯着小数。它不判定，也不给结论。"},
@@ -1976,11 +4311,11 @@ var HELP={
 function mkHelp(key){
   var b=document.createElement("button");
   b.type="button";b.className="help";b.setAttribute("data-help",key);
-  b.setAttribute("aria-label","说明");b.textContent="?";
+  b.setAttribute("aria-label","查看说明");b.setAttribute("title","查看说明");b.textContent="?";
   return b;
 }
 function injectHelp(){
-  ["mTitle","mDose","mRoute","mTime","mNote","mValue","mUnit","rName","rTime","symQ","range","notes"].forEach(function(id){
+  ["mTitle","mTime","mNote","rName","rTime","symQ","range","notes"].forEach(function(id){
     var el=$(id);if(!el)return;
     var lab=el.closest?el.closest("label"):null;if(!lab)return;
     var first=lab.firstChild;
@@ -1993,6 +4328,7 @@ function injectHelp(){
     var el=$(p[0]);if(!el)return;
     var card=el.closest?el.closest(".card"):null;if(!card)return;
     var hd=card.querySelector(".cardhead");if(!hd)return;
+    if(hd.querySelector(".help"))return;
     var first=hd.firstElementChild;
     if(first&&first.tagName==="SPAN")first.appendChild(mkHelp(p[1]));
     else hd.appendChild(mkHelp(p[1]));
@@ -2005,6 +4341,9 @@ function injectHelp(){
   if(ib)ib.insertAdjacentElement("afterend",mkHelp("ics"));
   var warn=document.querySelector(".card.warn .cardhead");
   if(warn&&!warn.querySelector(".help"))warn.firstElementChild.appendChild(mkHelp("symIntro"));
+  document.querySelectorAll(".help").forEach(function(b){
+    if(!b.getAttribute("aria-label")){b.setAttribute("aria-label","查看说明");b.setAttribute("title","查看说明")}
+  });
 }
 function openHelp(key){
   var h=HELP[key];if(!h)return;
@@ -2030,16 +4369,54 @@ document.addEventListener("click",function(e){
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeHelp()});
 
 /* ---------- 切换 ---------- */
+function activateTab(key){
+  document.querySelectorAll(".tabbar button").forEach(function(o){
+    o.classList.toggle("on",o.dataset.tab===key);
+  });
+  document.querySelectorAll(".tab").forEach(function(sec){sec.classList.remove("active")});
+  var sec=$("tab-"+key);
+  if(sec)sec.classList.add("active");
+  if($("meChip"))$("meChip").classList.toggle("show",key!=="me");
+  refreshTitle();
+  if(key==="table"&&curTbl==null)renderTblList();
+  if($("fabPost"))$("fabPost").classList.toggle("show",key==="social");
+  mountIcons();
+  if(key==="sym"){ if(!$("symQ").value)startDaily(); } else stopDaily();
+  if(key==="game"){ensureDaily();renderGameHome()}
+  if(key==="me"&&typeof meView==="function")meView("meHome");
+  if(key!=="game")runStop();
+  window.scrollTo(0,0);
+}
+var tabSplashTimer=null;
+function tabSplash(key,cb){
+  var btn=document.querySelector('[data-tab="'+key+'"]');
+  var svg=btn?btn.querySelector("svg"):null;
+  var iconBox=$("splashIcon");
+  iconBox.innerHTML="";
+  iconBox.style.display="";
+  if(svg){
+    var c=svg.cloneNode(true);
+    c.setAttribute("class","sp-icon");
+    c.removeAttribute("style");
+    iconBox.appendChild(c);
+  }
+  $("splashLabel").textContent=TAB_NAMES[key]||"";
+  $("splashLabel").style.display="";
+  $("splashText").innerHTML="";
+  $("splashText").style.display="none";
+  if(REDUCE){if(cb)cb();return}
+  $("splashWrap").classList.add("show");
+  clearTimeout(tabSplashTimer);
+  tabSplashTimer=setTimeout(function(){
+    $("splashWrap").classList.remove("show");
+    if(cb)cb();
+  },480);
+}
 document.querySelectorAll(".tabbar button").forEach(function(b){
   b.addEventListener("click",function(){
-    document.querySelectorAll(".tabbar button").forEach(function(o){o.classList.remove("on")});
-    b.classList.add("on");
-    document.querySelectorAll(".tab").forEach(function(s){s.classList.remove("active")});
-    $("tab-"+b.dataset.tab).classList.add("active");
-    if($("meChip"))$("meChip").classList.toggle("show",b.dataset.tab!=="me");
-    refreshTitle();
-    if(b.dataset.tab==="table"&&curTbl==null)renderTblList();
-    window.scrollTo(0,0);
+    var key=b.dataset.tab;
+    if(key===currentTab()){activateTab(key);return}
+    tabSplash(key,function(){activateTab(key)});
   });
 });
 
@@ -2047,8 +4424,76 @@ document.querySelectorAll(".tabbar button").forEach(function(b){
 load();
 if(!$("mTime").value)$("mTime").value=nowLocal();
 $("notes").value=DB.notes||"";
-$("qStartNormal").addEventListener("click",function(){qStart("gender",1)});
-$("qStartExpert").addEventListener("click",function(){qStart("gender",2)});
+function quizRow(id,quizId){
+  var el=$(id);
+  if(!el)return;
+  el.addEventListener("click",function(e){
+    if(e.target&&e.target.closest&&e.target.closest("[data-mode]"))return;
+    qStart(quizId,1);
+  });
+}
+quizRow("goQuizGender","gender");quizRow("goQuizOrient","orient");
+quizRow("goQuizPhq","phq9");quizRow("goQuizGad","gad7");quizRow("goQuizKnow","hrt");
+$("goShop").addEventListener("click",function(){gameView("gameShop");renderShop()});
+$("goScore").addEventListener("click",function(){subSplash(SUB_ICON.chart,"我的成绩",function(){gameView("gameStats")})});
+$("goAch").addEventListener("click",function(){subSplash(SUB_ICON.medal,"成就",function(){gameView("gameAch");renderGameHome()})});
+$("goCard").addEventListener("click",function(){
+  splash("抽卡",function(){gameView("gameCard");startGacha()});
+});
+$("goRun").addEventListener("click",function(){
+  splash("跳一跳",function(){gameView("gameRun");renderRunStats()});
+});
+$("drawBtn").addEventListener("click",startGacha);
+$("cardNext").addEventListener("click",function(){
+  $("revealWrap").classList.remove("show");
+  $("cardNext").style.display="none";
+  startGacha();
+});
+$("runBtn").addEventListener("click",runStart);
+$("reviveClose").addEventListener("click",function(){
+  $("reviveWrap").classList.remove("show");renderGameHome();
+});
+$("reviveWrap").addEventListener("click",function(e){
+  if(e.target===this){this.classList.remove("show");renderGameHome()}
+});
+$("runAgain").addEventListener("click",runStart);
+["pointerdown","touchstart"].forEach(function(ev){
+  $("jumpBtn").addEventListener(ev,function(e){
+    e.preventDefault();
+    this.classList.add("down");
+    runJumpDown();
+  },{passive:false});
+});
+["pointerup","pointercancel","touchend","mouseup","mouseleave"].forEach(function(ev){
+  $("jumpBtn").addEventListener(ev,function(){
+    this.classList.remove("down");
+    runJumpUp();
+  });
+});
+document.addEventListener("keydown",function(e){
+  if(e.code==="Space"&&$("tab-game").classList.contains("active")&&!e.repeat){e.preventDefault();runJumpDown()}
+});
+document.addEventListener("keyup",function(e){
+  if(e.code==="Space")runJumpUp();
+});
+document.querySelectorAll("[data-gback]").forEach(function(b){
+  b.addEventListener("click",function(){gameView("gameHome");renderGameHome()});
+});
+$("goQuizMed").addEventListener("click",function(){
+  $("qHome").style.display="none";
+  $("medWrap").style.display="";
+  medView("intro");window.scrollTo(0,0);
+});
+$("goQuizHis").addEventListener("click",function(){
+  $("qHome").classList.add("hidden");
+  $("qHisView").classList.remove("hidden");
+  renderQuizHistory();window.scrollTo(0,0);
+});
+$("qHisClose").addEventListener("click",function(){
+  $("qHisView").classList.add("hidden");
+  $("qHome").classList.remove("hidden");
+  window.scrollTo(0,0);
+});
 $("qBack").addEventListener("click",function(){if(qs.idx>0){qs.idx--;qRender()}});
 $("qQuit").addEventListener("click",function(){qView("home");renderQuizHistory()});
 document.addEventListener("click",function(e){
@@ -2059,6 +4504,78 @@ document.addEventListener("click",function(e){
     navigator.clipboard.writeText(t).then(function(){toast("已复制："+t)},function(){toast(t)});
   }else toast(t);
 });
+function meView(which){
+  if(which==="meHome"&&!inPop&&popLayer())return;
+  ["meHome","meSet","meFeed"].forEach(function(id){
+    var el=$(id);if(el)el.style.display="none";
+  });
+  var el=$(which);if(el)el.style.display="";
+  if(which!=="meHome")pushLayer(function(){meView("meHome")});
+  window.scrollTo(0,0);
+}
+function subSplash(svg,label,cb){
+  $("splashIcon").innerHTML=svg;
+  $("splashIcon").style.display="";
+  $("splashLabel").textContent=label;
+  $("splashLabel").style.display="";
+  $("splashText").innerHTML="";
+  $("splashText").style.display="none";
+  if(REDUCE){if(cb)cb();return}
+  $("splashWrap").classList.add("show");
+  clearTimeout(tabSplashTimer);
+  tabSplashTimer=setTimeout(function(){
+    $("splashWrap").classList.remove("show");
+    if(cb)cb();
+  },480);
+}
+var SUB_ICON={
+  list:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>',
+  backup:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M6 4h9l4 4v12H6z"/><path d="M15 4v5h4"/><path d="M9 12h6M9 16h4"/></svg>',
+  notif:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M18 15v-4a6 6 0 1 0-12 0v4l-2 2h16z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+  medal:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M8 4h8v4a4 4 0 0 1-8 0z"/><path d="M8 6H5v2a3 3 0 0 0 3 3M16 6h3v2a3 3 0 0 1-3 3"/><path d="M12 12v4M9 20h6"/></svg>',
+  chart:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M4 20V6"/><path d="M4 20h16"/><path d="M8 16V11M13 16V8M18 16v-4"/></svg>',
+  set:'<svg class="sp-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.2v2.2M12 18.6v2.2M4.4 7.6l1.9 1.1M17.7 15.3l1.9 1.1M4.4 16.4l1.9-1.1M17.7 8.7l1.9-1.1"/></svg>',
+  feed:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 4v-4H4z"/><path d="M8 9h8M8 12.5h5"/></svg>',
+  plan:'<svg class="sp-icon" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h4"/><path d="M9 13h6M9 17h4"/></svg>'
+};
+$("achToggle").addEventListener("click",function(e){
+  if(e.target&&e.target.closest&&e.target.closest(".help"))return;
+  var box=$("achWrap");
+  var open=box.style.display==="none";
+  box.style.display=open?"":"none";
+  $("achChev").style.transform=open?"rotate(90deg)":"rotate(0deg)";
+});
+$("goSet").addEventListener("click",function(){subSplash(SUB_ICON.set,"设置",function(){meView("meSet")})});
+$("goFeed").addEventListener("click",function(){subSplash(SUB_ICON.feed,"问题反馈",function(){meView("meFeed")})});
+$("goPlan").addEventListener("click",function(){subSplash(SUB_ICON.plan,"开发计划",openPlan)});
+document.querySelectorAll("[data-meback]").forEach(function(b){
+  b.addEventListener("click",function(){meView("meHome")});
+});
+$("planClose").addEventListener("click",closePlan);
+$("planWrap").addEventListener("click",function(e){if(e.target===this)closePlan()});
+$("planAdd").addEventListener("click",function(){
+  var t=prompt("加一条计划或想法：");
+  if(t===null||!t.trim())return;
+  var a=loadPlanExtra();
+  var d=new Date();
+  a.unshift({d:(d.getMonth()+1)+"-"+d.getDate(),t:t.trim(),s:"plan"});
+  savePlanExtra(a);renderPlan();toast("加好了");
+});
+$("planReset").addEventListener("click",function(){
+  if(!confirm("清除本地 PIN？下次打开要重新设置。"))return;
+  localStorage.removeItem("hrthub.pin");toast("已清除");
+});
+$("themeChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){
+    PRO.theme=c.getAttribute("data-theme");saveProfile();applyProfile();
+  });
+});
+$("fontChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){
+    PRO.font=c.getAttribute("data-font");saveProfile();applyFont();
+  });
+});
+if(THEME_MQ&&THEME_MQ.addEventListener)THEME_MQ.addEventListener("change",function(){applyProfile()});
 $("avatarBtn").addEventListener("click",function(){$("avatarFile").click()});
 $("avatarFile").addEventListener("change",setAvatar);
 $("bgBtn").addEventListener("click",function(){$("bgFile").click()});
@@ -2075,8 +4592,7 @@ $("bgClear").addEventListener("click",function(){
 });
 $("pName").addEventListener("input",function(){
   PRO.name=this.value.trim().slice(0,20);saveProfile();
-  var box=$("avatarBox");
-  if(box&&!PRO.avatar)box.textContent=(PRO.name||"我").slice(0,1);
+  paintLook();
 });
 document.addEventListener("click",function(e){
   var b=e.target&&e.target.closest?e.target.closest("[data-quiz]"):null;
@@ -2084,9 +4600,16 @@ document.addEventListener("click",function(e){
 });
 renderQuizHistory();
 loadProfile();
+if($("verNum"))$("verNum").textContent=APP_VER;
+mountIcons();
+mountSearch();
 renderTblList();
+renderSocial("");
+loadGame();
+renderGameHome();
 injectHelp();
 $("annOk").addEventListener("click",function(){
+  if(this.disabled)return;
   $("annWrap").classList.remove("show");
   $("annWrap").setAttribute("aria-hidden","true");
   document.body.style.overflow="";
@@ -2094,11 +4617,74 @@ $("annOk").addEventListener("click",function(){
 $("annWrap").classList.add("show");
 $("annWrap").setAttribute("aria-hidden","false");
 document.body.style.overflow="hidden";
+(function(){
+  var left=3,btn=$("annOk");
+  var t=setInterval(function(){
+    left--;
+    if(left>0){btn.textContent=left+" 秒后就能进去啦～"}
+    else{
+      clearInterval(t);
+      btn.textContent="马上进去看看～";
+      btn.disabled=false;
+    }
+  },1000);
+})();
 
 renderLog();renderRem();renderSym("");notifState();
+(function(){
+  var last=parseInt(localStorage.getItem("hrthub.lastBackup")||"0",10);
+  var n=DB.entries.length;
+  if(n>=5&&(!last||Date.now()-last>30*86400000)){
+    setTimeout(function(){
+      toast("已经一个月没备份啦，去「记录 › 备份」导一份～");
+    },4000);
+  }
+})();
+/* ---------- 装到桌面 & 离线 ---------- */
+var installEvt=null;
+function showInstallBar(){
+  if($("instBar")||$("updBar"))return;
+  var bar=document.createElement("div");
+  bar.className="savedtip";bar.id="instBar";
+  var ic=document.createElement("span");ic.className="savedtip-ic";ic.textContent="↓";
+  var tx=document.createElement("span");tx.className="savedtip-tx";tx.textContent="可以装到桌面，以后点图标就能开～";
+  var go=document.createElement("button");go.type="button";go.className="savedtip-go";go.textContent="装";
+  go.addEventListener("click",function(){
+    bar.remove();
+    if(installEvt){try{installEvt.prompt()}catch(e){}installEvt=null}
+  });
+  var no=document.createElement("button");no.type="button";no.className="savedtip-go";no.textContent="不用";
+  no.addEventListener("click",function(){bar.remove();localStorage.setItem("hrthub.noInstall","1")});
+  bar.appendChild(ic);bar.appendChild(tx);bar.appendChild(go);bar.appendChild(no);
+  document.body.appendChild(bar);
+}
+window.addEventListener("beforeinstallprompt",function(e){
+  e.preventDefault();installEvt=e;
+  if(localStorage.getItem("hrthub.noInstall")!=="1")setTimeout(showInstallBar,3000);
+});
+window.addEventListener("appinstalled",function(){
+  localStorage.setItem("hrthub.installed","1");
+  var b=$("instBar");if(b)b.remove();
+});
+if("serviceWorker" in navigator && (location.protocol==="https:"||location.protocol==="http:")){
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+setTimeout(checkUpdate,2500);
+setInterval(function(){
+  if(!document.hidden)checkUpdate();
+},3600000);
 alarmTimer=setInterval(tick,15000);
 tick();
-document.addEventListener("visibilitychange",function(){if(!document.hidden)tick()});
+document.addEventListener("visibilitychange",function(){
+  document.documentElement.classList.toggle("app-hidden",document.hidden);
+  if(document.hidden)return;
+  tick();
+  ensureDaily();
+  if($("tab-game")&&$("tab-game").classList.contains("active"))renderGameHome();
+  renderGameStats();
+});
 })();
 </script>
 </body>
