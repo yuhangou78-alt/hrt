@@ -1,0 +1,2105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#5BCEFA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>用药记录</title>
+<style>
+:root{
+  --pink:#F5A9B8;--pink-d:#E27C96;--pink-l:#FDEBF0;
+  --blue:#5BCEFA;--blue-d:#2FA8CF;--blue-l:#E8F8FE;
+  --ink:#22313D;--dim:#6F8091;--line:#E3EDF3;
+  --card:#FFFFFF;--bg2:#F8FBFD;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--ink);font:15px/1.6 -apple-system,"PingFang SC","Noto Sans SC",system-ui,sans-serif;
+  background:radial-gradient(130% 55% at 100% 0%,var(--pink-l) 0%,rgba(255,255,255,0) 60%),
+    radial-gradient(130% 55% at 0% 0%,var(--blue-l) 0%,rgba(255,255,255,0) 60%),#fff;
+  background-attachment:fixed;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+header{padding:12px 16px 4px}
+.flag{height:7px;border-radius:99px;margin:4px 0 14px;
+  background:linear-gradient(90deg,#5BCEFA 0 20%,#F5A9B8 20% 40%,#fff 40% 60%,#F5A9B8 60% 80%,#5BCEFA 80% 100%);
+  box-shadow:0 0 0 1px var(--line),0 4px 12px rgba(91,206,250,.25)}
+.brand{display:flex;align-items:center;gap:9px}
+.mark{width:28px;height:28px;border-radius:10px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 4px 10px rgba(245,169,184,.4)}
+.mark svg{width:16px;height:16px;color:#fff}
+h1{font-size:19px;margin:0;letter-spacing:.2px}
+.sub{margin:6px 0 0;color:var(--dim);font-size:12px;padding-left:37px}
+main{padding:0 12px}
+.tab{display:none}.tab.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;
+  box-shadow:0 8px 22px rgba(47,168,207,.06)}
+label{display:block;font-size:12px;color:var(--dim);margin:10px 0 0}
+input,select,textarea{width:100%;margin-top:6px;background:var(--bg2);border:1px solid #DCE8F0;border-radius:14px;
+  color:var(--ink);padding:11px 12px;font:inherit;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(91,206,250,.2)}
+textarea{min-height:90px;resize:vertical}
+button{font:inherit;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);
+  padding:11px 16px;margin-top:10px;cursor:pointer;font-weight:500}
+button.primary{background:linear-gradient(135deg,var(--blue) 0%,#8FD9F0 55%,var(--pink) 100%);
+  border:none;color:#1E303C;font-weight:700;width:100%;box-shadow:0 6px 16px rgba(91,206,250,.32)}
+button.ghost{background:#fff}
+button:disabled{opacity:.5}
+.row2{display:flex;gap:10px}
+.row2>*{flex:1;min-width:0}
+.cardhead{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--dim);margin-bottom:8px}
+.entry{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #F0F5F8;align-items:flex-start}
+.entry:last-child{border-bottom:none}
+.entry .t{color:var(--dim);font-size:12px;width:42px;flex:none;padding-top:3px}
+.entry .b{flex:1;min-width:0}
+.entry .n{font-weight:600;font-size:14px}
+.entry .d{color:var(--dim);font-size:12px;word-break:break-word}
+.entry .x{margin:0;padding:2px 6px;font-size:16px;background:transparent;border-color:transparent;color:#B9C7D2;line-height:1}
+.daygroup{font-size:12px;color:var(--dim);margin:10px 0 2px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{margin:0;border-radius:999px;padding:6px 13px;font-size:13px;background:#fff;
+  border:1px solid #D9E9F2;color:#4E6273;transition:background .12s,color .12s}
+.chip.on{background:var(--blue-d);border-color:var(--blue-d);color:#fff;font-weight:600;
+  box-shadow:0 4px 10px rgba(47,168,207,.3)}
+.hint{color:var(--dim);font-size:12px;margin:8px 0 0}
+.warn{background:#FFF7F9;border-color:#F7C9D6;color:#8A3B52;font-size:13px;line-height:1.6}
+details{border-bottom:1px solid #F0F5F8;padding:11px 0}
+details:last-child{border-bottom:none}
+summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;gap:8px;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"+";color:var(--blue-d);font-weight:400;width:14px;flex:none}
+details[open] summary:before{content:"-"}
+.tag{font-size:11px;color:var(--dim);background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-weight:400}
+.kv{font-size:13px;color:#3E4F5C;margin:8px 0 0}
+.kv b{color:var(--dim);font-weight:500;font-size:12px;display:block;margin-bottom:2px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);z-index:9}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;
+  color:#93A4B2;padding:8px 0 9px;font-size:11px;border-radius:0;margin:0;font-weight:500}
+.tabbar button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--pink-d)}
+.tabbar button.on svg{stroke-width:2.1}
+pre.out{white-space:pre-wrap;word-break:break-word;background:var(--bg2);border:1px solid var(--line);
+  border-radius:14px;padding:11px;font-size:12px;max-height:46vh;overflow:auto;margin:10px 0 0;
+  font-family:ui-monospace,Menlo,monospace}
+.banner{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));
+  background:var(--blue-l);border:1px solid #9FE0F7;color:#0B4A63;padding:12px 14px;border-radius:16px;
+  display:none;z-index:20;font-size:14px;box-shadow:0 10px 26px rgba(47,168,207,.18)}
+.banner.show{display:block}
+.pbar{height:5px;background:#EFF5F9;border-radius:99px;overflow:hidden;margin:6px 0 2px}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--pink));border-radius:99px}
+.qtext{font-size:16px;font-weight:600;line-height:1.65;margin:14px 0 6px}
+.opt{display:block;width:100%;text-align:left;margin-top:9px;line-height:1.45;padding:13px 16px;border-radius:16px;
+  border-color:#DCE8F0;background:#fff}
+.opt:active{border-color:var(--pink);background:#FFF7F9}
+.dim{margin:12px 0}
+.dim .lbl{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:#3E4F5C}
+.dim .lbl span:last-child{color:var(--dim);font-variant-numeric:tabular-nums}
+.track{height:10px;background:#EFF5F9;border-radius:99px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:99px;background:var(--pink-d)}
+.track i.m{background:var(--blue-d)}
+.track i.n{background:#9B8CE0}
+.track i.u{background:#E0A54A}
+.res p{font-size:14px;line-height:1.7;color:#3A4A57;margin:10px 0}
+.res li{font-size:13px;color:#3E4F5C;margin:6px 0}
+.foot{text-align:center;color:#A6B4C0;font-size:11px;padding:18px 16px 4px}
+
+.help{display:inline-grid;place-items:center;width:18px;height:18px;min-width:18px;margin:0 0 0 6px;padding:0;
+  border-radius:50%;border:1px solid #BFE6F5;background:var(--blue-l);color:var(--blue-d);
+  font-size:11px;font-weight:700;line-height:1;vertical-align:1px;cursor:pointer;flex:none}
+.help:active{background:#D5F1FB;border-color:var(--blue)}
+.sheet-wrap{position:fixed;inset:0;z-index:40;display:none;background:rgba(34,49,61,.3);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.sheet-wrap.show{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;
+  padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;
+  box-shadow:0 -10px 34px rgba(34,49,61,.18);animation:sheetup .2s ease-out}
+@keyframes sheetup{from{transform:translateY(16px);opacity:.5}to{transform:none;opacity:1}}
+.sheet h2{font-size:17px;margin:0 0 2px;padding-right:40px}
+.sheet .xbtn{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:50%;border:none;
+  background:var(--bg2);color:var(--dim);font-size:18px;margin:0;padding:0;line-height:1}
+.sheet .sec{margin-top:16px}
+.sheet .sec b{display:block;font-size:12px;color:var(--blue-d);margin-bottom:4px;letter-spacing:.4px}
+.sheet .sec p{margin:0;font-size:14px;line-height:1.7;color:#3A4A57}
+.sheet .mail{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);line-height:1.7}
+.sheet .mail a{color:var(--pink-d);font-weight:600;text-decoration:none}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;
+  margin-right:6px;vertical-align:2px;background:var(--blue-l);color:#1D6F8C}
+.badge.b-body{background:var(--pink-l);color:#A8455F}
+.badge.b-note{background:#F1F4F7;color:#6F8091}
+.badge.b-quiz{background:#F0ECFB;color:#6C5CA8}
+.avatar{width:64px;height:64px;border-radius:50%;flex:none;display:grid;place-items:center;
+  overflow:hidden;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;
+  font-size:24px;font-weight:700;box-shadow:0 4px 12px rgba(245,169,184,.35)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.announce-wrap{position:fixed;inset:0;z-index:50;display:none;background:rgba(34,49,61,.35);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:18px;overflow:auto}
+.announce-wrap.show{display:flex;align-items:center;justify-content:center}
+.announce{background:#fff;border-radius:22px;padding:22px 18px;max-width:420px;width:100%;
+  box-shadow:0 20px 50px rgba(34,49,61,.25);animation:sheetup .2s ease-out}
+.announce h2{font-size:19px;margin:0 0 4px}
+.announce .byline{font-size:13px;color:var(--dim);margin:0 0 10px}
+.announce p{font-size:14px;line-height:1.7;color:#3A4A57;margin:10px 0}
+.announce .row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-top:8px;font-size:14px}
+.mechip{display:none;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  border-radius:99px;padding:4px 14px 4px 4px;margin:8px 0 0;font-size:13px;color:var(--ink);
+  box-shadow:0 4px 12px rgba(47,168,207,.12);max-width:100%}
+.mechip.show{display:inline-flex}
+.mechip-avatar{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;
+  overflow:hidden;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;font-size:12px;font-weight:700}
+.mechip-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.mechip-name{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;border:none;box-shadow:none}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--pink))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:#fff;border:2px solid var(--blue-d);margin-top:-8px;box-shadow:0 2px 6px rgba(47,168,207,.3)}
+.tblWrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:8px;background:#fff}
+table.dyn{border-collapse:collapse;width:100%;font-size:13px}
+table.dyn th,table.dyn td{border:1px solid #EDF3F7;padding:9px 11px;min-width:92px;max-width:200px;
+  text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.dyn th{background:#F5FAFD;font-weight:600;color:#3E4F5C}
+table.dyn tbody tr{animation:rowin .24s ease-out}
+@keyframes rowin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+table.dyn td:active{background:var(--blue-l)}
+table.dyn td.flash{animation:flash .55s}
+@keyframes flash{0%{background:var(--pink-l)}100%{background:transparent}}
+.tabbar button{font-size:9.5px;padding:7px 0 8px;gap:2px;white-space:nowrap}
+.tabbar button svg{width:18px;height:18px}
+.chartWrap{margin-top:10px}
+.chartWrap svg{width:100%;height:auto;display:block}
+.chartWrap .empty{color:var(--dim);font-size:12px;padding:8px 2px;margin:0}
+.bar{transform-box:fill-box;transform-origin:bottom;animation:grow .45s cubic-bezier(.2,.8,.3,1)}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.slice{transform-box:fill-box;transform-origin:center;animation:pop .4s ease-out}
+@keyframes pop{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.pt{animation:pop .3s ease-out}
+
+/* 入场动画 */
+.tab.active{animation:tabfade .26s ease-out}
+@keyframes tabfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tab.active > .card,.tab.active > div > .card{animation:cardUp .32s cubic-bezier(.2,.8,.3,1) both}
+.tab.active > .card:nth-child(2),.tab.active > div > .card:nth-child(2){animation-delay:.04s}
+.tab.active > .card:nth-child(3),.tab.active > div > .card:nth-child(3){animation-delay:.08s}
+.tab.active > .card:nth-child(4),.tab.active > div > .card:nth-child(4){animation-delay:.12s}
+.tab.active > .card:nth-child(5),.tab.active > div > .card:nth-child(5){animation-delay:.16s}
+@keyframes cardUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.entry{animation:rowIn .24s ease-out both}
+@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+details{animation:rowIn .22s ease-out both}
+summary:active{background:var(--blue-l)}
+button{transition:transform .12s ease,background .15s,color .15s,border-color .15s}
+button:active{transform:scale(.96)}
+.chip.on{animation:chipPop .22s ease-out}
+@keyframes chipPop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.pbar i{transition:width .25s ease}
+.track i{transition:width .5s cubic-bezier(.2,.8,.3,1)}
+</style>
+</head>
+<body>
+<div class="flag"></div>
+<header>
+  <button class="mechip" id="meChip" type="button">
+    <span class="mechip-avatar" id="chipAvatar">我</span>
+    <span class="mechip-name" id="chipName">我的</span>
+  </button>
+  <div class="flag" aria-hidden="true"></div>
+  <div class="brand">
+    <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7 3.5c0 4.9-7 9.3-7 9.3z"/></svg></span>
+    <h1>用药记录</h1>
+  </div>
+  <p class="sub">记录 · 提醒 · 自察，不给剂量建议 · 数据只存在这台设备</p>
+</header>
+
+<main>
+<!-- 记录 -->
+<section class="tab" id="tab-log">
+  <div class="card">
+    <div class="cardhead"><span>记一笔</span></div>
+    <div class="chips" id="typeChips">
+      <button class="chip on" data-type="med" type="button">用药</button>
+      <button class="chip" data-type="body" type="button">身体变化</button>
+      <button class="chip" data-type="note" type="button">随笔</button>
+    </div>
+    <label>标题<input id="mTitle" placeholder="药名，例如 戊酸雌二醇" autocomplete="off"></label>
+    <div id="medFields">
+      <div class="row2">
+        <label>剂量<input id="mDose" placeholder="2 mg / 1 片 / 0.5 ml" autocomplete="off"></label>
+        <label>途径<select id="mRoute">
+          <option>口服</option><option>舌下</option><option>经皮</option>
+          <option>肌注</option><option>皮下</option><option>其他</option>
+        </select></label>
+      </div>
+    </div>
+    <div id="bodyFields" style="display:none">
+      <div class="row2">
+        <label>数值<input id="mValue" inputmode="decimal" placeholder="例如 62" autocomplete="off"></label>
+        <label>单位<input id="mUnit" placeholder="kg / cm" autocomplete="off"></label>
+      </div>
+    </div>
+    <label>时间<input id="mTime" type="datetime-local"></label>
+    <label>备注<input id="mNote" placeholder="部位、感受，可留空" autocomplete="off"></label>
+    <button class="primary" id="saveBtn">记一笔</button>
+    <div class="chips" id="recentChips"></div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>最近记录</span><span id="count"></span></div>
+    <div id="logList"></div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>备份</span></div>
+    <button class="ghost" id="expBtn">导出 JSON</button>
+    <label style="margin-top:10px">导入 JSON（合并）
+      <input type="file" id="impFile" accept=".json,application/json">
+    </label>
+    <p class="hint">清浏览器数据或换手机会丢，定期导出一份放到网盘或电脑。</p>
+  </div>
+</section>
+
+<!-- 表格 -->
+<section class="tab" id="tab-table">
+  <div id="tblHome">
+    <div class="card">
+      <div class="cardhead"><span>表格<button class="help" type="button" data-help="table">?</button></span><span id="tblCount"></span></div>
+      <p class="hint" style="margin-top:0">自己建表：化验记录、用药对照、体重曲线、复诊安排，都行。点格子就能改。</p>
+      <button class="primary" id="tblNew">新建表格</button>
+    </div>
+    <div id="tblList"></div>
+  </div>
+
+  <div id="tblEdit" style="display:none">
+    <div class="card">
+      <div class="cardhead"><span id="tblTitle"></span><button class="ghost" id="tblBack" style="margin:0;padding:4px 12px;font-size:12px">返回</button></div>
+      <div class="chips" id="chartChips" style="margin-top:8px">
+        <button class="chip on" data-chart="none" type="button">表格</button>
+        <button class="chip" data-chart="line" type="button">折线</button>
+        <button class="chip" data-chart="bar" type="button">条形</button>
+        <button class="chip" data-chart="pie" type="button">饼图</button>
+      </div>
+      <div class="chartWrap" id="tblChart"></div>
+      <div class="tblWrap">
+        <table class="dyn"><thead><tr id="tblHead"></tr></thead><tbody id="tblBody"></tbody></table>
+      </div>
+      <div class="row2">
+        <button class="ghost" id="tblAddRow">+ 一行</button>
+        <button class="ghost" id="tblAddCol">+ 一列</button>
+      </div>
+      <button class="ghost" id="tblDel" style="width:100%">删除这张表</button>
+    </div>
+  </div>
+</section>
+
+<!-- 用药 -->
+<section class="tab" id="tab-med">
+  <div id="medIntro">
+    <div class="card">
+      <div class="cardhead"><span>用药准备<button class="help" type="button" data-help="med">?</button></span><span class="tag">不是处方</span></div>
+      <p style="font-size:14px;line-height:1.7"><b>它不给你开方案。</b>它用一问一答，把见医生之前该想清楚的事问一遍，最后给一张「还差什么」的清单。</p>
+      <p class="hint">任何一题都可以跳过。答得越全，清单越准。</p>
+      <button class="primary" id="medStart">开始 · 14 个问题</button>
+    </div>
+    <div class="card warn">
+      <b>事先声明</b>
+      <p style="margin:6px 0 0">任何用药都应当在能随访的人指导下进行——医生，或者你信得过、懂行的人。网页能帮你准备，不能替你负责。</p>
+    </div>
+  </div>
+  <div id="medRun" style="display:none">
+    <div class="card">
+      <div class="cardhead"><span id="medProgress"></span><span class="tag">用药准备</span></div>
+      <div class="pbar"><i id="medBarFill" style="width:0"></i></div>
+      <p class="qtext" id="medText"></p>
+      <div id="medOpts"></div>
+      <div class="row2">
+        <button class="ghost" id="medBack" style="display:none">上一题</button>
+        <button class="ghost" id="medSkip">跳过这题</button>
+      </div>
+    </div>
+  </div>
+  <div id="medResult" style="display:none"></div>
+</section>
+
+<!-- 提醒 -->
+<section class="tab" id="tab-remind">
+  <div class="card">
+    <div class="cardhead"><span>新建提醒<button class="help" type="button" data-help="remindForm">?</button></span></div>
+    <label>提醒什么事<input id="rName" placeholder="吃药、喝水、复诊、上课，都行" autocomplete="off"></label>
+    <label>时间<input id="rTime" type="time" value="09:00"></label>
+    <div class="cardhead" style="margin-top:14px"><span>多久一次<button class="help" type="button" data-help="repeat">?</button></span></div>
+    <div class="chips" id="repeatChips">
+      <button class="chip on" data-rep="once" type="button">只提醒一次</button>
+      <button class="chip" data-rep="daily" type="button">每天</button>
+      <button class="chip" data-rep="custom" type="button">自定义</button>
+    </div>
+    <div id="onceBox">
+      <label>哪天<input id="rDate" type="date"></label>
+    </div>
+    <div id="customBox" style="display:none">
+      <div class="chips" id="dayChips">
+        <button class="chip" data-day="1" type="button">一</button>
+        <button class="chip" data-day="2" type="button">二</button>
+        <button class="chip" data-day="3" type="button">三</button>
+        <button class="chip" data-day="4" type="button">四</button>
+        <button class="chip" data-day="5" type="button">五</button>
+        <button class="chip" data-day="6" type="button">六</button>
+        <button class="chip" data-day="0" type="button">日</button>
+      </div>
+      <p class="hint">选哪几天重复，可以多选。</p>
+    </div>
+    <button class="primary" id="addRem">添加提醒</button>
+    <div class="row2">
+      <button class="ghost" id="notifBtn">开启通知</button>
+      <button class="ghost" id="testNotif">测试一下</button>
+    </div>
+    <p class="hint" id="notifState"></p>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>提醒列表<button class="help" type="button" data-help="remList">?</button></span><span id="remCount"></span></div>
+    <div id="remList"></div>
+    <button id="icsBtn">导出到手机日历 (.ics)</button>
+    <p class="hint">网页提醒只在页面开着时有效。每次添加后会问你要不要写进手机日历，导入后关屏也会响。</p>
+  </div>
+</section>
+
+<section class="tab" id="tab-sym">
+  <div class="card warn">
+    <div class="cardhead"><span>说明</span></div>
+    这里只帮你判断「要不要看医生」「该记什么」，<b>不提供药名和剂量</b>。下面的内容是常见情况的整理，不是诊断。
+  </div>
+  <div class="card" style="border-color:#F7C9D6">
+    <div class="cardhead"><span>用药避雷（重要）</span><span class="tag">先看这个</span></div>
+    <p class="hint" style="margin:0;line-height:1.8">
+      · 剂量不是越大越好，加量换不来更快，只换来更高风险<br>
+      · 避孕药不能当雌激素用，里面的成分风险完全不同<br>
+      · 同时吃两种抗雄药，副作用是叠加的<br>
+      · 长期不查血就调整，等于闭眼开车<br>
+      · 来源不明的药，剂量和真假都没人担保<br>
+      · 突然停药会反弹，想停要慢慢来并告诉医生<br>
+      · 出现单侧腿肿、气短、黄疸、剧烈头痛，立刻停并就医
+    </p>
+  </div>
+  <div class="card">
+    <input id="symQ" placeholder="搜一下：头痛 / 水肿 / 注射 / 停药…" autocomplete="off">
+    <div id="hisBox" style="display:none"></div>
+    <div id="symList"></div>
+  </div>
+</section>
+
+<!-- 摘要 -->
+<section class="tab" id="tab-sum">
+  <div class="card">
+    <div class="cardhead"><span>就诊摘要</span></div>
+    <div class="row2">
+      <label>范围<select id="range">
+        <option value="7">近 7 天</option>
+        <option value="30" selected>近 30 天</option>
+        <option value="90">近 90 天</option>
+        <option value="0">全部</option>
+      </select></label>
+    </div>
+    <label>想跟医生说的话 / 想问的问题<textarea id="notes" placeholder="例如：最近两个月情绪波动大，想评估一下；注射部位有硬结，问要不要换部位。"></textarea></label>
+    <button class="primary" id="genBtn">生成就诊摘要</button>
+    <div class="row2">
+      <button class="ghost" id="copyBtn">复制</button>
+      <button class="ghost" id="dlBtn">下载 .md</button>
+    </div>
+    <pre class="out" id="out">点上面的按钮生成。</pre>
+  </div>
+  <div class="card">
+    <p class="hint">把导出的 .md 文件当附件发给医生，或者发给 DSH Go 让它整理、列问题。这样不用把 AI 密钥放进网页里。</p>
+  </div>
+</section>
+
+<!-- 测验 -->
+<section class="tab" id="tab-quiz">
+  <div id="qHome">
+    <div class="card">
+      <div class="cardhead"><span>测验<button class="help" type="button" data-help="quizModes">?</button></span><span class="tag">自评</span></div>
+      <p class="hint" style="margin-top:0">都是自己填的自评工具，不是诊断。结果用比例或分数呈现，不给你下结论。</p>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>性别认同倾向</span><span class="tag">约 3 分钟</span></div>
+      <p class="hint" style="margin-top:0">看你的倾向落在哪、有多确定、身体上想要什么。</p>
+      <button class="primary" id="qStartNormal">普通模式 · 12 题</button>
+      <button class="ghost" id="qStartExpert">专家模式 · 28 题</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>性取向倾向</span><span class="tag">10 题</span></div>
+      <p class="hint" style="margin-top:0">看吸引力更常指向哪一边。同样不给结论，也不贴标签。</p>
+      <button class="primary" data-quiz="orient" data-mode="1">普通 · 10 题</button>
+      <button class="ghost" data-quiz="orient" data-mode="2">专家 · 18 题</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>情绪状态筛查</span><span class="tag">PHQ-9</span></div>
+      <p class="hint" style="margin-top:0">最近两周的情绪状态，9 道题。是筛查量表，不是诊断。</p>
+      <button class="primary" data-quiz="phq9" data-mode="1">普通 · 9 题</button>
+      <button class="ghost" data-quiz="phq9" data-mode="2">专家 · 14 题</button>
+    </div>
+    <div class="card">
+      <div class="cardhead"><span>焦虑筛查</span><span class="tag">GAD-7</span></div>
+      <p class="hint" style="margin-top:0">最近两周的焦虑程度，7 道题。同样是筛查。</p>
+      <button class="primary" data-quiz="gad7" data-mode="1">普通 · 7 题</button>
+      <button class="ghost" data-quiz="gad7" data-mode="2">专家 · 12 题</button>
+    </div>
+    <div id="qHistory"></div>
+    <div class="card">
+      <div class="cardhead"><span>更多</span></div>
+      <p class="hint" style="margin:0">睡眠、压力这类低风险量表可以再加。至于「我有没有某种精神疾病」的自测，我不做，原因写在说明里。</p>
+    </div>
+  </div>
+
+  <div id="qRun" style="display:none">
+    <div class="card">
+      <div class="cardhead"><span id="qProgress"></span><span class="tag" id="qModeTag"></span></div>
+      <div class="pbar"><i id="qBarFill" style="width:0"></i></div>
+      <p class="qtext" id="qText"></p>
+      <div id="qOpts"></div>
+      <button class="ghost" id="qBack" style="display:none">上一题</button>
+      <button class="ghost" id="qQuit">退出</button>
+    </div>
+  </div>
+
+  <div id="qResult" style="display:none"></div>
+</section>
+
+<!-- 我的 -->
+<section class="tab active" id="tab-me">
+  <div class="card">
+    <div class="cardhead"><span>我的<button class="help" type="button" data-help="profile">?</button></span><span class="tag">只在本机</span></div>
+    <div style="display:flex;gap:14px;align-items:center;margin-top:6px">
+      <div class="avatar" id="avatarBox">我</div>
+      <div style="flex:1;min-width:0">
+        <label style="margin-top:0">名字<input id="pName" placeholder="怎么称呼你" autocomplete="off"></label>
+        <button class="ghost" id="avatarBtn" style="width:100%">换头像</button>
+        <input type="file" id="avatarFile" accept="image/*" style="display:none">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>网页背景<button class="help" type="button" data-help="bg">?</button></span></div>
+    <p class="hint" style="margin-top:0">从相册选一张图，压缩后存在本机。文字下面会加一层半透明白，保证看得清。</p>
+    <label>背景可见度<input id="bgAlpha" type="range" min="0" max="100" step="5" value="60" style="padding:0;height:34px"></label>
+    <button class="primary" id="bgBtn">从相册选背景</button>
+    <button class="ghost" id="bgClear" style="width:100%">恢复默认</button>
+    <input type="file" id="bgFile" accept="image/*" style="display:none">
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>反馈<button class="help" type="button" data-help="feedback">?</button></span></div>
+    <div class="entry">
+      <div class="b"><div class="n">邮箱</div><div class="d">libibocom@qq.com</div></div>
+      <button class="ghost" data-copy="libibocom@qq.com" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+    </div>
+    <div class="entry">
+      <div class="b"><div class="n">QQ</div><div class="d">150516059</div></div>
+      <button class="ghost" data-copy="150516059" style="margin:0;padding:5px 12px;font-size:12px">复制</button>
+    </div>
+    <p class="hint">发现 bug、想加功能、或者哪里看不懂，都可以找我。写清楚你用的是哪个功能、手机是什么系统，方便定位。</p>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span>说明</span></div>
+    <p class="hint" style="margin:0">头像、名字、背景都只存在这台设备，不需要账号，也不会上传。换手机或清浏览器数据会丢。</p>
+    <p class="hint">想给别人用：把网页链接或这个文件发过去就行，每个人都是各用各的，互相看不到对方的数据。</p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">bcm.hrthub.com · 数据只存在这台设备，不上传</footer>
+
+<nav class="tabbar">
+  <button data-tab="me" class="on">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6"/></svg>
+    我的</button>
+  <button data-tab="log">
+    <svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="14" rx="4"/><path d="M9 6V5a3 3 0 0 1 6 0v1"/><path d="M12 11v5M9.5 13.5h5"/></svg>
+    记录</button>
+  <button data-tab="table">
+    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M4 10h16M4 15h16M10 5v14"/></svg>
+    表格</button>
+  <button data-tab="med">
+    <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="10" rx="5"/><path d="M9 12h6"/></svg>
+    用药</button>
+  <button data-tab="remind">
+    <svg viewBox="0 0 24 24"><path d="M18 15v-4a6 6 0 1 0-12 0v4l-2 2h16z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+    提醒</button>
+  <button data-tab="sym">
+    <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7 3.4C19 15.7 12 20 12 20z"/></svg>
+    搜索</button>
+  <button data-tab="quiz">
+    <svg viewBox="0 0 24 24"><path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z"/><path d="M18 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>
+    测验</button>
+  <button data-tab="sum">
+    <svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h4"/><path d="M9 13h6M9 17h4"/></svg>
+    摘要</button>
+</nav>
+
+<div class="banner" id="banner"></div>
+
+<div class="announce-wrap" id="annWrap" aria-hidden="true">
+  <div class="announce" role="dialog" aria-modal="true">
+    <h2>hrt记录网站</h2>
+    <p class="byline">制作人：面包miao</p>
+    <p><b>一个给自己用的记录小工具</b>：记用药、看身体变化、做心理自评、到点提醒。它不是医疗建议，也不做诊断。</p>
+    <p><b>数据只在你这台手机上</b>，不上传、不需要注册。换手机或清浏览器缓存会丢，记得偶尔点「记录 › 备份 › 导出 JSON」。</p>
+    <p style="margin-bottom:4px"><b>有问题找我</b>：</p>
+    <div class="row"><span>邮箱 libibocom@qq.com</span><button class="ghost" data-copy="libibocom@qq.com" style="margin:0;padding:5px 12px;font-size:12px">复制</button></div>
+    <div class="row"><span>QQ 150516059</span><button class="ghost" data-copy="150516059" style="margin:0;padding:5px 12px;font-size:12px">复制</button></div>
+    <button class="primary" id="annOk" style="margin-top:18px">知道了，开始用</button>
+  </div>
+</div>
+
+<div class="sheet-wrap" id="sheetWrap" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="xbtn" id="sheetClose" type="button" aria-label="关闭">×</button>
+    <h2 id="sheetTitle">说明</h2>
+    <div class="cardhead" style="margin:6px 0 0"><span id="sheetSub"></span></div>
+    <div id="sheetBody"></div>
+    <div class="mail">还是不明白，或者发现哪里写错了？写信到 <a href="mailto:libibocom@qq.com">libibocom@qq.com</a>，附上你用的是哪个功能就行。</div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var KEY="hrthub.v1";
+var DB={entries:[],reminders:[],notes:"",fired:{},quiz:[],tables:[]};
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){var s=JSON.parse(raw);
+      if(Array.isArray(s.entries))DB.entries=s.entries;
+      if(Array.isArray(s.reminders))DB.reminders=s.reminders;
+      if(typeof s.notes==="string")DB.notes=s.notes;
+      if(Array.isArray(s.quiz))DB.quiz=s.quiz;
+      if(Array.isArray(s.tables))DB.tables=s.tables;
+      if(s.fired&&typeof s.fired==="object")DB.fired=s.fired;
+    }
+  }catch(e){}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast("本地存储写不进去，可能是空间满了")}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function $(id){return document.getElementById(id)}
+function pad(n){return n<10?"0"+n:""+n}
+function nowLocal(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())}
+function dayOf(iso){return (iso||"").slice(0,10)}
+function hhmm(iso){return (iso||"").slice(11,16)}
+function toast(msg){
+  var b=$("banner");b.textContent=msg;b.classList.add("show");
+  clearTimeout(toast.t);toast.t=setTimeout(function(){b.classList.remove("show")},3200);
+}
+
+/* ---------- 记录 ---------- */
+var ENTRY_TYPES={
+  med:{label:"用药"},
+  body:{label:"身体"},
+  note:{label:"随笔"},
+  quiz:{label:"测验"}
+};
+var curType="med";
+function typeOf(e){return ENTRY_TYPES[e.type]?e.type:"med"}
+function entryTitle(e){return e.title||e.name||"（无标题）"}
+function entryDesc(e){
+  var t=typeOf(e);
+  if(t==="body"){
+    var v=(e.value!=null&&e.value!=="")?(e.value+(e.unit||"")):"";
+    return [v,e.note].filter(Boolean).join(" · ");
+  }
+  if(t==="quiz")return e.note||"";
+  return [e.dose,e.route,e.note].filter(Boolean).join(" · ");
+}
+function setType(t){
+  curType=t;
+  $("typeChips").querySelectorAll(".chip").forEach(function(c){
+    c.classList.toggle("on",c.dataset.type===t);
+  });
+  $("medFields").style.display=t==="med"?"":"none";
+  $("bodyFields").style.display=t==="body"?"":"none";
+  $("mTitle").placeholder=t==="med"?"药名，例如 戊酸雌二醇":t==="body"?"项目，例如 体重、胸围":"随便写个标题";
+  $("mNote").placeholder=t==="note"?"正文，想写什么写什么":"部位、感受，可留空";
+}
+function renderChips(){
+  var seen={},list=[];
+  DB.entries.filter(function(e){return typeOf(e)==="med"}).slice().reverse().forEach(function(e){
+    var k=entryTitle(e);
+    if(!seen[k]&&list.length<8){seen[k]=1;list.push(e)}
+  });
+  var box=$("recentChips");box.innerHTML="";
+  list.forEach(function(e){
+    var b=document.createElement("button");
+    b.className="chip";b.type="button";b.textContent=entryTitle(e);
+    b.addEventListener("click",function(){
+      setType("med");
+      $("mTitle").value=entryTitle(e);$("mDose").value=e.dose||"";
+      $("mRoute").value=e.route||"口服";
+      $("mTitle").focus();
+    });
+    box.appendChild(b);
+  });
+}
+function renderLog(){
+  var box=$("logList");box.innerHTML="";
+  var list=DB.entries.slice().sort(function(a,b){return a.at<b.at?1:-1});
+  $("count").textContent=list.length?list.length+" 条":"";
+  if(!list.length){box.innerHTML='<p class="hint">还没有记录。上面填一条试试。</p>';renderChips();return}
+  var lastDay="";
+  list.forEach(function(e){
+    var d=dayOf(e.at);
+    if(d!==lastDay){
+      lastDay=d;
+      var g=document.createElement("div");g.className="daygroup";g.textContent=d;
+      box.appendChild(g);
+    }
+    var row=document.createElement("div");row.className="entry";
+    var t=document.createElement("div");t.className="t";t.textContent=hhmm(e.at);
+    var b=document.createElement("div");b.className="b";
+    var n=document.createElement("div");n.className="n";
+    var badge=document.createElement("span");
+    badge.className="badge b-"+typeOf(e);badge.textContent=ENTRY_TYPES[typeOf(e)].label;
+    n.appendChild(badge);
+    n.appendChild(document.createTextNode(entryTitle(e)));
+    var dd=document.createElement("div");dd.className="d";
+    dd.textContent=entryDesc(e);
+    b.appendChild(n);b.appendChild(dd);
+    var x=document.createElement("button");x.className="x";x.type="button";x.textContent="×";
+    x.title="删除这条";
+    x.addEventListener("click",function(){
+      if(!confirm("删除 "+(e.at.replace("T"," "))+" 的「"+entryTitle(e)+"」？"))return;
+      DB.entries=DB.entries.filter(function(o){return o.id!==e.id});save();renderLog();
+    });
+    row.appendChild(t);row.appendChild(b);row.appendChild(x);
+    box.appendChild(row);
+  });
+  renderChips();
+}
+$("typeChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){setType(c.dataset.type)});
+});
+$("saveBtn").addEventListener("click",function(){
+  var title=$("mTitle").value.trim();
+  if(!title){
+    if(curType==="note"){title="随笔"}
+    else{toast(curType==="body"?"先填项目名":"先填药名");$("mTitle").focus();return}
+  }
+  var at=$("mTime").value||nowLocal();
+  var e={id:uid(),type:curType,title:title,at:at,note:$("mNote").value.trim()};
+  if(curType==="med"){e.dose=$("mDose").value.trim();e.route=$("mRoute").value}
+  if(curType==="body"){e.value=$("mValue").value.trim();e.unit=$("mUnit").value.trim()}
+  DB.entries.push(e);
+  save();renderLog();
+  $("mDose").value="";$("mNote").value="";$("mValue").value="";$("mTime").value=nowLocal();
+  toast("已记下："+title);
+  $("mTitle").focus();
+});
+
+$("expBtn").addEventListener("click",function(){
+  var d=new Date();
+  dl("用药记录备份-"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+".json",JSON.stringify(DB,null,2),"application/json");
+});
+
+$("impFile").addEventListener("change",function(ev){
+  var f=ev.target.files&&ev.target.files[0];if(!f)return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    try{
+      var s=JSON.parse(fr.result);
+      if(!s||!Array.isArray(s.entries))throw new Error("格式不对");
+      var map={},add=0;
+      DB.entries.forEach(function(e){map[e.at+"|"+entryTitle(e)+"|"+(e.dose||"")]=1});
+      s.entries.forEach(function(e){
+        if(!e||!e.at||!(e.name||e.title))return;
+        var title=e.title||e.name, at=e.at;
+        var k=at+"|"+title+"|"+(e.dose||"");
+        if(map[k])return;
+        map[k]=1;add++;
+        DB.entries.push({id:uid(),type:e.type||"med",title:title,dose:e.dose||"",
+          route:e.route||"",value:e.value||"",unit:e.unit||"",at:at,note:e.note||""});
+      });
+      if(Array.isArray(s.reminders)){
+        s.reminders.forEach(function(r){
+          if(!r||!r.name||!r.time)return;
+          var exists=DB.reminders.some(function(o){return o.name===r.name&&o.time===r.time});
+          if(!exists)DB.reminders.push({id:uid(),name:r.name,time:r.time});
+        });
+      }
+      if(typeof s.notes==="string"&&s.notes.trim()&&!DB.notes.trim())DB.notes=s.notes;
+      if(Array.isArray(s.tables)){
+        if(!DB.tables)DB.tables=[];
+        s.tables.forEach(function(t){
+          if(!t||!t.id)return;
+          if(!DB.tables.some(function(x){return x.id===t.id}))DB.tables.push(t);
+        });
+      }
+      save();renderLog();renderRem();renderTblList();$("notes").value=DB.notes;
+      toast("导入完成，新增 "+add+" 条记录");
+    }catch(err){toast("这个文件读不出来："+err.message)}
+    ev.target.value="";
+  };
+  fr.readAsText(f);
+});
+
+/* ---------- 提醒 ---------- */
+var curRep="once";
+var curDays=[];
+function repOf(r){
+  if(r.repeat==="once"||r.repeat==="daily"||r.repeat==="custom")return r.repeat;
+  return "daily";
+}
+function setRep(v){
+  curRep=v;
+  $("repeatChips").querySelectorAll(".chip").forEach(function(c){
+    c.classList.toggle("on",c.getAttribute("data-rep")===v);
+  });
+  $("onceBox").style.display=v==="once"?"":"none";
+  $("customBox").style.display=v==="custom"?"":"none";
+}
+function remDesc(r){
+  var rep=repOf(r);
+  var names=["日","一","二","三","四","五","六"];
+  if(rep==="once")return (r.date?r.date+" ":"")+r.time+"（一次）";
+  if(rep==="daily")return "每天 "+r.time;
+  var ds=(r.days||[]).slice().sort();
+  return "每周"+ds.map(function(d){return names[d]}).join("、")+" "+r.time;
+}
+function renderRem(){
+  var box=$("remList");box.innerHTML="";
+  $("remCount").textContent=DB.reminders.length?DB.reminders.length+" 个":"";
+  if(!DB.reminders.length){box.innerHTML='<p class="hint">还没有提醒。</p>';return}
+  DB.reminders.slice().sort(function(a,b){return a.time<b.time?-1:1}).forEach(function(r){
+    var row=document.createElement("div");row.className="entry";
+    var t=document.createElement("div");t.className="t";t.textContent=r.time;
+    var b=document.createElement("div");b.className="b";
+    var n=document.createElement("div");n.className="n";n.textContent=r.name;
+    var d=document.createElement("div");d.className="d";d.textContent=remDesc(r);
+    b.appendChild(n);b.appendChild(d);
+    var x=document.createElement("button");x.className="x";x.type="button";x.textContent="×";
+    x.addEventListener("click",function(){
+      if(!confirm("删除提醒「"+r.name+"」？"))return;
+      DB.reminders=DB.reminders.filter(function(o){return o.id!==r.id});
+      save();renderRem();
+    });
+    row.appendChild(t);row.appendChild(b);row.appendChild(x);
+    box.appendChild(row);
+  });
+}
+$("repeatChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){setRep(c.getAttribute("data-rep"))});
+});
+$("dayChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){
+    var d=parseInt(c.getAttribute("data-day"),10);
+    var i=curDays.indexOf(d);
+    if(i>=0)curDays.splice(i,1);else curDays.push(d);
+    c.classList.toggle("on",curDays.indexOf(d)>=0);
+  });
+});
+$("addRem").addEventListener("click",function(){
+  var name=$("rName").value.trim();
+  var time=$("rTime").value;
+  if(!name){toast("先写提醒什么事");return}
+  if(!time){toast("先选时间");return}
+  var r={id:uid(),name:name,time:time,repeat:curRep};
+  if(curRep==="once")r.date=$("rDate").value||dayOf(nowLocal());
+  if(curRep==="custom"){
+    if(!curDays.length){toast("至少选一天");return}
+    r.days=curDays.slice().sort();
+  }
+  DB.reminders.push(r);
+  save();renderRem();
+  $("rName").value="";
+  toast("已添加："+remDesc(r));
+  setTimeout(function(){
+    var ok=confirm("提醒「"+r.name+"」加好了。\n\n要现在写进手机日历吗？\n\n· 导入：关屏、关掉网页也会响\n· 不导入：只有这个网页开着的时候才提醒，关掉就没了");
+    if(ok){
+      exportIcs([r]);
+      toast("已生成日历文件，打开它并选「导入」");
+    }
+  },400);
+});
+function notifState(){
+  var e=$("notifState");
+  if(!("Notification" in window)){e.textContent="这个浏览器不支持网页通知，用 .ics 导进日历更稳。";return}
+  e.textContent="当前状态："+(Notification.permission==="granted"?"已允许":Notification.permission==="denied"?"已被拒绝，去浏览器设置里改":"还没开启");
+}
+$("notifBtn").addEventListener("click",function(){
+  if(!("Notification" in window)){toast("浏览器不支持通知，用 .ics");return}
+  Notification.requestPermission().then(function(){notifState()});
+});
+$("testNotif").addEventListener("click",function(){
+  fire("测试提醒","如果你看到这条，通知是通的。");
+});
+function fire(title,body){
+  toast(title);
+  try{if("Notification" in window&&Notification.permission==="granted")new Notification(title,{body:body})}catch(e){}
+}
+function tick(){
+  var d=new Date();
+  var day=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  var hm=pad(d.getHours())+":"+pad(d.getMinutes());
+  var wd=d.getDay();
+  var changed=false;
+  DB.reminders.forEach(function(r){
+    if(r.time!==hm)return;
+    var rep=repOf(r);
+    if(rep==="once"&&r.date!==day)return;
+    if(rep==="custom"&&(r.days||[]).indexOf(wd)<0)return;
+    var k=day+" "+hm+" "+r.id;
+    if(DB.fired[k])return;
+    DB.fired[k]=1;changed=true;
+    fire("提醒："+r.name,"现在是 "+hm);
+  });
+  if(changed){save();pruneFired()}
+}
+function pruneFired(){
+  var keys=Object.keys(DB.fired);
+  if(keys.length<400)return;
+  var keep={};keys.slice(-100).forEach(function(k){keep[k]=1});DB.fired=keep;
+}
+function exportIcs(list){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//hrt//CN","CALSCALE:GREGORIAN"];
+  var stamp=utc(new Date());
+  var DOW=["SU","MO","TU","WE","TH","FR","SA"];
+  list.forEach(function(r){
+    var rep=repOf(r),start;
+    if(rep==="once"){
+      start=(r.date||dayOf(nowLocal())).replace(/-/g,"");
+    }else if(rep==="daily"){
+      start="20260101";
+    }else{
+      var ds=(r.days||[]).slice().sort();
+      var nd=new Date();
+      var want=ds.length?ds[0]:nd.getDay();
+      var diff=(want-nd.getDay()+7)%7;
+      nd.setDate(nd.getDate()+diff);
+      start=nd.getFullYear()+pad(nd.getMonth()+1)+pad(nd.getDate());
+    }
+    L.push("BEGIN:VEVENT");
+    L.push("UID:"+r.id+"@hrt");
+    L.push("DTSTAMP:"+stamp);
+    L.push("DTSTART:"+start+"T"+r.time.replace(":","")+"00");
+    if(rep==="daily")L.push("RRULE:FREQ=DAILY");
+    if(rep==="custom"){
+      var by=(r.days||[]).slice().sort().map(function(d){return DOW[d]}).join(",");
+      if(by)L.push("RRULE:FREQ=WEEKLY;BYDAY="+by);
+    }
+    L.push("SUMMARY:"+safe(r.name));
+    L.push("DESCRIPTION:"+safe(remDesc(r)));
+    L.push("BEGIN:VALARM","TRIGGER:-PT0M","ACTION:DISPLAY","DESCRIPTION:"+safe(r.name),"END:VALARM");
+    L.push("END:VEVENT");
+  });
+  L.push("END:VCALENDAR");
+  dl("提醒-"+String(Date.now()).slice(-6)+".ics",L.join("\r\n"),"text/calendar;charset=utf-8");
+}
+$("icsBtn").addEventListener("click",function(){
+  if(!DB.reminders.length){toast("先加一个提醒");return}
+  exportIcs(DB.reminders);
+  toast("已导出，点开文件导入日历");
+});
+function safe(s){return String(s).replace(/[\\,;]/g," ").replace(/\n/g," ")}
+function utc(d){return d.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z"}
+function dl(name,text,type){
+  var b=new Blob([text],{type:type||"text/plain;charset=utf-8"});
+  var u=URL.createObjectURL(b);
+  var a=document.createElement("a");a.href=u;a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(u)},4000);
+}
+
+/* ---------- 搜索 ---------- */
+var SYM=[
+ {t:"注射部位红肿、硬结",tag:"注射",c:"注射后的局部反应很常见，和药液刺激、注射深度、消毒方式都有关。",r:"范围快速扩大、发热、压痛明显加重、流出脓液——去医院。",m:"哪个部位、范围几厘米、什么时候出现、有没有发热。",a:"需要换注射部位还是换剂型？需不需要看一眼？"},
+ {t:"单侧小腿肿痛、发热",tag:"紧急",c:"单侧下肢肿痛要优先排除血栓，不要当普通拉伤处理。",r:"单侧肿胀、皮肤发红发热、按压痛、走路痛——尽快去医院。",m:"哪条腿、从什么时候开始、肿了多少、最近有没有长时间不动。",a:"要不要急诊做个血管超声？"},
+ {t:"气短、胸痛",tag:"紧急",c:"呼吸费力或胸口痛属于不能等的情况。",r:"任何突发气短、胸痛、咯血，直接急诊。",m:"发作时间、持续多久、有没有缓解。",a:"直接就医，不用先纠结原因。"},
+ {t:"头痛、视力变化",tag:"要紧",c:"伴视力模糊、闪光、视野缺损的头痛需要评估，别自己扛。",r:"看东西变形、一侧看不清、说话不清、手脚无力——立刻就医。",m:"多久一次、什么位置、和用药时间有没有关系。",a:"需不需要查眼底，或者调整方案？"},
+ {t:"乳房胀痛",tag:"常见",c:"激素水平变化期间常见，多为双侧。",r:"单侧硬块、皮肤凹陷或橘皮样改变、乳头溢液——要检查。",m:"哪一侧、有没有摸到硬块、和周期有没有关系。",a:"要不要做一次乳腺超声？"},
+ {t:"乳房发育慢或不对称",tag:"常见",c:"发育速度个体差异很大，两侧不同步也很常见。",r:"完全没发育、伴随其他异常、或单侧突然变大。",m:"开始多久了、有没有变化、家族里有没有类似情况。",a:"目前的分期正常吗？需不需要调整方案？"},
+ {t:"催乳素升高",tag:"要紧",c:"部分抗雄药和雌激素会让催乳素升高，需要复查确认。",r:"持续升高、伴随溢乳或头痛、视力变化。",m:"数值多少、什么时候查的、有没有吃别的药。",a:"要不要换药？多久复查一次？"},
+ {t:"乏力、食欲差、尿色发深",tag:"要紧",c:"这几个凑在一起要想到肝脏，别只当累。",r:"眼白发黄、右上腹持续痛——尽快查肝功能。",m:"什么时候开始、有没有吃别的药或保健品。",a:"要不要查肝功能和胆红素？"},
+ {t:"血脂异常",tag:"要紧",c:"激素方案会影响血脂，口服和经皮的差别不小。",r:"甘油三酯特别高、伴随腹痛（警惕胰腺炎）。",m:"数值、查的时间、当时空腹没有。",a:"需不需要换给药方式？饮食要怎么调？"},
+ {t:"血压偏高",tag:"要紧",c:"家用血压计连续几天偏高才有意义，单次高不算。",r:"持续 140/90 以上、伴头痛或胸闷。",m:"早晚各测一次、连测七天、记下数值。",a:"需不需要开始监测或处理？"},
+ {t:"红细胞压积升高",tag:"要紧",c:"睾酮会促进造血，靠血常规确认，不靠感觉。",r:"持续头痛、视物模糊、胸闷、面红明显。",m:"数值多少、有没有吸烟、最近有没有脱水。",a:"要不要查一次血常规？需不需要调整？"},
+ {t:"情绪波动、易怒、低落",tag:"常见",c:"短期内水平和睡眠变化都会影响情绪。",r:"持续两周以上的低落、失去兴趣、有伤害自己的念头——找人、就医，别等。",m:"多久、有没有诱因、睡眠怎么样。",a:"要不要评估一下，或者调整节奏？"},
+ {t:"睡不着、睡不踏实",tag:"常见",c:"激素变化、焦虑、作息都会影响睡眠。",r:"连续一个月睡不好、白天无法正常生活。",m:"几点睡、醒几次、白天有没有补觉。",a:"需不需要查一下原因，或者先调作息？"},
+ {t:"性欲或功能变化",tag:"常见",c:"很常见，也常被忽略，值得记下来而不是忍着。",r:"伴随明显情绪问题或疼痛——说出来，别自己扛。",m:"变化从什么时候开始、程度、对生活的影响。",a:"这是不是方案带来的，需不需要调整？"},
+ {t:"水肿、体重短期上涨",tag:"常见",c:"几天内涨几公斤，多半是水，不是脂肪。",r:"脸和眼睑也肿、尿量明显变少——要查肾功能。",m:"早晚体重、脚踝有没有按下去一个坑。",a:"需不需要查电解质和肾功能？"},
+ {t:"皮肤出油、痤疮",tag:"常见",c:"激素波动期常见，通常会随时间缓解。",r:"大面积囊肿、化脓留疤——看皮肤科。",m:"部位、严重程度、有没有自己挤。",a:"需不需要外用药？"},
+ {t:"脱发、发际线后移",tag:"常见",c:"和激素水平、遗传都有关，越早处理越好。",r:"短期内大量脱落、成片掉。",m:"掉多久了、每天大概多少根、家里有没有类似情况。",a:"需不需要查一下铁和甲状腺？"},
+ {t:"声音不够理想",tag:"常见",c:"激素对已经变声的嗓子作用有限，更多靠训练。",r:"说话疼、持续嘶哑超过两周。",m:"音高、有没有练过、平时用嗓多不多。",a:"本地有没有语音训练的资源？"},
+ {t:"体毛、胡须",tag:"常见",c:"和遗传、激素都有关，见效慢是正常的。",r:"短期内突然变多、伴随月经紊乱。",m:"部位、变化速度。",a:"脱毛方式怎么选？需不需要查激素？"},
+ {t:"漏服、忘记吃药",tag:"用药",c:"偶尔漏一次很常见，别加倍补，也别自责。",r:"频繁漏服、或漏了之后出现明显不适。",m:"漏了哪种、漏了多久、下次本来该什么时候吃。",a:"漏了要不要补？下次按原时间还是顺延？"},
+ {t:"吃药后恶心、头晕",tag:"用药",c:"部分药物和给药方式会有胃肠或体位性反应。",r:"持续呕吐、晕倒、皮疹、呼吸困难——停药并就医。",m:"什么药、什么时候吃、空腹还是饭后、多久出现。",a:"要不要换剂型或换时间吃？"},
+ {t:"用药和其他药冲突",tag:"用药",c:"部分抗雄药、抗癫痫药、抗结核药会互相影响。",r:"同时吃多种处方药、或开始吃新药后明显不适。",m:"两种药的名称、剂量、吃的时间。",a:"这两种能一起吃吗？需要错开多久？"},
+ {t:"该查哪些血",tag:"就医",c:"常见的监测项：肝肾功能、血脂、血常规、激素水平，部分方案还要催乳素。",r:"出现明显不适时，先查再调。",m:"上次查是什么时候、查了哪几项、数值多少。",a:"按我现在的方案，需要查哪几项？多久一次？"},
+ {t:"想去医院不知道怎么开口",tag:"就医",c:"很多人卡在第一步，不是不想去，是不知道怎么描述。",r:"如果有自伤念头，先找信任的人或去急诊。",m:"你想解决的问题、持续多久、最困扰你的是什么。",a:"可以先把「记录 › 摘要」导出，拿去给医生看。"},
+ {t:"想停药或减量",tag:"用药",c:"停之前先想清楚原因，是副作用、费用、还是情绪。",r:"突然停药后出现明显情绪波动或身体不适。",m:"想停的原因、停了多久、停了以后的变化。",a:"能不能先减量观察？停了会有什么反弹？"}
+];
+SYM=SYM.concat([
+ {t:"常见 HRT 药物分几类",tag:"用药",c:"大方向分四类：雌激素、抗雄、孕激素、睾酮。雌激素负责女性化；抗雄负责压住雄激素；孕激素在部分方案里用；睾酮用于男性化。",r:"任何一类出现过敏、黄疸、单侧腿肿，都要停并就医。",m:"你在用哪几类、各是什么名字、从什么时候开始。",a:"我现在这个组合有必要吗？哪些是可以停的？"},
+ {t:"雌激素的几种给药方式差别",tag:"用药",c:"口服、舌下、经皮（凝胶、贴片）、注射，吸收路径不同，对肝脏的负担和血药稳定性也不同。",r:"注射部位感染、贴片处大面积皮疹。",m:"用的哪种方式、多久一次、有没有换过。",a:"我的情况适合哪种方式？换方式要注意什么？"},
+ {t:"抗雄药是干什么的",tag:"用药",c:"抗雄不是「女性化药」，它只是把雄激素压下去，让雌激素能起效。不同抗雄的副作用差别很大。",r:"持续乏力、情绪低落、肝功能异常、催乳素升高。",m:"用的是哪种抗雄、剂量、用了多久、有没有查过肝和催乳素。",a:"能不能单用雌激素、不吃抗雄？"},
+ {t:"孕激素要不要加",tag:"用药",c:"孕激素在部分方案里用于乳房发育或情绪，但证据不如雌激素充分，副作用也要单独评估。",r:"明显情绪波动、水肿、血栓风险叠加。",m:"有没有加、加了多久、加了以后的变化。",a:"我需要加吗？加了要监测什么？"},
+ {t:"避雷：把避孕药当雌激素",tag:"避雷",c:"复方避孕药里常有炔雌醇，和医用雌二醇不是一回事，血栓风险明显更高，剂量也很难精确控制。",r:"任何用它替代雌激素的想法都该停下。",m:"如果你已经在用，记下用了多久、每天几次。",a:"我现在该换成什么？怎么换才安全？"},
+ {t:"避雷：自己加量",tag:"避雷",c:"血药浓度有目标区间，超了不会更快，只会增加血栓、肝损、催乳素升高的风险。",r:"加量后出现头痛、视物模糊、胸闷、腿肿。",m:"加了多少、加了多久、有没有查过血。",a:"我现在的数值是多少？需不需要降回来？"},
+ {t:"避雷：两种抗雄一起吃",tag:"避雷",c:"副作用会叠加，而且很难判断是哪一个引起的，出问题时不方便调整。",r:"乏力、低血压、情绪低落、肝功异常。",m:"两种分别是什么、各吃多久。",a:"能不能只留一种？留哪个？"},
+ {t:"避雷：从不查血",tag:"避雷",c:"肝肾功能、血脂、血常规、激素水平、催乳素，这些靠感觉是感觉不出来的。",r:"出现明显不适却没有任何近期化验。",m:"上次查是什么时候、查了哪几项。",a:"按我现在的方案，多久查一次合适？"},
+ {t:"避雷：突然停药",tag:"避雷",c:"突然停会让激素水平骤降，情绪和身体都会有反弹，有些变化不可逆。",r:"停药后出现强烈情绪波动或自伤念头。",m:"为什么想停、停了多久、停了以后的变化。",a:"能不能先减量？怎么过渡？"},
+ {t:"避雷：来源不明的药",tag:"避雷",c:"没有正规渠道的药，真假、含量、有效期都没人担保，出问题也追不到人。",r:"包装无中文、无批号、颜色气味异常。",m:"从哪来的、包装上有什么。",a:"有没有正规途径可以拿到？"},
+ {t:"什么情况必须马上停并就医",tag:"紧急",c:"有几类信号不能等：血栓、肝损伤、过敏、严重头痛伴视力变化。",r:"单侧腿肿痛、突发气短胸痛、眼白发黄、全身皮疹、剧烈头痛看东西变形——立刻就医，别先问网友。",m:"发作时间、持续多久、当时在用什么药。",a:"到医院直接说：我在用激素，出现这些症状。"},
+ {t:"怎么和医生说自己在用什么",tag:"就医",c:"隐瞒用药会让医生判断失误，尤其是急诊和手术前。",r:"任何手术、急诊、开新药之前，都要说出来。",m:"药名、剂量、途径、开始时间，写下来带着。",a:"我需要停药多久？会不会和麻醉冲突？"}
+]);
+SYM=SYM.concat([
+ {t:"雌二醇（口服片）",tag:"药物",c:"最常用的雌激素形式。口服要经过肝脏首过代谢，对血脂和凝血因子的影响比经皮大一些。",r:"黄疸、右上腹痛、单侧腿肿、突发剧烈头痛。",m:"药名、剂量、每天几次、开始时间、最近一次化验的雌二醇数值。",a:"我的雌二醇水平在目标区间吗？要不要换成经皮？"},
+ {t:"戊酸雌二醇",tag:"药物",c:"口服雌激素里最常见的一种，本质还是雌二醇，只是酯化形式，吸收后一样。",r:"同样的肝负担信号：黄疸、乏力、腿肿。",m:"和雌二醇一样：剂量、频次、化验值。",a:"和普通雌二醇片有什么区别？我该用哪个？"},
+ {t:"雌二醇凝胶 / 贴片（经皮）",tag:"药物",c:"涂在皮肤上或贴片，绕过肝脏首过代谢，血脂和凝血影响相对小，但吸收因人而异。",r:"贴的地方大片红疹、水泡；涂抹后给他人接触。",m:"涂的部位、每天什么时候、有没有转着地方涂、化验值。",a:"我的吸收够不够？要不要测一次血药浓度？"},
+ {t:"注射用雌二醇（苯甲酸／环戊丙酸）",tag:"药物",c:"注射给药，血药浓度波动比口服大，峰谷差明显，间隔太长会出现「低谷期」不适。",r:"注射部位红肿化脓、发热；心悸、胸闷。",m:"注射日期、部位、剂量、两次之间的感受变化。",a:"我这个间隔合适吗？谷值要不要测？"},
+ {t:"螺内酯",tag:"药物",c:"常见的抗雄药，同时有保钾利尿作用，所以钾和肾功能要盯着。",r:"乏力、心慌、肌肉无力（可能高钾）；血压过低、头晕。",m:"剂量、频次、有没有同时补钾、最近的钾和肌酐。",a:"我的钾和肾功能正常吗？需要定期查吗？"},
+ {t:"醋酸环丙孕酮（CPA）",tag:"药物",c:"强效抗雄，常与雌激素合用。对肝脏和催乳素的影响需要监测，长期使用要评估。",r:"黄疸、极度乏力、持续头痛、视力变化、泌乳。",m:"剂量、用了多久、肝功能和催乳素的数值。",a:"我需要长期用吗？能不能减量或换药？"},
+ {t:"比卡鲁胺",tag:"药物",c:"非甾体抗雄，主要用于前列腺癌，也被部分人用于 HRT。肝功能和相互作用要留意。",r:"黄疸、尿色变深、右上腹痛。",m:"剂量、开始时间、肝功能结果。",a:"这个适合我吗？要监测什么？"},
+ {t:"GnRH 激动剂（亮丙瑞林／戈舍瑞林）",tag:"药物",c:"通过抑制垂体来压住性激素，效果强、副作用谱不同，通常需要医生管理。",r:"骨密度下降、潮热、情绪波动；注射部位反应。",m:"注射日期、间隔、有没有骨密度检查。",a:"我需要用这个吗？长期用对骨头有什么影响？"},
+ {t:"微粒化黄体酮",tag:"药物",c:"天然孕激素，常被用于方案里的孕激素部分，嗜睡是常见副作用。",r:"明显情绪低落、水肿加重、异常出血。",m:"剂量、什么时候吃、吃了以后睡得怎么样。",a:"我需要加孕激素吗？加了对乳房发育有帮助吗？"},
+ {t:"醋酸甲羟孕酮（MPA）",tag:"药物",c:"合成孕激素，作用比天然黄体酮强，副作用和风险也不同。",r:"情绪明显变化、水肿、血栓信号。",m:"剂量、频次、用了多久。",a:"和天然黄体酮比，我更适合哪个？"},
+ {t:"非那雄胺",tag:"药物",c:"5α 还原酶抑制剂，主要用来处理脱发和体毛，不是主力抗雄。",r:"情绪低落、性功能变化；孕期接触有风险。",m:"剂量、用了多久、头发和体毛的变化。",a:"我需要用吗？停药会不会反弹？"},
+ {t:"睾酮（注射／凝胶）",tag:"药物",c:"男性化的核心用药，会促进造血，红细胞压积和血脂是重点监测项。",r:"红细胞压积过高（头痛、面红、胸闷）、血压升高、注射部位感染。",m:"注射日期、部位、剂量、最近的血常规和血压。",a:"我的红细胞压积是多少？需要放血或减量吗？"},
+ {t:"十一酸睾酮",tag:"药物",c:"长效睾酮制剂，注射间隔长，血药浓度波动相对平缓，但一旦过量不容易快速回调。",r:"同上：红细胞压积、血压、情绪波动。",m:"注射日期、剂量、两次之间的感受。",a:"这个间隔合适吗？要不要改短效的？"},
+ {t:"复方避孕药（避雷）",tag:"避雷",c:"含炔雌醇等成分，和医用雌二醇不是一回事，血栓风险明显更高，剂量也无法精确控制。",r:"任何用它替代雌激素的做法都该停下。",m:"如果已经在用，记下用了多久、每天几次。",a:"我现在该换成什么？怎么换才安全？"}
+]);
+var HIS=[];
+function loadHis(){try{var a=JSON.parse(localStorage.getItem("hrthub.his")||"[]");if(Array.isArray(a))HIS=a}catch(e){HIS=[]}}
+function saveHis(){try{localStorage.setItem("hrthub.his",JSON.stringify(HIS))}catch(e){}}
+function pushHis(q){
+  q=(q||"").trim();
+  if(!q)return;
+  HIS=HIS.filter(function(x){return x!==q});
+  HIS.unshift(q);
+  if(HIS.length>12)HIS.pop();
+  saveHis();renderHis();
+}
+function renderHis(){
+  var box=$("hisBox");if(!box)return;
+  box.innerHTML="";
+  if(!HIS.length){box.style.display="none";return}
+  var head=document.createElement("div");head.className="cardhead";head.style.marginTop="10px";
+  var sp=document.createElement("span");sp.textContent="最近搜过";
+  var cl=document.createElement("button");cl.className="ghost";cl.type="button";cl.textContent="清空";
+  cl.style.cssText="margin:0;padding:3px 10px;font-size:12px";
+  cl.addEventListener("click",function(){HIS=[];saveHis();renderHis()});
+  head.appendChild(sp);head.appendChild(cl);
+  var wrap=document.createElement("div");wrap.className="chips";
+  HIS.forEach(function(q){
+    var b=document.createElement("button");b.className="chip";b.type="button";b.textContent=q;
+    b.addEventListener("click",function(){ $("symQ").value=q; renderSym(q); });
+    wrap.appendChild(b);
+  });
+  box.appendChild(head);box.appendChild(wrap);
+  box.style.display="";
+}
+function renderSym(q){
+  var box=$("symList");box.innerHTML="";
+  var k=(q||"").trim().toLowerCase();
+  var list=SYM.filter(function(s){
+    if(!k)return true;
+    return (s.t+s.c+s.r+s.m+s.a+s.tag).toLowerCase().indexOf(k)>=0;
+  });
+  if(!list.length){box.innerHTML='<p class="hint">没找到。换个词试试，或者把症状写进「摘要」里带去问医生。</p>';return}
+  list.forEach(function(s){
+    var d=document.createElement("details");
+    var sum=document.createElement("summary");
+    sum.appendChild(document.createTextNode(s.t));
+    var tg=document.createElement("span");tg.className="tag";tg.textContent=s.tag;
+    sum.appendChild(tg);
+    d.appendChild(sum);
+    [["常见情况",s.c],["要立刻就医的信号",s.r],["记下来",s.m],["问医生",s.a]].forEach(function(p){
+      var kv=document.createElement("div");kv.className="kv";
+      var b=document.createElement("b");b.textContent=p[0];
+      kv.appendChild(b);kv.appendChild(document.createTextNode(p[1]));
+      d.appendChild(kv);
+    });
+    box.appendChild(d);
+  });
+}
+$("symQ").addEventListener("input",function(){renderSym(this.value)});
+$("symQ").addEventListener("focus",function(){renderHis()});
+$("symQ").addEventListener("change",function(){pushHis(this.value)});
+$("symQ").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){e.preventDefault();pushHis(this.value);this.blur()}
+});
+
+/* ---------- 摘要 ---------- */
+function buildSummary(){
+  var days=parseInt($("range").value,10)||0;
+  var cut=null;
+  if(days){cut=new Date();cut.setDate(cut.getDate()-days)}
+  function inRange(e){return !cut||new Date(e.at.replace(" ","T"))>=cut}
+  var all=DB.entries.filter(inRange).sort(function(x,y){return x.at<y.at?-1:1});
+  var meds=all.filter(function(e){return typeOf(e)==="med"});
+  var bodies=all.filter(function(e){return typeOf(e)==="body"});
+  var L=[];
+  L.push("# 记录摘要");
+  L.push("");
+  L.push("- 生成时间："+new Date().toLocaleString("zh-CN"));
+  L.push("- 统计范围："+(days?"近 "+days+" 天":"全部记录"));
+  L.push("- 记录条数："+all.length);
+  L.push("");
+  if(meds.length){
+    var byName={};
+    meds.forEach(function(e){var k=entryTitle(e);byName[k]=(byName[k]||0)+1});
+    L.push("## 用药汇总");
+    L.push("");
+    Object.keys(byName).forEach(function(n){L.push("- "+n+"："+byName[n]+" 次")});
+    L.push("");
+    L.push("## 用药明细");
+    L.push("");
+    var day="";
+    meds.forEach(function(e){
+      var d=dayOf(e.at);
+      if(d!==day){day=d;L.push("");L.push("### "+d);L.push("")}
+      var parts=[hhmm(e.at),entryTitle(e),e.dose,e.route].filter(Boolean).join(" · ");
+      L.push("- "+parts+(e.note?"（"+e.note+"）":""));
+    });
+    L.push("");
+  }else{
+    L.push("> 这段时间没有用药记录。");
+    L.push("");
+  }
+  if(bodies.length){
+    L.push("## 身体变化");
+    L.push("");
+    var groups={};
+    bodies.forEach(function(e){
+      var k=entryTitle(e);(groups[k]=groups[k]||[]).push(e);
+    });
+    Object.keys(groups).forEach(function(k){
+      var arr=groups[k],line=[];
+      arr.forEach(function(e){
+        var v=(e.value!=null&&e.value!=="")?(e.value+(e.unit||"")):"";
+        line.push(e.at.slice(5,10)+" "+v);
+      });
+      var extra="";
+      var nums=arr.map(function(e){return parseFloat(e.value)}).filter(function(n){return !isNaN(n)});
+      if(nums.length>=2){
+        var diff=Math.round((nums[nums.length-1]-nums[0])*100)/100;
+        extra="（变化 "+(diff>0?"+":"")+diff+(arr[arr.length-1].unit||"")+"）";
+      }
+      L.push("- "+k+"："+line.join("；")+extra);
+    });
+    L.push("");
+  }
+  if(DB.reminders.length){
+    L.push("## 提醒");
+    L.push("");
+    DB.reminders.slice().sort(function(a,b){return a.time<b.time?-1:1}).forEach(function(r){
+      L.push("- "+remDesc(r)+" · "+r.name);
+    });
+    L.push("");
+  }
+  if(DB.quiz&&DB.quiz.length){
+    var qz=DB.quiz[DB.quiz.length-1];
+    L.push("## 最近一次测验");
+    L.push("");
+    L.push("- 时间："+new Date(qz.at).toLocaleDateString("zh-CN"));
+    if(qz.kind==="scale"){
+      L.push("- "+qz.title+"："+qz.score+"/"+qz.max+"（"+qz.band+"）");
+    }else{
+      var LBL={f:"女性",m:"男性",n:"非二元",u:"仍在探索",w:"偏向女性",b:"双向或多向",a:"少有吸引"};
+      var qa=Object.keys(qz.r).map(function(k){return [LBL[k]||k,qz.r[k]]})
+        .sort(function(x,y){return y[1]-x[1]});
+      L.push("- "+qz.title+"："+qa.map(function(x){return x[0]+" "+x[1]+"%"}).join(" · "));
+      if(qz.id==="gender")L.push("- 身体改变意愿："+qz.body+"%｜确定性："+qz.cert+"%");
+    }
+    L.push("- 说明：自评工具，不是诊断。");
+    L.push("");
+  }
+  var notes=($("notes").value||"").trim();
+  if(notes){
+    L.push("## 我想说的");
+    L.push("");
+    L.push(notes);
+    L.push("");
+  }
+  L.push("---");
+  L.push("");
+  L.push("以上为本人自己记录，未包含化验结果与剂量建议。请医生结合检查判断。");
+  return L.join("\n");
+}
+var lastMd="";
+$("genBtn").addEventListener("click",function(){
+  lastMd=buildSummary();
+  $("out").textContent=lastMd;
+  DB.notes=$("notes").value;save();
+  toast("生成好了，可以复制或下载");
+});
+$("copyBtn").addEventListener("click",function(){
+  if(!lastMd){toast("先点生成");return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(lastMd).then(function(){toast("已复制")},function(){legacyCopy()});
+  }else legacyCopy();
+  function legacyCopy(){
+    var ta=document.createElement("textarea");ta.value=lastMd;
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");toast("已复制")}catch(e){toast("复制失败，长按上面文字手动选")}
+    ta.remove();
+  }
+});
+$("dlBtn").addEventListener("click",function(){
+  if(!lastMd){toast("先点生成");return}
+  var d=new Date();
+  dl("就诊摘要-"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+".md",lastMd,"text/markdown;charset=utf-8");
+});
+
+/* ---------- 测验 ---------- */
+var QCFG={
+ gender:{
+  kind:"dist",title:"性别认同倾向",
+  dims:[["女性","f",""],["男性","m","m"],["非二元","n","n"],["仍在探索","u","u"]],
+  items:[
+   {q:"你希望别人把你当什么性别看待？",o:[["女性",{f:3},2],["男性",{m:3},2],["都不是，或者两种都有",{n:3},1],["无所谓，不重要",{u:3},1],["还在想",{u:2},0]]},
+   {q:"想象十年后的自己，你希望镜子里是什么形象？",o:[["女性的样子",{f:3},2],["男性的样子",{m:3},2],["偏中性，看不出性别",{n:3},1],["没想过，看不到画面",{u:2},0]]},
+   {q:"对现在的身体特征（声音、胡须、肩宽、胸部等），你的感觉是？",o:[["强烈不适，很想改",{f:2},1,2],["有点不适，但能忍",{f:1},1,1],["基本满意",{},2,0],["挺喜欢",{m:2},2,0],["说不清",{u:1},0,0]]},
+   {q:"「如果我是女性就好了」这个念头出现的频率？",o:[["几乎每天",{f:3},2],["经常",{f:2},1],["偶尔",{n:1},1],["几乎没有",{m:2},1],["从来没有",{m:2},2]]},
+   {q:"别人用「女士」「小姐」称呼你时，你更接近哪种感受？",o:[["开心，希望更多",{f:3},2],["别扭，想纠正",{m:2},1],["无所谓",{u:1},1],["还没遇到过",{u:1},0],["希望被当成女性",{f:2},1]]},
+   {q:"在游戏或网上需要填性别时，你通常怎么选？",o:[["选女性",{f:2},2],["选男性",{m:2},2],["选「保密」或「其他」",{n:2},1],["看场合，随便",{u:2},1]]},
+   {q:"如果明天有一台机器能立刻改变你的身体，你会？",o:[["立刻改成女性身体",{f:2},2,2],["考虑一下再改",{f:1},1,1],["只改一部分，比如声音或体型",{n:1},1,2],["不改",{m:1},2,0],["不确定",{u:2},0,0]]},
+   {q:"你希望别人怎么称呼你（代词）？",o:[["她",{f:3},2],["他",{m:3},2],["TA，或者直接叫名字",{n:2},1],["都行",{u:2},1],["没想过",{u:2},0]]},
+   {q:"最近一年，你花多少时间想「性别」这件事？",o:[["每天，很多",{},0],["经常",{},0],["偶尔",{},1],["很少",{},2]]},
+   {q:"如果完全没有人评判你，你会怎么生活？",o:[["以女性的身份生活",{f:3},2],["以男性的身份生活",{m:3},2],["不给自己定义",{n:2},1],["现在这样就挺好",{m:2},2],["不知道",{u:2},0]]},
+   {q:"你有没有私下试过女性化的打扮、称呼或行为？",o:[["经常",{f:2},2,1],["试过几次",{f:1},1],["想过，没做",{n:1},0],["没有",{m:1},2]]},
+   {q:"想到「这辈子都以现在的性别身份过下去」，你的感觉是？",o:[["难以接受",{f:2},1,1],["有点遗憾",{f:1},1],["可以接受",{m:2},2],["挺好",{m:2},2],["说不上来",{u:2},0]]},
+   {q:"青春期那段记忆，你更常感到？",o:[["好像错过了什么",{f:2},1],["尴尬，但还行",{u:1},1],["挺自然的",{m:2},2],["已经很模糊了",{u:1},0]]},
+   {q:"被陌生人误认成女性时，你更接近？",o:[["高兴",{f:2},2],["尴尬，想纠正",{m:2},2],["没发生过",{u:1},0]]},
+   {q:"「跨性别女性」这个标签，对你来说？",o:[["就是我",{f:2},2],["有点像，但不完全",{n:2},1],["不是我",{m:1},1],["我不需要标签",{u:2},1]]},
+   {q:"你考虑过使用激素吗？",o:[["已经在用，或者很想开始",{f:2},2,2],["认真考虑过",{f:1},1,1],["不太想",{m:1},1,0],["没想过",{u:1},0,0]]},
+   {q:"对手术，你的大方向是？",o:[["想做",{f:1},2,2],["只想做一部分",{n:1},1,1],["不想做",{},1,0],["还在了解",{u:1},0,0]]},
+   {q:"你喜欢自己的名字，和身份证上的性别吗？",o:[["不喜欢，想改",{f:2},2,1],["有点别扭",{f:1},1],["无所谓",{u:2},1],["喜欢",{m:2},2]]},
+   {q:"和跨性别的朋友相处时，你更接近？",o:[["有归属感",{f:2},1],["能聊，但不完全一样",{n:2},1],["不太有共鸣",{m:1},1],["没接触过",{u:1},0]]},
+   {q:"对「男性应该怎样」的规范，你的感觉是？",o:[["很反感",{f:2},1],["无所谓",{u:2},1],["挺自在",{m:2},2]]},
+   {q:"想起自己的身体时，你更常感到？",o:[["陌生，不像自己的",{f:1,n:1},0,2],["不满意，但那是我",{f:1},1,1],["能接受",{m:1},2,0],["没特别的感觉",{u:2},1,0]]},
+   {q:"你是否希望某天被人「看穿」你其实是女性？",o:[["是",{f:2},2],["有时会",{f:1},1],["不会",{m:1},1]]},
+   {q:"如果只能保留一种改变，你会选？",o:[["声音和脸",{f:1},1,2],["胸部和体型",{f:1},1,2],["称呼和证件",{f:1},1,0],["都不改",{m:1},2,0]]},
+   {q:"对穿着、说话的「性别感」，你更想？",o:[["更女性化",{f:2},1,1],["偏中性",{n:2},1],["保持现在",{m:1},1],["试过，但不舒服",{m:2},1]]},
+   {q:"你是否曾在夜里为性别问题难过？",o:[["经常",{},1,1],["偶尔",{},1,1],["很少",{},2],["没有",{},2]]},
+   {q:"你对「女性的身体」的想象？",o:[["清晰，而且向往",{f:2},2,2],["模糊",{f:1,n:1},1,1],["不向往",{m:2},2,0]]},
+   {q:"如果医生说你的身体完全健康、不需要任何改变，你会？",o:[["失望",{f:2},1,1],["松一口气",{m:2},2,0],["无所谓",{u:2},1]]},
+   {q:"你希望别人记住你时，怎么描述你？",o:[["她",{f:2},2],["他",{m:2},2],["名字就好",{u:2},1]]}
+  ]
+ },
+ orient:{
+  kind:"dist",title:"性取向倾向",
+  dims:[["偏向女性","w",""],["偏向男性","m","m"],["双向或多向","b","n"],["少有吸引","a","u"],["还不确定","u","u"]],
+  items:[
+   {q:"你会被什么样的人吸引？",o:[["女性",{w:3}],["男性",{m:3}],["两种都会",{b:3}],["很少被谁吸引",{a:3}],["说不清",{u:2}]]},
+   {q:"想象一段亲密关系，对方更常是？",o:[["女性",{w:3}],["男性",{m:3}],["都可以",{b:3}],["想象不出来",{a:2}],["没想过",{u:2}]]},
+   {q:"看到某个人时，那种心动或紧张，通常因为谁？",o:[["女性",{w:3}],["男性",{m:3}],["两种人都出现过",{b:3}],["几乎没出现过",{a:3}],["不记得了",{u:2}]]},
+   {q:"如果完全没有人评判，你最想和谁在一起？",o:[["女性",{w:3}],["男性",{m:3}],["都行",{b:3}],["谁都不想",{a:2}],["不知道",{u:2}]]},
+   {q:"性别在你被吸引这件事里重要吗？",o:[["只看某一性别",{w:1,m:1}],["有一定影响",{b:2}],["不太重要",{b:1,a:1}],["说不好",{u:2}]]},
+   {q:"你被哪个性别的人吸引过？",o:[["只有女性",{w:3}],["只有男性",{m:3}],["两种都有过",{b:3}],["都没有过",{a:3}]]},
+   {q:"你对身体亲近的想象，更偏向？",o:[["和女性",{w:3}],["和男性",{m:3}],["都可以",{b:3}],["没有这种想象",{a:3}],["不确定",{u:2}]]},
+   {q:"别人问「你喜欢男生还是女生」，你通常怎么答？",o:[["女生",{w:3}],["男生",{m:3}],["都行",{b:3}],["不好说",{u:2}],["没喜欢过谁",{a:3}]]},
+   {q:"你对自己「喜欢谁」的确定程度？",o:[["很清楚",{w:1,m:1,b:1}],["大概知道",{w:1,m:1}],["还在变",{u:3}],["没想过",{u:2}]]},
+   {q:"你更容易对哪类人产生浪漫想象？",o:[["女性",{w:3}],["男性",{m:3}],["两种都有",{b:3}],["很少",{a:3}],["说不清",{u:2}]]}
+  ]
+ },
+ phq9:{
+  kind:"scale",title:"情绪状态（PHQ-9）",
+  intro:"回想最近两周，下面这些情况出现的频率。",
+  items:[
+   "做事时提不起劲，或者没有兴趣",
+   "感到心情低落、沮丧，或者绝望",
+   "入睡困难、睡不安稳，或者睡得过多",
+   "感觉疲倦，或者没有活力",
+   "食欲不振，或者吃得太多",
+   "觉得自己很糟，或者觉得自己很失败，或者让自己、家人失望",
+   "注意力不集中，比如看东西时走神",
+   "动作或说话慢到别人都察觉；或者相反，烦躁、坐立不安、动来动去比平时多",
+   "有不如死掉，或者想用某种方式伤害自己的念头"
+  ],
+  options:["完全不会","好几天","一半以上的天数","几乎每天"],
+  bands:[[4,"几乎没有"],[9,"轻度"],[14,"中度"],[19,"中重度"],[27,"重度"]]
+ },
+ gad7:{
+  kind:"scale",title:"焦虑程度（GAD-7）",
+  intro:"回想最近两周，下面这些情况出现的频率。",
+  items:[
+   "感到紧张、焦虑，或者急切",
+   "不能停止或控制自己的担忧",
+   "对各种各样的事情担忧过多",
+   "很难放松下来",
+   "因为不安而无法静坐",
+   "变得容易烦恼，或者急躁",
+   "感到似乎会有可怕的事情发生而害怕"
+  ],
+  options:["完全不会","好几天","一半以上的天数","几乎每天"],
+  bands:[[4,"几乎没有"],[9,"轻度"],[14,"中度"],[21,"重度"]]
+ }
+};
+QCFG.orient.base=10;
+QCFG.orient.items=QCFG.orient.items.concat([
+ {q:"你会因为某个人而心跳加快吗？",o:[["女性",{w:3}],["男性",{m:3}],["两种都有",{b:3}],["很少",{a:3}],["说不清",{u:2}]]},
+ {q:"你更容易被哪种气质吸引？",o:[["温柔细腻",{w:2}],["干脆直接",{m:2}],["都行",{b:2}],["不太在意",{a:2}],["不清楚",{u:2}]]},
+ {q:"如果一段关系里没有身体吸引，你能接受吗？",o:[["能，感情更重要",{a:1,b:1}],["不太能",{w:1,m:1}],["要看情况",{b:2}],["说不清",{u:3}]]},
+ {q:"同性朋友里，有没有让你心动过的？",o:[["有",{w:2,m:2}],["没有",{a:2}],["有过但不敢想",{b:2}],["不确定",{u:2}]]},
+ {q:"你会同时喜欢上两个不同性别的人吗？",o:[["会",{b:3}],["不会",{w:1,m:1}],["没想过",{u:2}]]},
+ {q:"你对自己现在这个状态的满意程度？",o:[["挺满意",{b:1,w:1}],["有点困扰",{u:2}],["很不满意",{u:1}],["说不清",{u:2}]]},
+ {q:"如果以后发现和现在的认知不一样，你会？",o:[["能接受",{b:2}],["有点慌",{u:2}],["不关心",{a:2}],["不知道",{u:2}]]},
+ {q:"有过被谁吸引但不敢承认的经历吗？",o:[["有",{b:3}],["没有",{a:2,w:1}],["不好说",{u:3}]]}
+]);
+QCFG.phq9.extra=[
+ "因为情绪问题，工作、学习或和人相处受到影响",
+ "这些问题已经持续两周以上",
+ "以前也有过类似的时期",
+ "最近用喝酒、熬夜或其他方式让自己好受一点",
+ "因为这些事去看过医生"
+];
+QCFG.gad7.extra=[
+ "因为担心，回避过某些场合或事情",
+ "这种担心已经持续六个月以上",
+ "身体上会有紧绷、手抖、出汗",
+ "担心影响到睡眠",
+ "因为这些事去看过医生"
+];
+var cur={id:"",cfg:null,mode:1,idx:0,ans:[],perm:[]};
+var lastQuiz=null;
+
+function qTotal(){
+  var c=cur.cfg;
+  if(c.kind==="scale"){
+    var n=c.items.length;
+    if(cur.mode===2&&c.extra)n+=c.extra.length;
+    return n;
+  }
+  return cur.mode===2?c.items.length:(c.base||c.items.length);
+}
+function qItem(i){
+  var c=cur.cfg;
+  if(c.kind==="scale"){
+    if(i<c.items.length)return c.items[i];
+    return (c.extra||[])[i-c.items.length]||"";
+  }
+  return c.items[i];
+}
+function qView(which){
+  $("qHome").style.display=which==="home"?"":"none";
+  $("qRun").style.display=which==="run"?"":"none";
+  $("qResult").style.display=which==="result"?"":"none";
+}
+function qStart(id,mode){
+  cur={id:id,cfg:QCFG[id],mode:mode||1,idx:0,ans:[],perm:[]};
+  var n=qTotal();
+  for(var i=0;i<n;i++){
+    var idx;
+    if(cur.cfg.kind==="scale"){
+      idx=cur.cfg.options.map(function(_,k){return k});
+    }else{
+      var o=cur.cfg.items[i].o||[];
+      idx=o.map(function(_,k){return k});
+      for(var j=idx.length-1;j>0;j--){
+        var k2=Math.floor(Math.random()*(j+1));
+        var t=idx[j];idx[j]=idx[k2];idx[k2]=t;
+      }
+    }
+    cur.perm.push(idx);
+  }
+  qView("run");qRender();
+  window.scrollTo(0,0);
+}
+function qRender(){
+  var it=qItem(cur.idx),tot=qTotal();
+  $("qProgress").textContent=(cur.idx+1)+" / "+tot;
+  $("qBarFill").style.width=(cur.idx/tot*100)+"%";
+  $("qModeTag").textContent=(cur.cfg.kind==="scale"?"量表":"" )+(cur.mode===2?"专家":"普通");
+  var qt=(typeof it==="string")?it:((it&&it.q)||"");
+  $("qText").textContent=(cur.idx===0&&cur.cfg.intro)?cur.cfg.intro+" "+qt:qt;
+  $("qBack").style.display=cur.idx>0?"":"none";
+  var box=$("qOpts");box.innerHTML="";
+  var order=cur.perm[cur.idx]||[];
+  order.forEach(function(oi){
+    var txt=cur.cfg.kind==="scale"?cur.cfg.options[oi]:it.o[oi][0];
+    var b=document.createElement("button");
+    b.className="opt";b.type="button";b.textContent=txt;
+    b.addEventListener("click",function(){qPick(oi)});
+    box.appendChild(b);
+  });
+}
+function qPick(i){
+  cur.ans[cur.idx]=i;
+  if(cur.idx+1>=qTotal()){qFinish();return}
+  cur.idx++;qRender();
+}
+function qFinish(){
+  var tot=qTotal();
+  if(cur.cfg.kind==="scale"){
+    var base=cur.cfg.items.length;
+    var score=0,item9=0,extraHit=0;
+    for(var i=0;i<tot;i++){
+      var v=cur.ans[i]||0;
+      if(i<base){
+        score+=v;
+        if(cur.id==="phq9"&&i===8&&v>0)item9=v;
+      }else if(v>=2){extraHit++}
+    }
+    var max=cur.cfg.bands[cur.cfg.bands.length-1][0];
+    var band="";
+    for(var b2=0;b2<cur.cfg.bands.length;b2++){
+      if(score<=cur.cfg.bands[b2][0]){band=cur.cfg.bands[b2][1];break}
+    }
+    lastQuiz={at:Date.now(),kind:"scale",id:cur.id,title:cur.cfg.title,score:score,max:max,band:band,item9:item9,
+      mode:cur.mode,extraHit:extraHit,extraTotal:(cur.mode===2&&cur.cfg.extra)?cur.cfg.extra.length:0};
+    qShowScaleResult();
+    window.scrollTo(0,0);
+    return;
+  }
+  var sums={},body=0,bodyMax=0,cert=0,certMax=0;
+  cur.cfg.dims.forEach(function(d){sums[d[1]]=0});
+  for(var i2=0;i2<tot;i2++){
+    var o=cur.cfg.items[i2].o[cur.ans[i2]];
+    if(!o)continue;
+    var dim=o[1]||{};
+    cur.cfg.dims.forEach(function(d){sums[d[1]]+=(dim[d[1]]||0)});
+    if(typeof o[2]==="number"){cert+=o[2];certMax+=2}
+    if(typeof o[3]==="number"){body+=o[3];bodyMax+=2}
+  }
+  var totalSum=0;
+  cur.cfg.dims.forEach(function(d){totalSum+=sums[d[1]]});
+  var r={};
+  if(totalSum>0){
+    cur.cfg.dims.forEach(function(d){r[d[1]]=Math.round(sums[d[1]]/totalSum*100)});
+    var sumPct=0;
+    cur.cfg.dims.forEach(function(d){sumPct+=r[d[1]]});
+    var diff=100-sumPct,best=cur.cfg.dims[0][1];
+    cur.cfg.dims.forEach(function(d){if(r[d[1]]>r[best])best=d[1]});
+    r[best]+=diff;
+  }else{
+    cur.cfg.dims.forEach(function(d){r[d[1]]=d[0]==="仍在探索"||d[0]==="还不确定"?100:0});
+  }
+  lastQuiz={at:Date.now(),kind:"dist",id:cur.id,title:cur.cfg.title,mode:cur.mode,r:r,
+    body:bodyMax?Math.round(body/bodyMax*100):0,
+    cert:certMax?Math.round(cert/certMax*100):0};
+  qShowDistResult();
+  window.scrollTo(0,0);
+}
+function qBar(label,pct,cls){
+  return '<div class="dim"><div class="lbl"><span>'+label+'</span><span>'+pct+'%</span></div>'+
+    '<div class="track"><i class="'+(cls||"")+'" style="width:'+Math.max(0,Math.min(100,pct))+'%"></i></div></div>';
+}
+function saveQuizRecord(entryNote){
+  if(!DB.quiz)DB.quiz=[];
+  DB.quiz.push(lastQuiz);
+  DB.entries.push({id:uid(),type:"quiz",title:lastQuiz.title,at:nowLocal(),note:entryNote});
+  save();renderLog();renderQuizHistory();
+  toast("已存进记录");
+}
+function qShowDistResult(){
+  var z=lastQuiz,r=z.r,cfg=cur.cfg;
+  var arr=cfg.dims.map(function(d){return [d[0],r[d[1]]||0,d[2]]})
+    .sort(function(x,y){return y[1]-x[1]});
+  var top=arr[0],sec=arr[1];
+  var t="";
+  if(z.id==="gender"){
+    if(top[0]==="女性")t="你的答案主要落在「女性」这一侧，占 "+top[1]+"%，其次是「"+sec[0]+"」"+sec[1]+"%。这不是「你是跨性别女性」的判定，只是说明：在你给出的答案里，对身体的想象、对被这样称呼的期待，更多指向女性这一侧。";
+    else if(top[0]==="男性")t="你的答案主要落在「男性」这一侧，占 "+top[1]+"%，其次是「"+sec[0]+"」"+sec[1]+"%。这些题目没有把你导向女性一侧。如果这个结果让你有点失落，那种感觉本身也值得记下来——测验是镜子，不是判决。";
+    else if(top[0]==="非二元")t="你的答案更多落在「非二元」这一侧，占 "+top[1]+"%，其次是「"+sec[0]+"」"+sec[1]+"%。你似乎不太接受非此即彼的划分，或者在两边都有认同。这也是常见、站得住的状态。";
+    else t="你的答案比较分散，「仍在探索」"+top[1]+"%，「"+sec[0]+"」"+sec[1]+"%。这种分散不是缺点，它更像在说：现在还没到需要答案的时候。";
+  }else{
+    if(top[0]==="偏向女性")t="吸引力更常指向女性，占 "+top[1]+"%，其次是「"+sec[0]+"」"+sec[1]+"%。这只描述吸引的方向，不给你贴标签。";
+    else if(top[0]==="偏向男性")t="吸引力更常指向男性，占 "+top[1]+"%，其次是「"+sec[0]+"」"+sec[1]+"%。同样只是描述方向。";
+    else if(top[0]==="双向或多向")t="两边都出现过，占 "+top[1]+"%，「"+sec[0]+"」"+sec[1]+"%。这种状态一点也不少见。";
+    else if(top[0]==="少有吸引")t="很少被谁吸引，占 "+top[1]+"%，「"+sec[0]+"」"+sec[1]+"%。这在人群里真实存在，不是毛病，也不需要治。";
+    else t="答案比较分散，「还不确定」"+top[1]+"%，「"+sec[0]+"」"+sec[1]+"%。不确定是可以长期待着的位置。";
+  }
+  var bodyHtml="";
+  if(z.id==="gender"){
+    var bt="";
+    if(z.body>=70)bt="身体上的改变愿望很明确（"+z.body+"%）。这是整份测验里最该被认真对待的一项——它和「我是谁」不完全是一回事，但它会持续影响你每天的感受。";
+    else if(z.body>=40)bt="身体上的改变愿望是部分的（"+z.body+"%）。你可能只对某几个特征不满，而不是全部。";
+    else bt="身体上的改变愿望不强（"+z.body+"%）。如果困惑主要在称呼、社会角色这些层面，那和身体无关。";
+    var ct="";
+    if(z.cert>=70)ct="你的答案前后比较一致（确定性 "+z.cert+"%），再测一次大概率也差不多。";
+    else if(z.cert>=40)ct="有些题目你还在摇摆（确定性 "+z.cert+"%），前后不完全一致是正常的。";
+    else ct="大量答案指向「还在想」「说不上来」（确定性 "+z.cert+"%）。比起任何分数，这个信号更值得注意。";
+    bodyHtml='<div class="cardhead" style="margin-top:18px"><span>两个参考维度<button class="help" type="button" data-help="resBody">?</button><button class="help" type="button" data-help="resCert">?</button></span></div>'+
+      qBar("身体改变意愿",z.body,"n")+qBar("确定性",z.cert,"u")+'<p>'+bt+'</p><p>'+ct+'</p>';
+  }else{
+    bodyHtml='<p class="hint">取向会变，标签也不是必需品。这里只是把答案摊开。</p>';
+  }
+  var noteText=arr.map(function(x){return x[0]+" "+x[1]+"%"}).join(" · ");
+  var html='<div class="card res">'+
+    '<div class="cardhead"><span>倾向分布<button class="help" type="button" data-help="resList">?</button></span><span class="tag">'+cfg.title+'</span></div>'+
+    '<p class="hint" style="margin-top:0">几条比例加起来是 100%，表示你更靠近哪边，不是概率。</p>'+
+    arr.map(function(x){return qBar(x[0],x[1],x[2])}).join("")+
+    '<p>'+t+'</p>'+bodyHtml+
+    '<p class="hint" style="margin:14px 0 0">这不是诊断，也不该拿来替自己做决定。如果它让你更困扰，去找愿意听的人聊——比再测一次有用。</p>'+
+    '</div>'+
+    '<div class="card"><div class="cardhead"><span>保存<button class="help" type="button" data-help="resSave">?</button></span></div>'+
+    '<button class="primary" id="qSave">把这次结果存进记录</button>'+
+    '<div class="row2"><button class="ghost" id="qAgain">重测</button><button class="ghost" id="qHome2">回到测验</button></div></div>';
+  $("qResult").innerHTML=html;
+  qView("result");
+  $("qSave").addEventListener("click",function(){saveQuizRecord("倾向："+noteText)});
+  $("qAgain").addEventListener("click",function(){qStart(z.id,z.mode)});
+  $("qHome2").addEventListener("click",function(){qView("home");renderQuizHistory()});
+}
+function qShowScaleResult(){
+  var z=lastQuiz;
+  var advice="";
+  if(z.band==="几乎没有")advice="这个区间通常不需要特别处理。保持作息和运动，隔一段时间再测一次就行。";
+  else if(z.band==="轻度")advice="轻度区间建议先观察：规律睡眠、减少熬夜、把压力源列出来。如果两周后没有好转，或者影响到了工作学习，去看一次精神科或心理科。";
+  else if(z.band==="中度")advice="中度区间建议安排一次专业评估。不是「你有病」，是让懂的人帮你确认一下，顺便排除其他原因（甲状腺、贫血、睡眠问题都会像这样）。";
+  else advice="这个分数建议尽快找精神科或心理科评估，不要自己扛着，也不要靠加药或喝酒来顶。";
+  var crisis="";
+  if(z.item9>0){
+    crisis='<div class="card warn" style="margin-top:12px"><b>关于第 9 题</b><p style="margin:6px 0 0">你选了有伤害自己的念头。这种情况不要一个人扛：现在就联系一个你信得过的人，或者去最近的医院急诊／精神科；如果你觉得自己马上会做伤害自己的事，拨 120。</p></div>';
+  }
+  var html='<div class="card res">'+
+    '<div class="cardhead"><span>结果<button class="help" type="button" data-help="scaleRes">?</button></span><span class="tag">'+z.title+'</span></div>'+
+    '<div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 4px"><span style="font-size:34px;font-weight:700;color:var(--pink-d)">'+z.score+'</span><span style="color:var(--dim);font-size:13px">/ '+z.max+'</span></div>'+
+    '<p style="font-size:15px"><b>'+z.band+'</b></p>'+
+    (z.extraTotal?'<p>补充问题：'+z.extraTotal+' 项里有 '+z.extraHit+' 项选了「一半以上」或更多。'+
+      (z.extraHit>=3?'这说明它已经影响到日常，值得尽快找人聊聊。':'这部分不计分，只作参考。')+'</p>':'')+
+    '<p>'+advice+'</p>'+
+    '<p class="hint" style="margin:12px 0 0">这是筛查量表，不是诊断。分数反映的是你最近两周的主观感受，会随状态变化。</p>'+
+    '</div>'+crisis+
+    '<div class="card"><div class="cardhead"><span>保存<button class="help" type="button" data-help="resSave">?</button></span></div>'+
+    '<button class="primary" id="qSave">把这次结果存进记录</button>'+
+    '<div class="row2"><button class="ghost" id="qAgain">重测</button><button class="ghost" id="qHome2">回到测验</button></div></div>';
+  $("qResult").innerHTML=html;
+  qView("result");
+  $("qSave").addEventListener("click",function(){saveQuizRecord(z.score+"/"+z.max+" · "+z.band)});
+  $("qAgain").addEventListener("click",function(){qStart(z.id,1)});
+  $("qHome2").addEventListener("click",function(){qView("home");renderQuizHistory()});
+}
+function renderQuizHistory(){
+  var box=$("qHistory");if(!box)return;
+  var list=DB.quiz||[];
+  if(!list.length){box.innerHTML="";return}
+  var html='<div class="card"><div class="cardhead"><span>测过的结果</span><span>'+list.length+' 次</span></div>';
+  list.slice().reverse().forEach(function(z){
+    var d=new Date(z.at);
+    var head="",sub="";
+    if(z.kind==="scale"){head=z.title+" "+z.score+"/"+z.max;sub=z.band}
+    else{
+      var arr=Object.keys(z.r).map(function(k){return [k,z.r[k]]}).sort(function(x,y){return y[1]-x[1]});
+      var labels={f:"女性",m:"男性",n:"非二元",u:"仍在探索",w:"偏向女性",b:"双向或多向",a:"少有吸引"};
+      head=(labels[arr[0][0]]||arr[0][0])+" "+arr[0][1]+"%";
+      sub=(z.id==="gender"?(z.mode===2?"专家":"普通")+" · 身体 "+z.body+"% · 确定性 "+z.cert+"%":z.title);
+    }
+    html+='<div class="entry"><div class="t">'+(d.getMonth()+1)+"/"+d.getDate()+'</div>'+
+      '<div class="b"><div class="n">'+head+'</div><div class="d">'+sub+'</div></div>'+
+      '<button class="x" data-del="'+z.at+'" type="button">×</button></div>';
+  });
+  html+='</div>';
+  box.innerHTML=html;
+  box.querySelectorAll("[data-del]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var at=parseInt(b.dataset.del,10);
+      if(!confirm("删除这条测验记录？"))return;
+      DB.quiz=DB.quiz.filter(function(z){return z.at!==at});
+      save();renderQuizHistory();
+    });
+  });
+}
+
+/* ---------- 我的（本机） ---------- */
+var PRO={name:"",avatar:"",bg:"",bgAlpha:60};
+function saveProfile(){try{localStorage.setItem("hrthub.profile",JSON.stringify(PRO))}catch(e){toast("存不下了，换张小一点的图")}}
+function loadProfile(){
+  try{
+    var s=JSON.parse(localStorage.getItem("hrthub.profile")||"{}");
+    if(s&&typeof s==="object")PRO=s;
+  }catch(e){}
+  applyProfile();
+}
+var TAB_NAMES={me:"主页",log:"记录",table:"表格",med:"用药",remind:"提醒",sym:"搜索",quiz:"测验",sum:"摘要"};
+function currentTab(){
+  var el=document.querySelector(".tab.active");
+  return el?el.id.replace("tab-",""):"me";
+}
+function refreshTitle(){
+  var k=currentTab();
+  var who=PRO.name||"我";
+  var t=who+"的hrt"+(TAB_NAMES[k]||"");
+  var h1=document.querySelector("header h1");
+  if(h1)h1.textContent=t;
+  document.title=t;
+}
+function updateChip(){
+  var av=$("chipAvatar"),nm=$("chipName");
+  if(!av||!nm)return;
+  if(PRO.avatar)av.innerHTML='<img alt="" src="'+PRO.avatar+'">';
+  else av.textContent=(PRO.name||"我").slice(0,1);
+  nm.textContent=PRO.name||"我的";
+}
+function applyProfile(){
+  if($("pName"))$("pName").value=PRO.name||"";
+  refreshTitle();
+  updateChip();
+  var box=$("avatarBox");
+  if(box){
+    if(PRO.avatar)box.innerHTML='<img alt="头像" src="'+PRO.avatar+'">';
+    else box.textContent=(PRO.name||"我").slice(0,1);
+  }
+  var v=(typeof PRO.bgAlpha==="number")?PRO.bgAlpha:60;
+  if($("bgAlpha"))$("bgAlpha").value=v;
+  if(PRO.bg){
+    var a=(0.92-0.8*(v/100)).toFixed(3);
+    document.body.style.backgroundImage=
+      "linear-gradient(rgba(255,255,255,"+a+"),rgba(255,255,255,"+a+")),url("+JSON.stringify(PRO.bg)+")";
+    document.body.style.backgroundSize="cover";
+    document.body.style.backgroundPosition="center";
+    document.body.style.backgroundAttachment="fixed";
+    document.body.style.backgroundRepeat="no-repeat";
+  }else{
+    document.body.style.backgroundImage="";
+    document.body.style.backgroundSize="";
+    document.body.style.backgroundPosition="";
+    document.body.style.backgroundAttachment="";
+  }
+}
+function pickImage(file,maxW,q,cb){
+  if(!file)return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var scale=Math.min(1,maxW/img.width);
+        var c=document.createElement("canvas");
+        c.width=Math.round(img.width*scale);
+        c.height=Math.round(img.height*scale);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        cb(c.toDataURL("image/jpeg",q));
+      }catch(e){toast("这个浏览器处理不了图片")}
+    };
+    img.onerror=function(){toast("这张图读不了")};
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function setAvatar(){
+  pickImage($("avatarFile").files[0],256,0.8,function(data){
+    PRO.avatar=data;saveProfile();applyProfile();toast("头像换好了");
+  });
+}
+function setBg(){
+  pickImage($("bgFile").files[0],1280,0.72,function(data){
+    PRO.bg=data;saveProfile();applyProfile();toast("背景换好了");
+  });
+}
+
+/* ---------- 用药准备 ---------- */
+var MEDQ=[
+ {k:"age",q:"你的年龄区间？",o:["未满 18","18–24","25–34","35 岁以上"]},
+ {k:"doctor",q:"你目前有在看医生吗？",o:["有，内分泌或精神科","看过，但不是跨性别相关","没有","不方便说"]},
+ {k:"lab",q:"最近一次抽血是什么时候？",o:["三个月内","半年内","一年内","更久","从来没查过"]},
+ {k:"chronic",q:"有没有已知的慢性病？（肝、肾、心血管、凝血、高血压、糖尿病）",o:["没有","有，控制得不错","有，但没在管","不清楚"]},
+ {k:"smoke",q:"你吸烟吗？",o:["不吸","偶尔","每天"]},
+ {k:"mind",q:"最近几个月的心理状态？",o:["比较稳定","时好时坏","长期低落","有过伤害自己的念头"]},
+ {k:"support",q:"身边有支持你的人吗？",o:["家人支持","有朋友或社群","基本没有","不想说"]},
+ {k:"money",q:"长期费用你能承担吗？",o:["可以","比较勉强","承担不了","还没考虑"]},
+ {k:"birth",q:"对生育的打算？",o:["想保留","不想要","还没想过","已经不可能"]},
+ {k:"other",q:"现在还在吃别的药或保健品吗？",o:["没有","有处方药","有中药或保健品","记不清"]},
+ {k:"first",q:"你最希望先改变的是？",o:["胸部","皮肤和体型","声音","体毛","整体"]},
+ {k:"worry",q:"你最担心的是什么？",o:["副作用","被别人发现","效果不够","费用","没有医生"]},
+ {k:"guide",q:"有能问的人吗？",o:["有医生可以问","有前辈可以问","都没有"]},
+ {k:"when",q:"你打算多久内开始？",o:["一个月内","半年内","一年内","还不确定"]}
+];
+var medState={i:0,ans:{}};
+function medView(which){
+  $("medIntro").style.display=which==="intro"?"":"none";
+  $("medRun").style.display=which==="run"?"":"none";
+  $("medResult").style.display=which==="result"?"":"none";
+}
+function medStart(){
+  medState={i:0,ans:{}};
+  medView("run");medRender();
+  window.scrollTo(0,0);
+}
+function medRender(){
+  var q=MEDQ[medState.i],tot=MEDQ.length;
+  $("medProgress").textContent=(medState.i+1)+" / "+tot;
+  $("medBarFill").style.width=(medState.i/tot*100)+"%";
+  $("medText").textContent=q.q;
+  $("medBack").style.display=medState.i>0?"":"none";
+  var box=$("medOpts");box.innerHTML="";
+  q.o.forEach(function(txt,idx){
+    var b=document.createElement("button");
+    b.className="opt";b.type="button";b.textContent=txt;
+    b.addEventListener("click",function(){medPick(idx)});
+    box.appendChild(b);
+  });
+}
+function medPick(idx){
+  var q=MEDQ[medState.i];
+  medState.ans[q.k]=q.o[idx];
+  medNext();
+}
+function medSkip(){
+  var q=MEDQ[medState.i];
+  medState.ans[q.k]="跳过";
+  medNext();
+}
+function medNext(){
+  if(medState.i+1>=MEDQ.length){medFinish();return}
+  medState.i++;medRender();
+}
+function medFinish(){
+  var a=medState.ans;
+  var risk=[],prep=[];
+  // 风险/优先级
+  if(a.age==="未满 18")risk.push("你还没满 18 岁：任何用药都应当在监护人和医生知情的情况下进行。这不是道德要求，是法律和安全的边界。");
+  if(a.mind==="有过伤害自己的念头")risk.push("你说有过伤害自己的念头。这件事比 HRT 更急——先找一个能听你说话的人，或者去最近的医院精神科。");
+  else if(a.mind==="长期低落")risk.push("长期低落会干扰你对效果的判断，也可能和激素变化互相放大。先处理情绪，再谈方案。");
+  if(a.chronic==="有，但没在管")risk.push("有慢性病却没在管理，这会直接改变医生能给你什么方案。先把这件事管起来。");
+  if(a.chronic==="不清楚")risk.push("你不太清楚自己的身体状况，这意味着现在的方案只能靠猜。查一次血就能解决大半。");
+  if(a.smoke==="每天")risk.push("每天吸烟会明显增加血栓风险，这是 HRT 里最需要先处理的一件事。");
+  if(a.lab==="从来没查过"||a.lab==="更久"||a.lab==="一年内")prep.push("查一次基础血：肝肾功能、血脂、血常规，有条件加激素水平。");
+  if(a.doctor==="没有"||a.doctor==="不方便说")prep.push("找一个能看跨性别相关问题的医生。找不到就先从三甲医院内分泌科或精神科开始问。");
+  if(a.guide==="都没有")prep.push("找一个能问的人：医生、社群里的前辈、或者愿意陪你去医院的朋友。");
+  if(a.support==="基本没有")prep.push("你身边缺少支持。哪怕只有一个知道你情况的人，也能在出问题时帮你叫车去医院。");
+  if(a.money==="承担不了"||a.money==="比较勉强")prep.push("把长期费用算清楚：药费、化验费、复诊费。算完再决定节奏，别中途断。");
+  if(a.birth==="想保留")prep.push("想保留生育能力，要在开始之前就和医生谈，有些变化发生后不可逆。");
+  if(a.other==="有处方药"||a.other==="有中药或保健品")prep.push("把你现在吃的全部药列一张单，见面时直接给医生看。");
+  if(a.when==="一个月内")prep.push("你说想一个月内开始。这个节奏可以，但前提是上面几项已经办完，否则建议先放慢。");
+
+  var done=prep.length===0;
+  var L='<div class="card res">'+
+    '<div class="cardhead"><span>你现在的位置</span><span class="tag">不是判定</span></div>'+
+    '<p class="hint" style="margin-top:0">这一页不判你「能不能做」，也不给方案。它只告诉你：离一个安全的方案还差什么。</p>';
+  if(risk.length){
+    L+='<div class="card warn" style="margin:10px 0"><b>先处理这几件</b><p style="margin:6px 0 0">'+risk.join("<br><br>")+'</p></div>';
+  }
+  if(done){
+    L+='<p><b>准备得差不多了。</b>带着你的记录、化验单和这张清单去找医生，基本可以直接开始谈方案。</p>';
+  }else{
+    L+='<p><b>还差 '+prep.length+' 件事：</b></p><ul style="padding-left:18px;margin:6px 0">'+
+      prep.map(function(x){return "<li>"+x+"</li>"}).join("")+'</ul>';
+  }
+  L+='</div>';
+
+  L+='<div class="card"><div class="cardhead"><span>一般时间线</span><span class="tag">人群平均</span></div>'+
+    '<p class="hint" style="margin-top:0">这是很多人的平均情况，<b>不是给你的预测</b>。个体差异很大，方案和剂量要医生定。</p>'+
+    '<ul style="padding-left:18px;margin:6px 0;font-size:14px;line-height:1.8">'+
+    '<li>1–3 个月：乳房胀痛、皮肤变细、性欲变化</li>'+
+    '<li>3–6 个月：乳房开始发育，脂肪分布开始变</li>'+
+    '<li>6–12 个月：体型变化明显，肌肉量下降</li>'+
+    '<li>1–2 年：乳房发育接近最大，面部脂肪变化</li>'+
+    '<li>2 年以上：趋于稳定</li>'+
+    '<li>不会改变：声音、喉结、骨骼、已经长出来的胡须——这些要靠别的办法</li>'+
+    '</ul></div>';
+
+  L+='<div class="card"><div class="cardhead"><span>下一步</span></div>'+
+    '<button class="primary" id="medSave">把这份清单存进记录</button>'+
+    '<div class="row2"><button class="ghost" id="medAgain">重新做</button><button class="ghost" id="medHome">回到开始</button></div>'+
+    '<p class="hint">存进记录以后，可以在「摘要」里一起带给医生。</p></div>';
+
+  $("medResult").innerHTML=L;
+  medView("result");
+  window.scrollTo(0,0);
+
+  $("medSave").addEventListener("click",function(){
+    var txt=[];
+    if(risk.length)txt.push("风险：" + risk.join("；"));
+    if(prep.length)txt.push("待办：" + prep.join("；"));
+    DB.entries.push({id:uid(),type:"note",title:"用药准备评估",at:nowLocal(),
+      note:(txt.join(" ｜ ")||"准备清单已完成").slice(0,300)});
+    save();renderLog();toast("已存进记录");
+  });
+  $("medAgain").addEventListener("click",medStart);
+  $("medHome").addEventListener("click",function(){medView("intro")});
+}
+
+/* ---------- 表格 ---------- */
+var curTbl=null;
+function tblById(id){
+  var a=DB.tables||[];
+  for(var i=0;i<a.length;i++)if(a[i].id===id)return a[i];
+  return null;
+}
+function renderTblList(){
+  var box=$("tblList");
+  if(!box)return;
+  box.innerHTML="";
+  var n=(DB.tables||[]).length;
+  $("tblCount").textContent=n?n+" 张":"";
+  if(!n){
+    box.innerHTML='<p class="hint" style="padding:0 4px">还没有表格。点上面的按钮建一张。</p>';
+    return;
+  }
+  DB.tables.forEach(function(t){
+    var card=document.createElement("div");card.className="card";
+    var head=document.createElement("div");head.className="cardhead";
+    var sp=document.createElement("span");sp.textContent=t.name;
+    var cnt=document.createElement("span");cnt.textContent=(t.rows||[]).length+" 行 · "+(t.cols||[]).length+" 列";
+    head.appendChild(sp);head.appendChild(cnt);
+    var open=document.createElement("button");open.className="primary";open.textContent="打开";
+    open.addEventListener("click",function(){openTbl(t.id)});
+    card.appendChild(head);card.appendChild(open);
+    box.appendChild(card);
+  });
+}
+function openTbl(id){
+  curTbl=tblById(id);
+  if(!curTbl)return;
+  $("tblHome").style.display="none";
+  $("tblEdit").style.display="";
+  renderTbl();
+  window.scrollTo(0,0);
+}
+function backTbl(){
+  curTbl=null;
+  $("tblEdit").style.display="none";
+  $("tblHome").style.display="";
+  renderTblList();
+}
+function renderTbl(flash){
+  var t=curTbl;
+  if(!t)return;
+  $("tblTitle").textContent=t.name;
+  var h=$("tblHead");
+  h.innerHTML="";
+  (t.cols||[]).forEach(function(name,ci){
+    var th=document.createElement("th");
+    th.textContent=name;
+    th.addEventListener("click",function(){
+      var v=prompt("列名：",name);
+      if(v===null)return;
+      t.cols[ci]=v.trim()||name;
+      save();renderTbl();
+    });
+    h.appendChild(th);
+  });
+  var b=$("tblBody");
+  b.innerHTML="";
+  (t.rows||[]).forEach(function(row,ri){
+    var tr=document.createElement("tr");
+    (t.cols||[]).forEach(function(name,ci){
+      var td=document.createElement("td");
+      td.textContent=row[ci]||"";
+      td.addEventListener("click",function(){
+        var v=prompt(name+"：",row[ci]||"");
+        if(v===null)return;
+        row[ci]=v;
+        save();renderTbl([ri,ci]);
+      });
+      tr.appendChild(td);
+    });
+    b.appendChild(tr);
+  });
+  syncChartChips();
+  renderChart(t);
+  if(flash&&flash.length===2){
+    var rowEl=b.children[flash[0]];
+    var cellEl=rowEl&&rowEl.children[flash[1]];
+    if(cellEl){
+      cellEl.classList.add("flash");
+      setTimeout(function(){cellEl.classList.remove("flash")},600);
+    }
+  }
+}
+var CHART_COLORS=["#5BCEFA","#F5A9B8","#9B8CE0","#E0A54A","#3ECF8E","#E27C96"];
+function esc(t){
+  return String(t).replace(/[&<>"]/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function chartData(t){
+  var out=[];
+  (t.rows||[]).forEach(function(r){
+    var v=parseFloat(String(r[1]||"").replace(/[^\d.\-]/g,""));
+    if(!isNaN(v))out.push([String(r[0]||"").slice(0,12),v]);
+  });
+  return out;
+}
+function syncChartChips(){
+  var k=(curTbl&&curTbl.chart)||"none";
+  var box=$("chartChips");
+  if(!box)return;
+  box.querySelectorAll(".chip").forEach(function(c){
+    c.classList.toggle("on",c.getAttribute("data-chart")===k);
+  });
+}
+function renderChart(t){
+  var box=$("tblChart");
+  if(!box)return;
+  var kind=t.chart||"none";
+  if(kind==="none"){box.innerHTML="";box.style.display="none";return}
+  box.style.display="";
+  var d=chartData(t);
+  if(!d.length){box.innerHTML='<p class="empty">第一列写名称、第二列写数字，这里就会出图。</p>';return}
+  box.innerHTML=(kind==="pie")?pieSvg(d):axisSvg(d,kind);
+}
+function axisSvg(d,kind){
+  var W=320,H=180,P=28;
+  var vals=d.map(function(x){return x[1]});
+  var max=Math.max.apply(null,vals),min=Math.min.apply(null,vals);
+  if(min>0)min=0;
+  if(max===min)max=min+1;
+  var iw=W-P*2,ih=H-P*2;
+  function Y(v){return P+ih-(v-min)/(max-min)*ih}
+  var out='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  out+='<line x1="'+P+'" y1="'+(H-P)+'" x2="'+(W-P)+'" y2="'+(H-P)+'" stroke="#D9E9F2"/>';
+  out+='<text x="3" y="'+(P+4)+'" font-size="9" fill="#8FA3B3">'+max.toFixed(1)+'</text>';
+  out+='<text x="3" y="'+(H-P)+'" font-size="9" fill="#8FA3B3">'+min.toFixed(1)+'</text>';
+  if(kind==="bar"){
+    var step=iw/d.length,bw=Math.min(26,step*0.62);
+    d.forEach(function(p,i){
+      var cx=P+step*(i+0.5);
+      var h=(H-P)-Y(p[1]);
+      out+='<rect class="bar" x="'+(cx-bw/2)+'" y="'+Y(p[1])+'" width="'+bw+'" height="'+Math.max(1,h)+'" rx="4" fill="'+CHART_COLORS[i%6]+'"/>';
+    });
+  }else{
+    var step2=iw/Math.max(1,d.length-1);
+    var pts=d.map(function(p,i){return (P+step2*i)+','+Y(p[1])}).join(" ");
+    out+='<polyline points="'+pts+'" fill="none" stroke="#2FA8CF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>';
+    d.forEach(function(p,i){
+      out+='<circle class="pt" cx="'+(P+step2*i)+'" cy="'+Y(p[1])+'" r="3.4" fill="#fff" stroke="#2FA8CF" stroke-width="2"/>';
+    });
+  }
+  out+='<text x="'+P+'" y="'+(H-8)+'" font-size="9" fill="#8FA3B3">'+esc(d[0][0])+'</text>';
+  if(d.length>1){
+    out+='<text x="'+(W-P)+'" y="'+(H-8)+'" font-size="9" fill="#8FA3B3" text-anchor="end">'+esc(d[d.length-1][0])+'</text>';
+  }
+  return out+'</svg>';
+}
+function pieSvg(d){
+  var W=320,H=180,cx=92,cy=90,r=60;
+  var total=d.reduce(function(a,b){return a+Math.abs(b[1])},0);
+  if(!total)return '<p class="empty">数值都是 0，画不出饼图。</p>';
+  var a0=-Math.PI/2,out='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  d.forEach(function(p,i){
+    var frac=Math.abs(p[1])/total,a1=a0+frac*Math.PI*2;
+    var x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0);
+    var x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    if(frac>0.999){
+      out+='<circle class="slice" cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+CHART_COLORS[i%6]+'"/>';
+    }else{
+      out+='<path class="slice" d="M'+cx+','+cy+' L'+x0.toFixed(1)+','+y0.toFixed(1)+
+        ' A'+r+','+r+' 0 '+(frac>0.5?1:0)+' 1 '+x1.toFixed(1)+','+y1.toFixed(1)+' Z" fill="'+CHART_COLORS[i%6]+'"/>';
+    }
+    a0=a1;
+  });
+  d.slice(0,6).forEach(function(p,i){
+    out+='<rect x="178" y="'+(28+i*20)+'" width="9" height="9" rx="2" fill="'+CHART_COLORS[i%6]+'"/>';
+    out+='<text x="193" y="'+(36+i*20)+'" font-size="10" fill="#4E6273">'+esc(String(p[0]).slice(0,8))+' '+Math.round(p[1])+'</text>';
+  });
+  return out+'</svg>';
+}
+$("chartChips").querySelectorAll(".chip").forEach(function(c){
+  c.addEventListener("click",function(){
+    if(!curTbl)return;
+    curTbl.chart=c.getAttribute("data-chart");
+    save();syncChartChips();renderChart(curTbl);
+  });
+});
+$("tblNew").addEventListener("click",function(){
+  var name=prompt("给这张表起个名字：","新表格");
+  if(name===null)return;
+  name=name.trim()||"新表格";
+  var t={id:uid(),name:name,cols:["名称","数值","备注"],rows:[["","",""]],chart:"none",at:Date.now()};
+  if(!DB.tables)DB.tables=[];
+  DB.tables.push(t);
+  save();renderTblList();openTbl(t.id);
+});
+$("tblAddRow").addEventListener("click",function(){
+  if(!curTbl)return;
+  curTbl.rows.push(curTbl.cols.map(function(){return ""}));
+  save();renderTbl();
+});
+$("tblAddCol").addEventListener("click",function(){
+  if(!curTbl)return;
+  var name=prompt("新列的名字：","新列");
+  if(name===null)return;
+  name=name.trim()||"新列";
+  curTbl.cols.push(name);
+  curTbl.rows.forEach(function(r){r.push("")});
+  save();renderTbl();
+});
+$("tblDel").addEventListener("click",function(){
+  if(!curTbl)return;
+  if(!confirm("删除表格「"+curTbl.name+"」？里面的内容会一起没掉。"))return;
+  DB.tables=(DB.tables||[]).filter(function(t){return t.id!==curTbl.id});
+  save();backTbl();
+});
+$("tblBack").addEventListener("click",backTbl);
+$("medStart").addEventListener("click",medStart);
+$("medSkip").addEventListener("click",medSkip);
+$("medBack").addEventListener("click",function(){
+  if(medState.i>0){medState.i--;medRender()}
+});
+
+/* ---------- 说明 ---------- */
+var HELP={
+ header:{t:"这是什么",a:"一个只存在你手机里的用药记录页：记一笔、到点提醒、症状对照、自测、生成就诊摘要。",b:"底部分栏切换。数据不上传服务器，换设备前先在「记录 › 备份」里导出一份。"},
+ mName:{t:"药名",a:"你用的药叫什么。商品名、通用名、缩写都行，只要你自己认得出。",b:"直接打字。记过的药会出现在下面的小按钮里，点一下自动填好，不用每次重敲。"},
+ mTitle:{t:"标题",a:"这一条叫什么。用药就写药名，身体就写项目（体重、胸围），随笔随便写。",b:"记过的药名会变成下面的小按钮，点一下自动填好。随笔可以留空，会自动写成「随笔」。"},
+ mValue:{t:"数值",a:"这一项是多少，比如体重 62。",b:"只填数字，单位在右边单独填。以后看趋势、算变化都靠它。"},
+ mUnit:{t:"单位",a:"数值的单位，比如 kg、cm。",b:"跟数值配着写。同类项目用同一个单位，趋势才不会错。"},
+ mDose:{t:"剂量",a:"这一次用了多少。",b:"数字加单位，或者「半片」「一泵」这种写法都行。它只用来记录和对照，页面不会拿它算建议。"},
+ mRoute:{t:"途径",a:"药怎么进身体：口服、舌下、经皮、肌注、皮下。",b:"从下拉里选。以后再改方案时，途径的变化和剂量的变化可以分开看。"},
+ mTime:{t:"时间",a:"这一次用药的时间，默认是现在。",b:"补记以前的事就点它改。日期和时间一起填。"},
+ mNote:{t:"备注",a:"想额外记的东西：注射部位、当时的感觉、有没有漏掉。",b:"可以留空。写的内容会跟着进就诊摘要。"},
+ save:{t:"记一笔",a:"把上面填的内容存成一条记录，存在这台设备上。",b:"填完点它，会提示「已记下」。之后在「最近记录」里能看到，点每条右边的 × 可以删，删前会再确认。"},
+ logList:{t:"最近记录",a:"按日期分组的全部记录，最新的在最上面。",b:"只读，不用操作。觉得某条记错了就点 × 删掉重记。"},
+ backup:{t:"备份",a:"把全部数据打包成 JSON 文件，或者从备份里读回来。",b:"导出会下载一个文件，存网盘或传电脑；换手机时用「导入」选它，重复的会自动跳过，不会记两遍。"},
+ rName:{t:"提醒什么事",a:"到点弹出来时显示的那句话。",b:"短一点更好认，比如「吃药」「喝水」「复诊」。"},
+ rTime:{t:"提醒时间",a:"每天几点提醒你。",b:"选一个时间点。加多个提醒时，它们各按各的时间响。"},
+ remindForm:{t:"新建提醒",a:"不只是吃药，什么事都能提醒：喝水、复诊、上课、交作业。",b:"写清楚提醒什么事，选时间，再选多久一次，点「添加提醒」。"},
+ repeat:{t:"多久一次",a:"只提醒一次：到那天那个点响一次。每天：天天响。自定义：自己挑星期几，可以多选。",b:"选「自定义」后，下面出现一到日的按钮，点一下选中，再点一下取消。"},
+ notif:{t:"开启通知",a:"让浏览器允许这个页面给你发通知。",b:"点一下，系统会弹权限窗口，选「允许」。之前拒绝过，得去浏览器设置里手动改回来。"},
+ test:{t:"测试一下",a:"立刻发一条通知，看看通不通。",b:"点它。手机弹出「测试提醒」就是通的；没弹，多半是权限没给，换用下面的日历导出更稳。"},
+ remList:{t:"提醒列表",a:"已经加上的提醒，按时间排。",b:"点 × 删掉一个。网页的提醒只在页面开着时才可靠，别指望它像闹钟一样。"},
+ ics:{t:"导出到手机日历",a:"把提醒变成一个日历文件，导入后由系统闹钟负责响。",b:"点它会下载 .ics，用手机日历打开并导入。导入后关屏也会响，这是最靠谱的提醒方式。"},
+ symIntro:{t:"症状对照说明",a:"这些条目帮你判断「要不要去看医生」和「该记什么」，不是诊断，也不给用药建议。",b:"搜一个词或点开一条。每条都写了：常见情况、要立刻就医的信号、该记什么、问医生什么。"},
+ symSearch:{t:"搜索",a:"在症状条目里找关键词。",b:"输入「头痛」「水肿」「注射」这类词，列表会实时筛。清空就显示全部。"},
+ range:{t:"统计范围",a:"生成摘要时取最近多少天的记录。",b:"给医生看一个周期选 30 天；想看换方案前后的对比，选 90 天或全部。"},
+ notes:{t:"想说的话",a:"给医生看的补充：最近的困扰、想问的问题。",b:"自由写。生成摘要时会单独成一段，不会被记录淹没。"},
+ sumForm:{t:"就诊摘要",a:"把记录、统计、提醒和你的补充整理成一段 Markdown 文字。",b:"选好范围、写完想说的话，点「生成就诊摘要」，下面会出现完整内容，可以复制或存成文件。"},
+ gen:{t:"生成就诊摘要",a:"把这段时间的记录整理成一份能直接给医生看的文字。",b:"选好范围点它。改完范围或补充内容后，再点一次就会重新生成。"},
+ copy:{t:"复制",a:"把生成的摘要放进剪贴板。",b:"点一下，然后去聊天框或邮件里粘贴。复制失败时可以长按上面的文字手动选。"},
+ dl:{t:"下载 .md",a:"把摘要存成一个 .md 文件。",b:"点它会下载。这个文件可以直接当附件发给医生，或者发给 DSH Go 让它帮你整理、列问题。"},
+ out:{t:"摘要内容",a:"上面生成的文字在这里预览。",b:"长按可以选中一部分复制。内容不满意，改范围或补充后再生成一次。"},
+ feedback:{t:"反馈",a:"联系方式放在这里，方便你提问题、报 bug、或者提想法。",b:"邮箱和 QQ 都可以点「复制」。写的时候带上：你用的是哪个功能、手机是安卓还是苹果、看到的是什么提示。"},
+ med:{t:"用药准备",a:"不问药名、不给剂量。它只把见医生前该想清楚的事问一遍，最后告诉你还差什么。",b:"点开始，一次一题，可以跳过。做完会给一张清单，存进记录后能带进摘要里。"},
+ table:{t:"表格",a:"自己建的表：想记什么就建什么列，点格子直接改。",b:"点「新建表格」起个名字；点列标题改列名，点格子改内容；「+ 一行」「+ 一列」随时加。长按没有用，点就对了。"},
+ profile:{t:"我的",a:"这里只有三样东西：头像、名字、网页背景。不需要账号，也不会传到任何地方。",b:"名字直接在框里改，边打边保存；头像点「换头像」从相册选，会裁成圆形。"},
+ bg:{t:"网页背景",a:"把一张自己喜欢的图铺在整页后面，文字底下的白色半透明层保证还能看清。",b:"点「从相册选背景」选图，会自动压缩到 1280 像素宽再存本机。想回到默认，点「恢复默认」。"},
+ quizModes:{t:"测验",a:"四个测验：性别认同、性取向、情绪（PHQ-9）、焦虑（GAD-7）。每个都有普通和专家两档，专家题更多、问得更细。",b:"先做普通；想更细就做专家。量表类的专家模式会多几道不计分的补充题，用来判断影响程度。"},
+ scaleRes:{t:"分数和区间",a:"分数是把每道题的频率加起来。区间是对应的严重程度，用来决定「要不要去看看」。",b:"它反映最近两周的主观感受，会随状态变。分数高不等于「你有病」，低也不等于「没事」。"},
+ quizRun:{t:"答题",a:"一次一题，选一个就翻到下一题。",b:"「上一题」可以回去改；「退出」不保存当前进度。选项顺序每次都会打乱，避免顺手点第一个把分数抬高。"},
+ resList:{t:"倾向分布",a:"四条比例加起来是 100%，表示你更靠近哪边，不是「有多大可能是跨性别」。",b:"看最高的两条就够了，别盯着小数。它不判定，也不给结论。"},
+ resBody:{t:"身体改变意愿",a:"单独的一维：你想不想改身体，和「你是谁」分开看。",b:"分高说明身体上的需求明确；分低也不代表没问题，困扰可能在称呼、社会角色那一层。"},
+ resCert:{t:"确定性",a:"你的答案前后有多一致。",b:"分低不代表「不知道自己是谁」，只说明你还在变化，这很正常，过段时间再测一次更能说明问题。"},
+ resSave:{t:"存进记录",a:"把这次结果留下来，以后能对比。",b:"点它，结果会出现在测验首页下方；就诊摘要里也会带上最近一次。"}
+};
+function mkHelp(key){
+  var b=document.createElement("button");
+  b.type="button";b.className="help";b.setAttribute("data-help",key);
+  b.setAttribute("aria-label","说明");b.textContent="?";
+  return b;
+}
+function injectHelp(){
+  ["mTitle","mDose","mRoute","mTime","mNote","mValue","mUnit","rName","rTime","symQ","range","notes"].forEach(function(id){
+    var el=$(id);if(!el)return;
+    var lab=el.closest?el.closest("label"):null;if(!lab)return;
+    var first=lab.firstChild;
+    if(first&&first.nodeType===3)lab.insertBefore(mkHelp(id),first.nextSibling);
+    else lab.insertBefore(mkHelp(id),lab.firstChild);
+  });
+  [["saveBtn","save"],["logList","logList"],["expBtn","backup"],["addRem","remindForm"],
+   ["remList","remList"],["icsBtn","ics"],["symQ","symIntro"],["genBtn","sumForm"],
+   ["qStartNormal","quizModes"],["qProgress","quizRun"]].forEach(function(p){
+    var el=$(p[0]);if(!el)return;
+    var card=el.closest?el.closest(".card"):null;if(!card)return;
+    var hd=card.querySelector(".cardhead");if(!hd)return;
+    var first=hd.firstElementChild;
+    if(first&&first.tagName==="SPAN")first.appendChild(mkHelp(p[1]));
+    else hd.appendChild(mkHelp(p[1]));
+  });
+  var brand=document.querySelector("header .brand");
+  if(brand)brand.appendChild(mkHelp("header"));
+  var sq=$("symQ");
+  if(sq)sq.insertAdjacentElement("afterend",mkHelp("symSearch"));
+  var ib=$("icsBtn");
+  if(ib)ib.insertAdjacentElement("afterend",mkHelp("ics"));
+  var warn=document.querySelector(".card.warn .cardhead");
+  if(warn&&!warn.querySelector(".help"))warn.firstElementChild.appendChild(mkHelp("symIntro"));
+}
+function openHelp(key){
+  var h=HELP[key];if(!h)return;
+  $("sheetTitle").textContent=h.t;
+  $("sheetBody").innerHTML='<div class="sec"><b>它是干什么的</b><p>'+h.a+'</p></div>'+
+    '<div class="sec"><b>怎么用</b><p>'+h.b+'</p></div>';
+  $("sheetWrap").classList.add("show");
+  $("sheetWrap").setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeHelp(){
+  $("sheetWrap").classList.remove("show");
+  $("sheetWrap").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+document.addEventListener("click",function(e){
+  var t=e.target;
+  var hp=t&&t.closest?t.closest(".help"):null;
+  if(hp){e.preventDefault();e.stopPropagation();openHelp(hp.getAttribute("data-help"));return}
+  if(t===$("sheetClose")){closeHelp();return}
+  if(t===$("sheetWrap")){closeHelp();return}
+},true);
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeHelp()});
+
+/* ---------- 切换 ---------- */
+document.querySelectorAll(".tabbar button").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll(".tabbar button").forEach(function(o){o.classList.remove("on")});
+    b.classList.add("on");
+    document.querySelectorAll(".tab").forEach(function(s){s.classList.remove("active")});
+    $("tab-"+b.dataset.tab).classList.add("active");
+    if($("meChip"))$("meChip").classList.toggle("show",b.dataset.tab!=="me");
+    refreshTitle();
+    if(b.dataset.tab==="table"&&curTbl==null)renderTblList();
+    window.scrollTo(0,0);
+  });
+});
+
+/* ---------- 启动 ---------- */
+load();
+if(!$("mTime").value)$("mTime").value=nowLocal();
+$("notes").value=DB.notes||"";
+$("qStartNormal").addEventListener("click",function(){qStart("gender",1)});
+$("qStartExpert").addEventListener("click",function(){qStart("gender",2)});
+$("qBack").addEventListener("click",function(){if(qs.idx>0){qs.idx--;qRender()}});
+$("qQuit").addEventListener("click",function(){qView("home");renderQuizHistory()});
+document.addEventListener("click",function(e){
+  var b=e.target&&e.target.closest?e.target.closest("[data-copy]"):null;
+  if(!b)return;
+  var t=b.getAttribute("data-copy");
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){toast("已复制："+t)},function(){toast(t)});
+  }else toast(t);
+});
+$("avatarBtn").addEventListener("click",function(){$("avatarFile").click()});
+$("avatarFile").addEventListener("change",setAvatar);
+$("bgBtn").addEventListener("click",function(){$("bgFile").click()});
+$("bgFile").addEventListener("change",setBg);
+$("bgAlpha").addEventListener("input",function(){
+  PRO.bgAlpha=parseInt(this.value,10)||0;
+  saveProfile();applyProfile();
+});
+$("meChip").addEventListener("click",function(){
+  document.querySelector('[data-tab="me"]').click();
+});
+$("bgClear").addEventListener("click",function(){
+  PRO.bg="";saveProfile();applyProfile();toast("已恢复默认背景");
+});
+$("pName").addEventListener("input",function(){
+  PRO.name=this.value.trim().slice(0,20);saveProfile();
+  var box=$("avatarBox");
+  if(box&&!PRO.avatar)box.textContent=(PRO.name||"我").slice(0,1);
+});
+document.addEventListener("click",function(e){
+  var b=e.target&&e.target.closest?e.target.closest("[data-quiz]"):null;
+  if(b){qStart(b.getAttribute("data-quiz"),parseInt(b.getAttribute("data-mode")||"1",10))}
+});
+renderQuizHistory();
+loadProfile();
+renderTblList();
+injectHelp();
+$("annOk").addEventListener("click",function(){
+  $("annWrap").classList.remove("show");
+  $("annWrap").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+});
+$("annWrap").classList.add("show");
+$("annWrap").setAttribute("aria-hidden","false");
+document.body.style.overflow="hidden";
+
+renderLog();renderRem();renderSym("");notifState();
+alarmTimer=setInterval(tick,15000);
+tick();
+document.addEventListener("visibilitychange",function(){if(!document.hidden)tick()});
+})();
+</script>
+</body>
+</html>
